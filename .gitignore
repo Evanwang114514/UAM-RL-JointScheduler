@@ -1,0 +1,31 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+# IDE
+.idea/
+.vscode/
+# Logs
+*.log
+log/
+logs/
+Log.log/
+# RL training outputs
+models/
+serial_runs/
+wandb/
+checkpoints/
+# Model files
+*.zip
+*.pkl
+*.pt
+*.pth
+*.ckpt
+# Environment
+.env
+# OS
+.DS_Store
+Thumbs.db
+diagnostics/
+fixed_fleet_fairness_scan/
+fixed_fleet_pretrain_baselines/
