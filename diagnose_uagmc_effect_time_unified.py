@@ -1,99 +1,448 @@
 # -*- coding: utf-8 -*-
-"""
-UAGMC Candidate-Specific Effect-Time Master Diagnostic
-======================================================
+r"""
+UAGMC Unified Candidate-Specific Effect-Time Diagnostic
+=======================================================
 
-目标
-----
-这是一份“正式训练之前的最终无训练诊断”，只验证本文最核心的问题：
+This file replaces the earlier chain of Stage-0 / 0.5 / 0.6 / 0.7 / 0.8
+diagnostic scripts with ONE corrected diagnostic.
 
-    对同一个乘客 p，不同候选 departure vertiport k 有不同 access delay T_{p,k}。
-    UAGMC 风格方法在 decision time t 使用同一时刻的环境快照 S(t)；
-    本项目关注的是：候选 k 是否应该读取/处理到它自己的 effect time
-        t + T_{p,k}
-    对应的同一组环境变量，再统一比较候选得分。
-
-本脚本不训练任何模型，不改 reward，不改 PPO。
-
-它修复此前 Stage-0~0.8 的主要逻辑漏洞：
-1) incoming passenger 不再使用粗粒度 state == "enroute"；
-   只把
+RETAINED LOGIC
+--------------
+1. Same-passenger candidate access/effect-time heterogeneity.
+2. Decision-time -> each candidate's OWN effect-time state drift.
+3. Candidate-independent shared future horizon -> own effect-time mismatch.
+4. Legal committed-event crossing using ONLY passengers already committed to
+   ground access at decision time.
+5. Correct incoming semantics:
        state == "enroute" AND sub_state == "to_vertiport"
-   视为“正在 ground access、未来会到达 departure vertiport 的 committed passenger”。
-
-2) 对上述 access-stage passenger，剩余 access ETA 使用
+6. Correct discrete remaining access ETA:
        current_timer + 1
-   （离散 simulation-step 边界）。
-   同时本脚本会在线重新审计 timer countdown 一致性，不盲信旧结论。
+7. Online timer-countdown audit.
+8. Offline-oracle ranking-change diagnostics, clearly marked as OFFLINE ONLY.
+9. Optional exact Longest-Queue / VertiSync-simple reposition comparison using
+   the SAME training-time reposition patch.
 
-3) “真实 future state”只用于 offline oracle diagnostic。
-   它可能包含未来尚未 reveal 的 passenger / 后续 policy 行为，绝不当作在线可用信息。
+DISCARDED / SUPERSEDED LOGIC
+----------------------------
+The following older diagnostic ideas are intentionally NOT implemented:
+- strict timer-only "Committed-only -> Oracle" as a claim that it reconstructs
+  the future state;
+- arrival-only peeling as a method-validity proof;
+- historical-service-rate P2 peeling;
+- committed-cohort oracle as a proof that the online representation is correct;
+- the old broad definition "state == enroute" for passenger incoming;
+- current_timer interpreted without the +1 discrete-step correction.
 
-4) 另外单独提供 legal committed-event evidence：
-   只使用 decision time 已经存在、已被过去动作 committed 的 access passenger，
-   检查这些已知 arrival 是否跨过不同 candidate 的 effect boundary。
-   这一部分不读取未来 unrevealed passenger。
+Why:
+The corrected master diagnostic explicitly treats future realized state as an
+OFFLINE oracle only. It tests whether temporal mismatch exists and whether
+decision-time-known committed events cross candidate-specific boundaries.
+It does NOT claim to reconstruct the counterfactual future online.
 
-5) 不再做旧版 P1/P2 的 service-rate projection，也不再用错误 cohort 证明方法有效。
-   本脚本只回答：
-       A. 同一乘客的不同机场 effect time 是否显著不同？
-       B. 同一组环境变量在各自 effect time 是否已经显著变化？
-       C. delay 越长，decision-time snapshot 是否越过时？
-       D. 一个 candidate-independent shared future horizon 是否仍与各自 effect time 有明显错位？
-       E. 当前已知 committed events 是否真的会跨过 candidate-specific effect boundary？
-   通过这些 gate 后，再进入正式训练。
+MODES
+-----
+Base UAGMC:
+    python diagnose_uagmc_effect_time_unified.py --mode base
 
-依赖
-----
-请把本文件放在 UAGMC 根目录，并保留：
-    diagnose_uagmc_candidate_temporal_mismatch.py
+Exact N=16 reposition comparison:
+    python diagnose_uagmc_effect_time_unified.py --mode reposition
 
-默认读取历史复现：
-    models/final_rl_model.zip
-    models/final_vec_normalize.pkl
-    train_data/passengers_300.csv
+The reposition mode still requires the TRAINING implementation:
+    train_uagmc_reposition_lq_vs_vertisync_800k.py
+because the aircraft reposition policy must be exactly the one used in training,
+not reimplemented in this diagnostic.
 
-输出
-----
-diagnostics/uagmc_effect_time_master/<timestamp>/
-    summary.json
-    candidate_detail.csv
-    decision_summary.csv
-    horizon_bins.csv
-    variable_change_summary.csv
-    committed_crossing_summary.csv
-    timer_semantics_audit.csv
-    resolved_config.json
-
-重要解释
---------
-- “oracle effect-time state”是离线事实诊断，不是 proposed online observation。
-- “shared horizon”默认取同一乘客所有 candidate access time 的均值，
-  只用于检验“统一向未来看”是否仍不能替代 candidate-specific temporal reference。
-- 自动 gate 只是工程性的 go/no-go 检查，不是统计学定理；所有原始指标都会完整输出。
+NO TRAINING occurs in this file.
 """
 
 from __future__ import annotations
 
 import argparse
 import csv
+import importlib
 import json
 import math
+import re
 import sys
 import time
+import traceback
+import zipfile
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 import numpy as np
 
-try:
-    import diagnose_uagmc_candidate_temporal_mismatch as stage0
-except Exception as exc:
+ROOT = Path(__file__).resolve().parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+
+# =============================================================================
+# Standalone helpers retained from Stage-0
+# =============================================================================
+
+def looks_like_uagmc_root(path: Path) -> bool:
+    """判断目录是否像 Traffic-Alpha/UAGMC 根目录。"""
+    return (
+        (path / "utilss" / "make_env.py").exists()
+        and (path / "utilss" / "uam_rl_wrapper.py").exists()
+        and (path / "at_obj" / "scenario.py").exists()
+        and (path / "rl_env" / "observation_encoder.py").exists()
+    )
+
+
+def discover_uagmc_root(project_root: Path, explicit: Optional[str]) -> Path:
+    """从项目中自动寻找 UAGMC 源码根目录。"""
+    if explicit:
+        p = Path(explicit).expanduser()
+        if not p.is_absolute():
+            p = (project_root / p).resolve()
+        else:
+            p = p.resolve()
+        if not looks_like_uagmc_root(p):
+            raise FileNotFoundError(
+                f"--uagmc-root 不是可识别的 UAGMC 根目录：{p}\n"
+                "应至少包含 utilss/make_env.py、utilss/uam_rl_wrapper.py、at_obj/scenario.py"
+            )
+        return p
+
+    if looks_like_uagmc_root(project_root):
+        return project_root
+
+    candidates: List[Path] = []
+    for file in project_root.rglob("utilss/uam_rl_wrapper.py"):
+        root = file.parent.parent
+        if looks_like_uagmc_root(root):
+            candidates.append(root.resolve())
+
+    candidates = sorted(
+        list({p for p in candidates}),
+        key=lambda p: (len(p.parts), str(p).lower()),
+    )
+
+    if not candidates:
+        raise FileNotFoundError(
+            "没有自动发现 UAGMC 源码目录。\n"
+            "请重新运行并显式传入：--uagmc-root \"你的UAGMC目录\""
+        )
+
+    print("[自动发现] UAGMC 候选目录：")
+    for i, p in enumerate(candidates):
+        print(f"  [{i}] {p}")
+    print(f"[自动选择] {candidates[0]}")
+    return candidates[0]
+
+
+def model_score(path: Path) -> Tuple[int, int, float]:
+    """checkpoint 自动选择优先级。"""
+    name = path.name.lower()
+    score = 0
+    if name == "final_rl_model.zip":
+        score += 20000
+    if "best_model" in name:
+        score += 15000
+    if "best" in name:
+        score += 10000
+    if "final" in name:
+        score += 8000
+
+    numbers = [int(x) for x in re.findall(r"(\d+)", name)]
+    step_hint = max(numbers) if numbers else 0
+    return score, step_hint, path.stat().st_mtime
+
+
+def discover_model(
+    uagmc_root: Path,
+    project_root: Path,
+    explicit: Optional[str],
+) -> Path:
+    """自动寻找已经复现完成的 PPO checkpoint。"""
+    if explicit:
+        p = Path(explicit).expanduser()
+        if not p.is_absolute():
+            p = (project_root / p).resolve()
+        else:
+            p = p.resolve()
+        if not p.exists():
+            raise FileNotFoundError(f"checkpoint 不存在：{p}")
+        return p
+
+    # 官方测试脚本默认路径优先。
+    standard = uagmc_root / "models" / "final_rl_model.zip"
+    if standard.exists():
+        print(f"[自动发现] checkpoint：{standard}")
+        return standard.resolve()
+
+    candidates = list(uagmc_root.rglob("*.zip"))
+
+    # 如果你的完全复现实验 checkpoint 放在项目其他目录，也一起寻找。
+    if uagmc_root != project_root:
+        candidates.extend(
+            p
+            for p in project_root.rglob("*.zip")
+            if "uagmc" in str(p).lower()
+        )
+
+    candidates = list({p.resolve() for p in candidates if p.is_file()})
+    if not candidates:
+        raise FileNotFoundError(
+            "未发现 PPO .zip checkpoint。请使用 --model 显式指定。"
+        )
+
+    candidates.sort(key=model_score, reverse=True)
+    print("[自动发现] checkpoint 候选（前 10 个）：")
+    for i, p in enumerate(candidates[:10]):
+        print(f"  [{i}] {p}")
+    print(f"[自动选择] {candidates[0]}")
+    return candidates[0]
+
+
+def discover_vecnorm(
+    uagmc_root: Path,
+    project_root: Path,
+    model_path: Path,
+    explicit: Optional[str],
+) -> Optional[Path]:
+    """自动寻找与 checkpoint 对应的 VecNormalize。"""
+    if explicit:
+        p = Path(explicit).expanduser()
+        if not p.is_absolute():
+            p = (project_root / p).resolve()
+        else:
+            p = p.resolve()
+        if not p.exists():
+            raise FileNotFoundError(f"VecNormalize 不存在：{p}")
+        return p
+
+    standard = uagmc_root / "models" / "final_vec_normalize.pkl"
+    if standard.exists():
+        print(f"[自动发现] VecNormalize：{standard}")
+        return standard.resolve()
+
+    candidates = [
+        p
+        for p in uagmc_root.rglob("*.pkl")
+        if "vec" in p.name.lower() or "normalize" in p.name.lower()
+    ]
+
+    if uagmc_root != project_root:
+        candidates.extend(
+            p
+            for p in project_root.rglob("*.pkl")
+            if "uagmc" in str(p).lower()
+            and ("vec" in p.name.lower() or "normalize" in p.name.lower())
+        )
+
+    candidates = list({p.resolve() for p in candidates if p.is_file()})
+    if not candidates:
+        print("[警告] 未发现 VecNormalize，将尝试直接使用原始 observation。")
+        return None
+
+    model_numbers = set(re.findall(r"\d+", model_path.stem.lower()))
+
+    def score(path: Path):
+        s = 0
+        if path.parent == model_path.parent:
+            s += 20000
+        path_numbers = set(re.findall(r"\d+", path.stem.lower()))
+        s += 500 * len(model_numbers & path_numbers)
+        if "final" in model_path.stem.lower() and "final" in path.stem.lower():
+            s += 5000
+        if "best" in model_path.stem.lower() and "best" in path.stem.lower():
+            s += 5000
+        return s, path.stat().st_mtime
+
+    candidates.sort(key=score, reverse=True)
+    print("[自动发现] VecNormalize 候选（前 10 个）：")
+    for i, p in enumerate(candidates[:10]):
+        print(f"  [{i}] {p}")
+    print(f"[自动选择] {candidates[0]}")
+    return candidates[0]
+
+
+def discover_passenger_file(
+    uagmc_root: Path,
+    project_root: Path,
+    explicit: Optional[str],
+) -> Path:
+    """寻找固定 passenger trace。"""
+    if explicit:
+        p = Path(explicit).expanduser()
+        if not p.is_absolute():
+            p1 = (uagmc_root / p).resolve()
+            p2 = (project_root / p).resolve()
+            if p1.exists():
+                return p1
+            if p2.exists():
+                return p2
+        elif p.exists():
+            return p.resolve()
+        raise FileNotFoundError(f"Passenger trace 不存在：{p}")
+
+    # 与官方 test_rl.py 一致，优先 train_data/passengers_300.csv。
+    preferred = [
+        uagmc_root / "train_data" / "passengers_300.csv",
+        uagmc_root / "test_data" / "passengers_300.csv",
+        uagmc_root / "passengers.csv",
+    ]
+    for p in preferred:
+        if p.exists():
+            print(f"[自动发现] passenger trace：{p}")
+            return p.resolve()
+
+    candidates = [
+        p for p in uagmc_root.rglob("*.csv") if "passenger" in p.name.lower()
+    ]
+    if not candidates:
+        raise FileNotFoundError(
+            "未发现 passenger CSV。请使用 --passengers 显式指定。"
+        )
+
+    candidates.sort(key=lambda p: str(p).lower())
+    print(f"[自动发现] passenger trace：{candidates[0]}")
+    return candidates[0].resolve()
+
+
+def unwrap_uagmc_wrapper(vec_env: Any) -> Any:
+    """从 VecNormalize -> DummyVecEnv -> Monitor 中找到 UAMRLWrapper。"""
+    obj = vec_env
+
+    if hasattr(obj, "venv"):
+        obj = obj.venv
+
+    if hasattr(obj, "envs") and obj.envs:
+        obj = obj.envs[0]
+
+    visited = set()
+    for _ in range(20):
+        if id(obj) in visited:
+            break
+        visited.add(id(obj))
+
+        if (
+            hasattr(obj, "state")
+            and hasattr(obj, "encoder")
+            and hasattr(obj, "decoder")
+            and hasattr(obj, "env")
+        ):
+            return obj
+
+        if hasattr(obj, "env"):
+            obj = obj.env
+        else:
+            break
+
     raise RuntimeError(
-        "无法导入 diagnose_uagmc_candidate_temporal_mismatch.py。\n"
-        "请将本脚本与 Stage-0 脚本放在同一 UAGMC 根目录。"
-    ) from exc
+        "无法找到 UAMRLWrapper。请确认复现环境仍使用官方 utilss/uam_rl_wrapper.py。"
+    )
+
+
+def get_candidate_ids(wrapper: Any, explicit: Optional[str]) -> List[int]:
+    """读取 ActionDecoder 中真实的候选 departure vertiport。"""
+    if explicit:
+        return [int(x.strip()) for x in explicit.split(",") if x.strip()]
+
+    decoder = wrapper.decoder
+    if hasattr(decoder, "from_vertiports"):
+        return [int(x) for x in decoder.from_vertiports]
+
+    n_actions = int(wrapper.action_space.n)
+    if n_actions == 2:
+        print("[警告] 无法读取 decoder.from_vertiports，按官方默认使用 [0, 1]。")
+        return [0, 1]
+
+    raise RuntimeError(
+        "无法自动确定 candidate vertiport。请显式传入，例如 --candidates 0,1"
+    )
+
+
+def get_waiting_pid(wrapper: Any) -> Optional[str]:
+    """读取当前真正等待 RL 决策的第一个 passenger。"""
+    state = getattr(wrapper, "state", None)
+    if not isinstance(state, dict):
+        return None
+    waiting = state.get("waiting_decisions", [])
+    if not waiting:
+        return None
+    return str(waiting[0])
+
+
+def estimate_access_times(
+    scenario: Any,
+    pid: str,
+    candidate_ids: Sequence[int],
+) -> Dict[int, float]:
+    """
+    完全复用 Scenario.apply_decision 中的物理 ground-access 计算：
+    scenario.vehicles.estimate_travel_time(origin, destination)。
+    """
+    person = scenario.persons.persons[pid]
+    result: Dict[int, float] = {}
+
+    for vid in candidate_ids:
+        vertiport = scenario.vertiports.vertiport_list[str(vid)]
+        pickup_time = scenario.vehicles.estimate_travel_time(
+            origin=person.origin_position,
+            destination=vertiport.vertiport_position,
+        )
+        result[int(vid)] = float(pickup_time)
+
+    return result
+
+
+def get_policy_probs(model: Any, obs: np.ndarray) -> Optional[np.ndarray]:
+    """读取 PPO 当前离散动作概率，不改变模型。"""
+    try:
+        import torch
+
+        with torch.no_grad():
+            obs_tensor, _ = model.policy.obs_to_tensor(obs)
+            distribution = model.policy.get_distribution(obs_tensor)
+            base_distribution = getattr(distribution, "distribution", None)
+            probs = getattr(base_distribution, "probs", None)
+            if probs is None:
+                return None
+            return probs.detach().cpu().numpy()[0].astype(float)
+    except Exception:
+        return None
+
+
+def resolve_device(device: str) -> str:
+    """仅做推理；auto 时才自动检测 CUDA。"""
+    if device != "auto":
+        return device
+
+    try:
+        import torch
+        return "cuda" if torch.cuda.is_available() else "cpu"
+    except Exception:
+        return "cpu"
+
+
+# =============================================================================
+# Logic provenance / retirement manifest
+# =============================================================================
+
+LOGIC_STATUS = {
+    "retained": [
+        "candidate-specific access/effect-time heterogeneity",
+        "decision-time -> own-effect-time SAFE/CORRECTED state drift",
+        "shared-horizon -> own-horizon mismatch",
+        "legal committed access-event crossing",
+        "timer countdown audit",
+        "offline oracle ranking-change diagnostic",
+        "exact training-time reposition policy adapter",
+    ],
+    "discarded_or_superseded": [
+        "old committed-vs-oracle projection as future-state reconstruction",
+        "arrival-only peeling as method-validity evidence",
+        "historical service-rate peeling (P2)",
+        "committed-cohort oracle as proof of online correctness",
+        "state==enroute as incoming-passenger definition",
+        "current_timer without +1 discrete-step correction",
+    ],
+}
 
 
 # =============================================================================
@@ -618,7 +967,7 @@ class AccessTimerAudit:
 # CLI
 # =============================================================================
 
-def parse_args():
+def _core_parse_args():
     parser = argparse.ArgumentParser(
         description=(
             "UAGMC candidate-specific effect-time master diagnostic "
@@ -718,8 +1067,8 @@ def parse_args():
 # 主流程
 # =============================================================================
 
-def main() -> None:
-    args = parse_args()
+def _core_main() -> None:
+    args = _core_parse_args()
 
     project_root = Path(args.project_root).expanduser().resolve()
 
@@ -728,25 +1077,25 @@ def main() -> None:
             f"项目根目录不存在：{project_root}"
         )
 
-    uagmc_root = stage0.discover_uagmc_root(
+    uagmc_root = discover_uagmc_root(
         project_root,
         args.uagmc_root,
     )
 
-    model_path = stage0.discover_model(
+    model_path = discover_model(
         uagmc_root,
         project_root,
         args.model,
     )
 
-    vecnorm_path = stage0.discover_vecnorm(
+    vecnorm_path = discover_vecnorm(
         uagmc_root,
         project_root,
         model_path,
         args.vecnorm,
     )
 
-    passenger_path = stage0.discover_passenger_file(
+    passenger_path = discover_passenger_file(
         uagmc_root,
         project_root,
         args.passengers,
@@ -795,7 +1144,7 @@ def main() -> None:
         env.training = False
         env.norm_reward = False
 
-    device = stage0.resolve_device(args.device)
+    device = resolve_device(args.device)
 
     model = PPO.load(
         str(model_path),
@@ -803,10 +1152,10 @@ def main() -> None:
         device=device,
     )
 
-    wrapper = stage0.unwrap_uagmc_wrapper(env)
+    wrapper = unwrap_uagmc_wrapper(env)
     scenario = wrapper.env
 
-    candidate_ids = stage0.get_candidate_ids(
+    candidate_ids = get_candidate_ids(
         wrapper,
         args.candidates,
     )
@@ -861,11 +1210,11 @@ def main() -> None:
             sim_time,
         )
 
-        focal_pid = stage0.get_waiting_pid(
+        focal_pid = get_waiting_pid(
             wrapper
         )
 
-        probs = stage0.get_policy_probs(
+        probs = get_policy_probs(
             model,
             obs,
         )
@@ -880,7 +1229,7 @@ def main() -> None:
         )
 
         if focal_pid is not None:
-            access_times = stage0.estimate_access_times(
+            access_times = estimate_access_times(
                 scenario,
                 focal_pid,
                 candidate_ids,
@@ -2161,5 +2510,721 @@ def main() -> None:
     print("=" * 124)
 
 
+
+
+
+# =============================================================================
+# Unified wrapper: base mode + exact reposition mode
+# =============================================================================
+
+VALID_REPOSITION_METHODS = ("longest_queue", "vertisync_simple")
+DEFAULT_REPOSITION_STEPS = (800_000,)
+
+
+def _write_json(path: Path, obj: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(jsonable(obj), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+
+def _parse_int_list(text: str) -> List[int]:
+    vals = [int(x.strip()) for x in str(text).split(",") if x.strip()]
+    if not vals:
+        raise ValueError("integer list cannot be empty")
+    return vals
+
+
+def _parse_methods(text: str) -> List[str]:
+    vals = [x.strip().lower() for x in str(text).split(",") if x.strip()]
+    if not vals:
+        raise ValueError("method list cannot be empty")
+    bad = [x for x in vals if x not in VALID_REPOSITION_METHODS]
+    if bad:
+        raise ValueError(
+            f"Unknown reposition method(s): {bad}; "
+            f"valid={VALID_REPOSITION_METHODS}"
+        )
+    return vals
+
+
+def _auto_find_reposition_run_root() -> Path:
+    serial = ROOT / "serial_runs"
+    patterns = (
+        "uagmc_reposition_LQ_vs_VertiSync_N16_seed*_800k_*",
+        "*reposition*LQ*VertiSync*N16*800k*",
+    )
+
+    candidates: List[Path] = []
+    for pattern in patterns:
+        candidates.extend(
+            p for p in serial.glob(pattern)
+            if p.is_dir()
+        )
+        if candidates:
+            break
+
+    if not candidates:
+        raise FileNotFoundError(
+            "Cannot auto-detect LQ-vs-VertiSync N16 run under serial_runs/. "
+            "Use --run-root explicitly."
+        )
+
+    return max(candidates, key=lambda p: p.stat().st_mtime).resolve()
+
+
+def _discover_reposition_checkpoint(
+    run_root: Path,
+    method: str,
+    step: int,
+) -> Tuple[Path, Path]:
+    ckpt = run_root / method / "checkpoints"
+    model = ckpt / f"uam_ppo_{int(step)}_steps.zip"
+    vec = ckpt / f"uam_ppo_vecnormalize_{int(step)}_steps.pkl"
+
+    if not model.exists():
+        raise FileNotFoundError(model)
+    if not vec.exists():
+        raise FileNotFoundError(vec)
+
+    return model.resolve(), vec.resolve()
+
+
+class _FixedFleetMakeEnvPatch:
+    """
+    Redirect utilss.make_env.make_env to make_env_fleet.make_env while the
+    corrected diagnostic is running. The reposition rule itself is installed
+    from the exact training file.
+    """
+
+    def __init__(self, fleet_size: int = 16):
+        self.fleet_size = int(fleet_size)
+        self.legacy_module = None
+        self.old_make_env = None
+
+    def install(self) -> None:
+        legacy_module = importlib.import_module("utilss.make_env")
+        fleet_module = importlib.import_module("utilss.make_env_fleet")
+
+        self.legacy_module = legacy_module
+        self.old_make_env = legacy_module.make_env
+        fleet_make_env = fleet_module.make_env
+
+        fleet_size = self.fleet_size
+
+        def fixed_fleet_make_env(*args, **kwargs):
+            kwargs = dict(kwargs)
+            kwargs.update(
+                fleet_mode="conserved_closed_loop",
+                fleet_size=fleet_size,
+                fleet_assertions=True,
+            )
+            return fleet_make_env(*args, **kwargs)
+
+        legacy_module.make_env = fixed_fleet_make_env
+
+    def restore(self) -> None:
+        if self.legacy_module is not None and self.old_make_env is not None:
+            self.legacy_module.make_env = self.old_make_env
+
+
+def _result_dirs(base: Path) -> Set[Path]:
+    if not base.exists():
+        return set()
+    return {
+        p.resolve()
+        for p in base.iterdir()
+        if p.is_dir() and (p / "summary.json").exists()
+    }
+
+
+def _new_result_dir(base: Path, before: Set[Path]) -> Path:
+    after = _result_dirs(base)
+    new_dirs = sorted(
+        after - before,
+        key=lambda p: p.stat().st_mtime,
+    )
+    if new_dirs:
+        return new_dirs[-1]
+
+    all_dirs = sorted(
+        after,
+        key=lambda p: p.stat().st_mtime,
+    )
+    if not all_dirs:
+        raise RuntimeError(
+            f"Diagnostic finished but no summary.json exists under {base}"
+        )
+    return all_dirs[-1]
+
+
+def _run_core_with_argv(argv: Sequence[str]) -> None:
+    old_argv = list(sys.argv)
+    try:
+        sys.argv = [str(Path(__file__).resolve())] + list(argv)
+        _core_main()
+    finally:
+        sys.argv = old_argv
+
+
+def _get_nested(data: Dict[str, Any], *keys: str, default=float("nan")):
+    obj: Any = data
+    for key in keys:
+        if not isinstance(obj, dict) or key not in obj:
+            return default
+        obj = obj[key]
+    return obj
+
+
+def _flatten_summary(
+    label: str,
+    step: int,
+    result_dir: Path,
+) -> Dict[str, Any]:
+    summary = json.loads(
+        (result_dir / "summary.json").read_text(encoding="utf-8")
+    )
+
+    return {
+        "label": label,
+        "train_step": int(step),
+        "result_dir": str(result_dir),
+        "recorded_decisions": summary.get("recorded_decisions"),
+        "complete_candidate_rows": summary.get("complete_candidate_rows"),
+        "complete_decisions": summary.get("complete_decisions"),
+
+        "mean_delay_spread": _get_nested(
+            summary, "same_passenger_candidate_delay", "mean_spread"
+        ),
+        "p90_delay_spread": _get_nested(
+            summary, "same_passenger_candidate_delay", "p90_spread"
+        ),
+
+        "mean_safe_drift_now_to_own": _get_nested(
+            summary, "oracle_effect_time_staleness",
+            "mean_safe_drift_now_to_own"
+        ),
+        "safe_change_rate": _get_nested(
+            summary, "oracle_effect_time_staleness",
+            "safe_any_change_rate"
+        ),
+        "rho_access_safe_drift": _get_nested(
+            summary, "oracle_effect_time_staleness",
+            "rho_access_vs_safe_drift"
+        ),
+        "p_access_safe_drift": _get_nested(
+            summary, "oracle_effect_time_staleness",
+            "p_access_vs_safe_drift"
+        ),
+        "long_short_drift_ratio": _get_nested(
+            summary, "oracle_effect_time_staleness",
+            "long_vs_short_drift_ratio"
+        ),
+
+        "mean_safe_drift_shared_to_own": _get_nested(
+            summary, "candidate_specific_vs_shared_future_reference",
+            "mean_safe_drift_shared_to_own"
+        ),
+        "shared_horizon_mismatch_rate": _get_nested(
+            summary, "candidate_specific_vs_shared_future_reference",
+            "shared_horizon_safe_mismatch_rate"
+        ),
+        "known_boundary_diff_rate": _get_nested(
+            summary, "candidate_specific_vs_shared_future_reference",
+            "decision_boundary_diff_rate_known_committed"
+        ),
+
+        "committed_crossing_rate": _get_nested(
+            summary, "legal_committed_event_evidence",
+            "positive_crossing_rate"
+        ),
+        "own_shared_cross_diff_rate": _get_nested(
+            summary, "legal_committed_event_evidence",
+            "own_vs_shared_cross_count_diff_rate"
+        ),
+
+        "timer_transitions": _get_nested(
+            summary, "timer_semantics_audit", "n_transitions"
+        ),
+        "timer_fraction_exact_minus_1": _get_nested(
+            summary, "timer_semantics_audit", "fraction_exact_minus_1"
+        ),
+
+        "waiting_rank_flip_now_to_own": _get_nested(
+            summary, "decision_relevance_offline_oracle",
+            "now_to_own_waiting_rank_flip_rate"
+        ),
+        "burden_rank_flip_now_to_own": _get_nested(
+            summary, "decision_relevance_offline_oracle",
+            "now_to_own_corrected_burden_rank_flip_rate"
+        ),
+        "pressure_rank_flip_now_to_own": _get_nested(
+            summary, "decision_relevance_offline_oracle",
+            "now_to_own_corrected_pressure_rank_flip_rate"
+        ),
+
+        "gate_status": _get_nested(
+            summary, "gate", "status", default="UNKNOWN"
+        ),
+        "gate_pass": _get_nested(
+            summary, "gate", "overall_pass", default=False
+        ),
+    }
+
+
+def _build_pairwise(rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
+    by_key = {
+        (str(r["label"]), int(r["train_step"])): r
+        for r in rows
+    }
+
+    fields = (
+        "mean_safe_drift_now_to_own",
+        "safe_change_rate",
+        "rho_access_safe_drift",
+        "long_short_drift_ratio",
+        "mean_safe_drift_shared_to_own",
+        "shared_horizon_mismatch_rate",
+        "known_boundary_diff_rate",
+        "committed_crossing_rate",
+        "own_shared_cross_diff_rate",
+        "waiting_rank_flip_now_to_own",
+        "burden_rank_flip_now_to_own",
+        "pressure_rank_flip_now_to_own",
+    )
+
+    out: Dict[str, Any] = {
+        "interpretation": (
+            "sync_minus_lq is purely descriptive. A larger temporal-mismatch "
+            "metric is not automatically better or worse."
+        ),
+        "steps": {},
+    }
+
+    for step in sorted({int(r["train_step"]) for r in rows}):
+        lq = by_key.get(("longest_queue", step))
+        sy = by_key.get(("vertisync_simple", step))
+        if lq is None or sy is None:
+            continue
+
+        row: Dict[str, Any] = {}
+        for field in fields:
+            try:
+                lv = float(lq.get(field))
+                sv = float(sy.get(field))
+                delta = sv - lv
+            except Exception:
+                lv = sv = delta = float("nan")
+
+            row[field] = {
+                "longest_queue": lv,
+                "vertisync_simple": sv,
+                "sync_minus_lq": delta,
+            }
+
+        out["steps"][str(step)] = row
+
+    return out
+
+
+def _build_zip(root: Path, name: str) -> Path:
+    zpath = root / name
+    with zipfile.ZipFile(
+        zpath,
+        "w",
+        compression=zipfile.ZIP_DEFLATED,
+    ) as z:
+        for p in sorted(root.rglob("*")):
+            if not p.is_file() or p == zpath:
+                continue
+            if p.suffix.lower() in {".csv", ".json", ".txt"}:
+                z.write(p, p.relative_to(root).as_posix())
+    return zpath
+
+
+def _write_unified_logic_manifest(path: Path) -> None:
+    _write_json(
+        path,
+        {
+            "logic_status": LOGIC_STATUS,
+            "scientific_guardrails": [
+                "No training is performed.",
+                "Oracle future state is offline diagnostic only.",
+                "Known committed-event evidence uses decision-time-known "
+                "ground-access passengers only.",
+                "The diagnostic demonstrates temporal mismatch, not ATT gain "
+                "or counterfactual optimality.",
+            ],
+        },
+    )
+
+
+def _run_base(args) -> int:
+    output_base = Path(args.output_dir)
+    if not output_base.is_absolute():
+        output_base = (Path(args.project_root).expanduser().resolve() / output_base)
+    output_base.mkdir(parents=True, exist_ok=True)
+
+    before = _result_dirs(output_base)
+
+    core_argv = [
+        "--project-root", str(args.project_root),
+        "--max-time", str(args.max_time),
+        "--device", str(args.device),
+        "--output-dir", str(output_base),
+        "--to-vertiport", str(args.to_vertiport),
+        "--gate-min-mean-delay-spread", str(args.gate_min_mean_delay_spread),
+        "--gate-min-safe-change-rate", str(args.gate_min_safe_change_rate),
+        "--gate-min-rho-access-safe-drift", str(args.gate_min_rho_access_safe_drift),
+        "--gate-min-committed-crossing-rate", str(args.gate_min_committed_crossing_rate),
+        "--gate-min-timer-consistency", str(args.gate_min_timer_consistency),
+    ]
+
+    if args.uagmc_root:
+        core_argv += ["--uagmc-root", str(args.uagmc_root)]
+    if args.model:
+        core_argv += ["--model", str(args.model)]
+    if args.vecnorm:
+        core_argv += ["--vecnorm", str(args.vecnorm)]
+    if args.passengers:
+        core_argv += ["--passengers", str(args.passengers)]
+    if args.candidates:
+        core_argv += ["--candidates", str(args.candidates)]
+
+    _run_core_with_argv(core_argv)
+
+    result_dir = _new_result_dir(output_base, before)
+    _write_unified_logic_manifest(result_dir / "logic_manifest.json")
+    bundle = _build_zip(
+        result_dir,
+        "UPLOAD_THIS_effect_time_unified.zip",
+    )
+
+    print("\n" + "=" * 124)
+    print("UNIFIED BASE DIAGNOSTIC COMPLETE")
+    print("=" * 124)
+    print(f"Result : {result_dir}")
+    print("UPLOAD THIS FILE TO CHATGPT:")
+    print(bundle)
+    print("=" * 124)
+    return 0
+
+
+def _run_reposition(args) -> int:
+    run_root = (
+        Path(args.run_root).expanduser()
+        if args.run_root
+        else _auto_find_reposition_run_root()
+    )
+    if not run_root.is_absolute():
+        run_root = (ROOT / run_root).resolve()
+    else:
+        run_root = run_root.resolve()
+
+    if not run_root.exists():
+        raise FileNotFoundError(run_root)
+
+    passenger_file = (
+        Path(args.passengers).expanduser()
+        if args.passengers
+        else ROOT / "train_data" / "passengers_300.csv"
+    )
+    if not passenger_file.is_absolute():
+        passenger_file = (ROOT / passenger_file).resolve()
+    else:
+        passenger_file = passenger_file.resolve()
+
+    if not passenger_file.exists():
+        raise FileNotFoundError(passenger_file)
+
+    train_file = ROOT / "train_uagmc_reposition_lq_vs_vertisync_800k.py"
+    if not train_file.exists():
+        raise FileNotFoundError(
+            "Reposition mode requires exact training implementation: "
+            f"{train_file}"
+        )
+
+    methods = _parse_methods(args.methods)
+    steps = sorted(set(_parse_int_list(args.steps)))
+
+    output_root = run_root / "effect_time_unified_compare"
+    output_root.mkdir(parents=True, exist_ok=True)
+    _write_unified_logic_manifest(output_root / "logic_manifest.json")
+
+    rows: List[Dict[str, Any]] = []
+    errors: List[Dict[str, Any]] = []
+
+    sys.path.insert(0, str(ROOT))
+    trainmod = importlib.import_module(
+        "train_uagmc_reposition_lq_vs_vertisync_800k"
+    )
+
+    for step in steps:
+        for method in methods:
+            try:
+                model, vec = _discover_reposition_checkpoint(
+                    run_root,
+                    method,
+                    step,
+                )
+
+                # Use the EXACT policy installation function used in training.
+                patch_info = trainmod.install_reposition_patch(method)
+
+                method_base = (
+                    output_root
+                    / method
+                    / f"step_{int(step):07d}"
+                )
+                method_base.mkdir(parents=True, exist_ok=True)
+                before = _result_dirs(method_base)
+
+                make_env_patch = _FixedFleetMakeEnvPatch(
+                    fleet_size=int(args.fleet_size)
+                )
+
+                try:
+                    make_env_patch.install()
+
+                    core_argv = [
+                        "--project-root", str(ROOT),
+                        "--uagmc-root", str(ROOT),
+                        "--model", str(model),
+                        "--vecnorm", str(vec),
+                        "--passengers", str(passenger_file),
+                        "--candidates", "0,1",
+                        "--to-vertiport", "2",
+                        "--max-time", str(args.max_time),
+                        "--device", str(args.device),
+                        "--output-dir", str(method_base),
+                        "--gate-min-mean-delay-spread",
+                        str(args.gate_min_mean_delay_spread),
+                        "--gate-min-safe-change-rate",
+                        str(args.gate_min_safe_change_rate),
+                        "--gate-min-rho-access-safe-drift",
+                        str(args.gate_min_rho_access_safe_drift),
+                        "--gate-min-committed-crossing-rate",
+                        str(args.gate_min_committed_crossing_rate),
+                        "--gate-min-timer-consistency",
+                        str(args.gate_min_timer_consistency),
+                    ]
+
+                    print("\n" + "#" * 124)
+                    print(
+                        f"UNIFIED REPOSITION DIAGNOSTIC | "
+                        f"{method} @ {int(step):,}"
+                    )
+                    print(f"model       : {model}")
+                    print(f"vecnormalize: {vec}")
+                    print(
+                        f"fleet       : conserved_closed_loop, "
+                        f"N={int(args.fleet_size)}"
+                    )
+                    print(f"patch       : {patch_info}")
+                    print("#" * 124)
+
+                    _run_core_with_argv(core_argv)
+
+                finally:
+                    make_env_patch.restore()
+
+                result_dir = _new_result_dir(method_base, before)
+                _write_unified_logic_manifest(
+                    result_dir / "logic_manifest.json"
+                )
+
+                rows.append(
+                    _flatten_summary(
+                        method,
+                        step,
+                        result_dir,
+                    )
+                )
+
+            except Exception as exc:
+                err = {
+                    "method": method,
+                    "step": int(step),
+                    "error": repr(exc),
+                    "traceback": traceback.format_exc(),
+                }
+                errors.append(err)
+                print(
+                    f"\n[ERROR] {method}@{int(step):,}: {repr(exc)}",
+                    flush=True,
+                )
+                if not args.continue_on_error:
+                    write_csv(output_root / "errors.csv", errors)
+                    raise
+
+    rows.sort(
+        key=lambda r: (
+            int(r["train_step"]),
+            str(r["label"]),
+        )
+    )
+
+    write_csv(output_root / "method_summary.csv", rows)
+    write_csv(output_root / "errors.csv", errors)
+    _write_json(
+        output_root / "pairwise_comparison.json",
+        _build_pairwise(rows),
+    )
+
+    _write_json(
+        output_root / "comparison_manifest.json",
+        {
+            "mode": "reposition",
+            "run_root": str(run_root),
+            "methods": methods,
+            "steps": steps,
+            "fleet_mode": "conserved_closed_loop",
+            "fleet_size": int(args.fleet_size),
+            "passenger_file": str(passenger_file),
+            "max_time": int(args.max_time),
+            "logic_status": LOGIC_STATUS,
+            "no_training": True,
+        },
+    )
+
+    bundle = _build_zip(
+        output_root,
+        "UPLOAD_THIS_effect_time_unified_compare.zip",
+    )
+
+    print("\n" + "=" * 124)
+    print("UNIFIED REPOSITION DIAGNOSTIC COMPLETE")
+    print("=" * 124)
+    for row in rows:
+        print(
+            f"{row['label']:<18} @ {int(row['train_step']):>8,d} | "
+            f"safe_change={float(row.get('safe_change_rate', float('nan'))):.4f} | "
+            f"rho={float(row.get('rho_access_safe_drift', float('nan'))):.4f} | "
+            f"shared={float(row.get('shared_horizon_mismatch_rate', float('nan'))):.4f} | "
+            f"cross={float(row.get('committed_crossing_rate', float('nan'))):.4f} | "
+            f"gate={row.get('gate_status')}"
+        )
+    print("-" * 124)
+    print("UPLOAD THIS FILE TO CHATGPT:")
+    print(bundle)
+    print("=" * 124)
+
+    return 0 if not errors else 2
+
+
+def _unified_parse_args():
+    p = argparse.ArgumentParser(
+        description=(
+            "One corrected UAGMC effect-time diagnostic replacing the earlier "
+            "Stage-0/0.5/0.6/0.7/0.8 script chain."
+        )
+    )
+
+    p.add_argument(
+        "--mode",
+        choices=["base", "reposition"],
+        default="base",
+    )
+
+    # Shared corrected-master settings.
+    p.add_argument("--project-root", default=str(Path.cwd()))
+    p.add_argument("--uagmc-root", default=None)
+    p.add_argument("--model", default=None)
+    p.add_argument("--vecnorm", default=None)
+    p.add_argument("--passengers", default=None)
+    p.add_argument("--candidates", default=None)
+    p.add_argument("--to-vertiport", type=int, default=2)
+    p.add_argument("--max-time", type=int, default=600)
+    p.add_argument(
+        "--device",
+        choices=["cpu", "cuda", "auto"],
+        default="cpu",
+    )
+    p.add_argument(
+        "--output-dir",
+        default="diagnostics/uagmc_effect_time_unified",
+    )
+
+    # Reposition mode.
+    p.add_argument("--run-root", default=None)
+    p.add_argument(
+        "--methods",
+        default="longest_queue,vertisync_simple",
+    )
+    p.add_argument(
+        "--steps",
+        default="800000",
+    )
+    p.add_argument(
+        "--fleet-size",
+        type=int,
+        default=16,
+        help=(
+            "Must match the reposition training run. "
+            "Historical LQ-vs-VertiSync experiment uses N=16."
+        ),
+    )
+    p.add_argument(
+        "--continue-on-error",
+        action="store_true",
+    )
+
+    # Engineering go/no-go thresholds copied from corrected master.
+    p.add_argument(
+        "--gate-min-mean-delay-spread",
+        type=float,
+        default=1.0,
+    )
+    p.add_argument(
+        "--gate-min-safe-change-rate",
+        type=float,
+        default=0.40,
+    )
+    p.add_argument(
+        "--gate-min-rho-access-safe-drift",
+        type=float,
+        default=0.10,
+    )
+    p.add_argument(
+        "--gate-min-committed-crossing-rate",
+        type=float,
+        default=0.10,
+    )
+    p.add_argument(
+        "--gate-min-timer-consistency",
+        type=float,
+        default=0.95,
+    )
+
+    return p.parse_args()
+
+
+def main() -> int:
+    args = _unified_parse_args()
+
+    print("=" * 124)
+    print("UAGMC UNIFIED EFFECT-TIME DIAGNOSTIC | NO TRAINING")
+    print("=" * 124)
+    print(f"Mode : {args.mode}")
+    print(
+        "Retired logic: old committed/oracle projection, arrival/service "
+        "peeling, cohort-oracle proof."
+    )
+    print(
+        "Retained logic: corrected effect-time master + timer audit + "
+        "optional exact reposition adapter."
+    )
+    print("=" * 124)
+
+    if args.mode == "base":
+        return _run_base(args)
+
+    if args.mode == "reposition":
+        return _run_reposition(args)
+
+    raise ValueError(args.mode)
+
+
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
