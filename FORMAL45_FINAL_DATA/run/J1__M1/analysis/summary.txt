@@ -1,0 +1,11 @@
+J1/M1 SHARED
+====================================================================================================
+final step          : 800,000
+final ATT           : 43.4565
+final completion    : 15.33%
+final Jsys/N        : 378.4133
+best checkpoint     : 350,000
+best Jsys/N         : 319.8700
+best rule           :  = nan
+final gap best rule : nan%
+late Jsys mean±std  : 363.4133 ± 9.0501

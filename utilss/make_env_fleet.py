@@ -29,7 +29,7 @@ VALID_FLEET_MODES = {
 
 
 def make_env(
-    max_time: int = 420,
+    max_time: int = 10000,
     log_dir: str = "logs",
     env_index: int = 0,
     person_spawn_file=None,

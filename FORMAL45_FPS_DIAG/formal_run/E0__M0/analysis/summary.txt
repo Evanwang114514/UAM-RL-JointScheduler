@@ -1,0 +1,11 @@
+E0/M0 RESIDUAL
+====================================================================================================
+final step          : 800,000
+final ATT           : 178.0612
+final completion    : 16.33%
+final Jsys/N        : 385.9033
+best checkpoint     : 450,000
+best Jsys/N         : 294.2600
+best rule           :  = nan
+final gap best rule : nan%
+late Jsys mean±std  : 381.0120 ± 6.2891

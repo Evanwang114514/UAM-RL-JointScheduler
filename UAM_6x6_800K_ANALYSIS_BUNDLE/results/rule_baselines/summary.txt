@@ -1,0 +1,8 @@
+RULE REFERENCES USED BY 6x6 MATRIX
+stage | SPF Jsys/N | STTF Jsys/N | QTTI2 Jsys/N | best
+E0 |   213.341 |     36.070 |      36.559 | STTF
+E2 |    33.519 |     32.323 |      32.621 | STTF
+E3 |    84.672 |     71.148 |      60.978 | QTTI2
+E4 |    97.817 |     92.344 |      74.900 | QTTI2
+E5 |   188.817 |    205.216 |     232.828 | SPF
+E6 |   224.323 |    235.087 |     266.424 | SPF

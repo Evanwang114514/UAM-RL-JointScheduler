@@ -1,0 +1,11 @@
+E3/A_SETETA M3-SetETA
+====================================================================================================
+final step          : 500,000
+final ATT           : 82.4800
+final completion    : 100.00%
+final Jsys/N        : 82.4800
+best checkpoint     : 450,000
+best Jsys/N         : 82.0767
+best rule           :  = nan
+final gap best rule : nan%
+late Jsys mean±std  : 89.9553 ± 8.4327

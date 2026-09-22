@@ -1,0 +1,104 @@
+{
+  "experiment": "UAGMC_FORMAL_45x800K",
+  "created": "2026-09-21T15:47:35",
+  "rows": [
+    "E0",
+    "E1",
+    "E2",
+    "E4",
+    "E5",
+    "J0",
+    "J1",
+    "J2",
+    "J3"
+  ],
+  "methods": [
+    "M0",
+    "M1",
+    "M2",
+    "M3",
+    "M4"
+  ],
+  "all_formal_rows": [
+    "E0",
+    "E1",
+    "E2",
+    "E4",
+    "E5",
+    "J0",
+    "J1",
+    "J2",
+    "J3"
+  ],
+  "all_formal_methods": [
+    "M0",
+    "M1",
+    "M2",
+    "M3",
+    "M4"
+  ],
+  "cells_requested": 45,
+  "timesteps_per_cell": 800000,
+  "requested_total_timesteps": 36000000,
+  "formal_full_matrix_timesteps": 36000000,
+  "train_seed": 1,
+  "eval_seeds": [
+    123,
+    124,
+    125
+  ],
+  "topology": "T2",
+  "candidates": [
+    0,
+    1
+  ],
+  "destination": 2,
+  "fleet_size_non_E0": 40,
+  "turnaround_delay_min": 3.0,
+  "finite_charger_capacity_E4_E5": 2,
+  "pad_separation_min_E5": 0.25,
+  "future_horizon_min": 30.0,
+  "max_events_per_type": 8,
+  "eta_uq_delta_min": 2.0,
+  "observation": {
+    "fixed_dimension_across_all_rows_methods": true,
+    "resource_superset_dim": 24,
+    "future_event_dim": 64,
+    "project_dim": 20,
+    "uq_dim": 4,
+    "ac_dim": 6,
+    "inactive_slots_zero_filled": true
+  },
+  "joint": {
+    "physics": "new E2: single-pax + fixed fleet + turnaround",
+    "aircraft_actions": [
+      "Hold",
+      "V0",
+      "V1"
+    ],
+    "joint_action_space": "passenger Discrete(2 current T2) x aircraft Discrete(3); pair Discrete(6), no per-aircraft vector",
+    "max_reposition_per_decision": 1,
+    "eligible_aircraft_selection": "deterministic lowest ID at hub",
+    "J0": "Separate + Parallel",
+    "J1": "Unified role-conditioned scorer + Parallel",
+    "J2": "Separate + Sequential-factorized",
+    "J3": "Unified role-conditioned scorer + Sequential-factorized"
+  },
+  "methods_factorial": {
+    "M0": "Residual, no explicit committed future",
+    "M1": "Shared",
+    "M2": "Shared + ETA-envelope UQ",
+    "M3": "Shared + Action-Center residual",
+    "M4": "Shared + ETA-envelope UQ + Action-Center residual"
+  },
+  "compute": {
+    "n_envs": 16,
+    "n_steps": 1280,
+    "global_rollout": 20480,
+    "batch_size": 2048,
+    "n_epochs": 10,
+    "device": "cuda",
+    "checkpoint_interval": 50000
+  },
+  "unrevealed_future_requests_used": false
+}

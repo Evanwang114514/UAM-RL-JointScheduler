@@ -1,0 +1,11 @@
+E3/M1 PASSENGER_RESIDUAL
+====================================================================================================
+final step          : 800,000
+final ATT           : 66.6200
+final completion    : 100.00%
+final Jsys/N        : 66.6200
+best checkpoint     : 400,000
+best Jsys/N         : 61.6700
+best rule           : QTTI2 = 60.9778
+final gap best rule : 9.25%
+late Jsys mean±std  : 66.7247 ± 0.8598

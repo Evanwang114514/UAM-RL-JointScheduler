@@ -1,0 +1,22 @@
+{
+  "cell_id": "E1__M2",
+  "row": "E1",
+  "row_name": "FIXED_FLEET_LQ",
+  "method": "M2",
+  "method_name": "SHARED_UQ",
+  "requested_timesteps": 800000,
+  "physics": {
+    "row": "E1",
+    "mapped_stage": "E3",
+    "stage": "E3_SINGLE_PAX",
+    "service_batch_size": 1,
+    "aircraft_reposition": "responsive_longest_queue",
+    "turnaround_delay_min": 0,
+    "turnaround_capacity": "not_applicable",
+    "pad_enabled": false,
+    "pad_capacity": null,
+    "pad_separation_min": null,
+    "observation_augmented": false,
+    "reward_changed": false
+  }
+}

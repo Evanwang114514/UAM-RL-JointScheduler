@@ -1,0 +1,91 @@
+{
+  "experiment": "UAGMC_FOCUSED_ABC_SINGLE_FACTOR_CONTROLS",
+  "created": "2026-09-20T22:05:38",
+  "groups": [
+    "A",
+    "B",
+    "C"
+  ],
+  "cells": [
+    {
+      "group": "A",
+      "stage": "E3",
+      "method": "A_SETCOUNT",
+      "name": "M2-SetCount"
+    },
+    {
+      "group": "A",
+      "stage": "E3",
+      "method": "A_SETETA",
+      "name": "M3-SetETA"
+    },
+    {
+      "group": "B",
+      "stage": "E4",
+      "method": "B_SHARED",
+      "name": "M3P-shared"
+    },
+    {
+      "group": "B",
+      "stage": "E4",
+      "method": "B_CAND",
+      "name": "M4-candidate"
+    },
+    {
+      "group": "B",
+      "stage": "E5",
+      "method": "B_SHARED",
+      "name": "M3P-shared"
+    },
+    {
+      "group": "B",
+      "stage": "E5",
+      "method": "B_CAND",
+      "name": "M4-candidate"
+    },
+    {
+      "group": "C",
+      "stage": "E5",
+      "method": "C_PRESSURE",
+      "name": "M5-pressure"
+    },
+    {
+      "group": "C",
+      "stage": "E5",
+      "method": "C_DW",
+      "name": "M5-bottleneck-dW"
+    },
+    {
+      "group": "C",
+      "stage": "E6",
+      "method": "C_PRESSURE",
+      "name": "M5-pressure"
+    },
+    {
+      "group": "C",
+      "stage": "E6",
+      "method": "C_DW",
+      "name": "M5-bottleneck-dW"
+    }
+  ],
+  "topology": "T2",
+  "timesteps_per_cell": 500000,
+  "n_cells": 10,
+  "total_requested_timesteps": 5000000,
+  "budget_design_default": "10 cells x 500k = 5.0M",
+  "train_seed": 1,
+  "eval_seeds": [
+    123,
+    124,
+    125
+  ],
+  "checkpoint_interval": 50000,
+  "future_horizon_min": 30.0,
+  "max_events": 8,
+  "controls": {
+    "A": "same event population + same DeepSets(mean+explicit counts); only individual ETA content differs",
+    "B": "same ETA sets + same projection + same original M4 network; only shared vs candidate-specific temporal reference differs",
+    "C": "same original candidate-centered M5 pipeline and same 3D CF branch; only pressure vs committed-resource delta-W differs"
+  },
+  "M0_reference_source": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\serial_runs\\uagmc_6x6_T2_800k_seed1_20260920_005311"
+}

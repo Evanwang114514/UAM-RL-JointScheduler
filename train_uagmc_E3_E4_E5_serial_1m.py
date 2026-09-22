@@ -160,8 +160,7 @@ RETURN_HUB = 2
 TRAIN_FILE = ROOT / "train_data" / "passengers_300.csv"
 
 # Keep the same training episode horizon as the previous fast LQ/Sync trainer.
-MAX_TIME = 500
-
+MAX_TIME = 10000
 DEFAULT_SEED = 1
 DEFAULT_TIMESTEPS = 1_000_000
 DEFAULT_CHECKPOINT_INTERVAL = 50_000

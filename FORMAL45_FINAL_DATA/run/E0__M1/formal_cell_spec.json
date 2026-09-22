@@ -1,0 +1,17 @@
+{
+  "cell_id": "E0__M1",
+  "row": "E0",
+  "row_name": "SINGLE_PAX_LEGACY",
+  "method": "M1",
+  "method_name": "SHARED",
+  "requested_timesteps": 800000,
+  "physics": {
+    "row": "E0",
+    "fleet_mode": "legacy_replenish",
+    "single_passenger_service": true,
+    "reposition": "source_legacy",
+    "turnaround_min": 0.0,
+    "finite_charging": false,
+    "finite_tlof": false
+  }
+}

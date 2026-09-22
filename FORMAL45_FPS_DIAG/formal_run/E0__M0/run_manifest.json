@@ -1,0 +1,93 @@
+{
+  "experiment": "UAGMC_CONTROLLED_6x6_800K",
+  "cell_id": "E0__M0",
+  "stage": "E0",
+  "method": "M0",
+  "method_name": "RESIDUAL",
+  "topology": "T2",
+  "train_seed": 1,
+  "requested_timesteps": 800000,
+  "formal_checkpoint": 800000,
+  "checkpoint_interval": 50000,
+  "fleet_size_E2_E6": 40,
+  "E0_fleet_mode": "legacy_replenish",
+  "future_horizon_min": 30.0,
+  "max_events_per_type_per_candidate": 8,
+  "pad_separation_min": 0.25,
+  "charger_capacity_E6": 2,
+  "passenger_trace": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\train_data\\passengers_300.csv",
+  "layout": {
+    "row": "E0",
+    "stage": "E0",
+    "method": "M0",
+    "topology": "T2",
+    "candidates": [
+      0,
+      1
+    ],
+    "n_candidates": 2,
+    "num_frames": 6,
+    "single_dim": 20,
+    "base_dim": 120,
+    "max_events": 8,
+    "dims": {
+      "base": 120,
+      "current": 24,
+      "passenger": 4,
+      "fine": 64,
+      "project": 20,
+      "uq": 4,
+      "ac": 6
+    },
+    "slices": {
+      "base": [
+        0,
+        120
+      ],
+      "current": [
+        120,
+        144
+      ],
+      "passenger": [
+        144,
+        148
+      ],
+      "fine": [
+        148,
+        212
+      ],
+      "project": [
+        212,
+        232
+      ],
+      "uq": [
+        232,
+        236
+      ],
+      "ac": [
+        236,
+        242
+      ]
+    },
+    "total_dim": 242,
+    "equal_dimension_across_methods": true
+  },
+  "compute": {
+    "n_envs": 16,
+    "n_steps": 1280,
+    "global_rollout": 20480,
+    "batch_size": 2048,
+    "n_epochs": 10,
+    "device": "cuda"
+  },
+  "control": {
+    "reward": "unchanged UAGMC",
+    "PPO": "same across all cells",
+    "history_frames": 6,
+    "future_information_first_introduced_at": "M2",
+    "M2_M3_same_event_population": true,
+    "M4_candidate_specific_effect_time": true,
+    "unrevealed_future_requests_used": false
+  },
+  "created": "2026-09-21T00:58:21"
+}

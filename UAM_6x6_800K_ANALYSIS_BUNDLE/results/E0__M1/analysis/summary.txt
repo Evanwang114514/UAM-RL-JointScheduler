@@ -1,0 +1,11 @@
+E0/M1 PASSENGER_RESIDUAL
+====================================================================================================
+final step          : 800,000
+final ATT           : 32.9966
+final completion    : 98.67%
+final Jsys/N        : 36.6567
+best checkpoint     : 650,000
+best Jsys/N         : 32.4033
+best rule           : STTF = 36.0700
+final gap best rule : 1.63%
+late Jsys mean±std  : 35.3233 ± 2.4582

@@ -1,0 +1,63 @@
+{
+  "created": "2026-09-21T00:58:58",
+  "formal_runner": "train_uagmc_45x800k_formal.py",
+  "workloads": [
+    {
+      "row": "E2",
+      "method": "M0"
+    },
+    {
+      "row": "E5",
+      "method": "M4"
+    },
+    {
+      "row": "J3",
+      "method": "M4"
+    }
+  ],
+  "profiles": [
+    {
+      "name": "P5_5x4096_b2048",
+      "n_envs": 5,
+      "n_steps": 4096,
+      "batch_size": 2048,
+      "rollout": 20480
+    },
+    {
+      "name": "P8_8x2560_b2048",
+      "n_envs": 8,
+      "n_steps": 2560,
+      "batch_size": 2048,
+      "rollout": 20480
+    },
+    {
+      "name": "P10_10x2048_b2048",
+      "n_envs": 10,
+      "n_steps": 2048,
+      "batch_size": 2048,
+      "rollout": 20480
+    },
+    {
+      "name": "P16_16x1280_b2048",
+      "n_envs": 16,
+      "n_steps": 1280,
+      "batch_size": 2048,
+      "rollout": 20480
+    }
+  ],
+  "repeats": 1,
+  "warmup_rollouts": 1,
+  "timed_rollouts": 1,
+  "env_only_transitions": 20480,
+  "device": "cuda",
+  "torch_version": "2.13.0+cu130",
+  "cuda_available": true,
+  "cuda_device": "NVIDIA GeForce RTX 5070 Laptop GPU",
+  "controls": {
+    "global_rollout_fixed": 20480,
+    "batch_size_fixed": 2048,
+    "ppo_epochs_unchanged": 10,
+    "representation_and_physics_unchanged": true,
+    "warning": "Do not run concurrently with formal training for valid measurements."
+  }
+}

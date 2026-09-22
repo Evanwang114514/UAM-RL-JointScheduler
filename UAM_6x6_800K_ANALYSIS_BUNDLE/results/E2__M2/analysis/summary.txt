@@ -1,0 +1,11 @@
+E2/M2 COARSE_FUTURE
+====================================================================================================
+final step          : 800,000
+final ATT           : 29.5608
+final completion    : 98.67%
+final Jsys/N        : 33.1900
+best checkpoint     : 550,000
+best Jsys/N         : 28.8433
+best rule           : STTF = 32.3233
+final gap best rule : 2.68%
+late Jsys mean±std  : 33.3927 ± 0.4197

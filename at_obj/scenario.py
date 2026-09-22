@@ -53,7 +53,7 @@ class Scenario(gym.Env):
 
     def __init__(
         self,
-        max_time: int = 450,
+        max_time: int = 10000,
         passenger_generation_end_time: int = 300,
         person_spawn_file: Optional[str] = None,
         num_evtols_per_vertiport: int = 2,
@@ -108,8 +108,14 @@ class Scenario(gym.Env):
     def reset(self, seed=None):
         super().reset(seed=seed)
 
+        if seed is not None:
+            random.seed(int(seed))
+
         self.time = 0
         self.persons.reset()
+
+        # IDs repeat for the fixed trace; never carry travel records across episodes.
+        self.person_travel_records = {}
         for pid in self.persons.persons.keys():
             if pid not in self.person_travel_records:
                 self.person_travel_records[pid] = []
@@ -140,6 +146,14 @@ class Scenario(gym.Env):
         """
         
         logger.info(f"===== STEP {self.time} START =====")
+
+        # Person-minutes in [t, t+1): every already-generated unfinished passenger counts.
+        active_count_start = sum(
+            1
+            for person in self.persons.persons.values()
+            if str(getattr(person, "state", "")).lower() != "finished"
+        )
+        reward = -float(active_count_start)
 
         # 1. Spawn 新乘客
 
@@ -264,29 +278,47 @@ class Scenario(gym.Env):
 
 
         # =========================
-        # 6. Reward
+        # 6. Episode termination
         # =========================
-        reward = 0.0
-        if self.finished_ids:
-            total_travel_time = 0.0
-            for pid in self.finished_ids:
-                last = self.person_travel_records[pid][-1]
-                total_travel_time += (last["end_time"] - last["start_time"])
+        # Spawn logic is inclusive (time <= passenger_generation_end_time).
+        generation_done = self.time >= self.passenger_generation_end_time
 
-            avg_travel_time = total_travel_time / len(self.finished_ids)
-            reward -= avg_travel_time
+        n_spawned = len(self.persons.persons)
+        n_finished = len(set(self.finished_ids))
 
+        all_finished = (
+            generation_done
+            and n_spawned > 0
+            and n_finished >= n_spawned
+            and len(self.waiting_decisions) == 0
+        )
 
-        terminated = False
+        # Natural task success: every generated passenger has completed.
+        terminated = bool(all_finished)
 
-        truncated = self.time >= self.max_time
+        # max_time is ONLY a safety/deadlock guard.
+        truncated = bool(self.time >= self.max_time and not terminated)
 
+        info = {
+            "generation_done": bool(generation_done),
+            "n_spawned": int(n_spawned),
+            "n_finished": int(n_finished),
+            "completion_rate": (
+                float(n_finished) / float(n_spawned)
+                if n_spawned > 0 else 0.0
+            ),
+            "hard_guard_hit": bool(truncated),
+        }
 
-        logger.info(f"[STEP END] time={self.time} reward={reward}")
+        logger.info(
+            f"[STEP END] time={self.time} reward={reward} "
+            f"finished={n_finished}/{n_spawned} "
+            f"terminated={terminated} truncated={truncated}"
+        )
 
         self.time += 1
 
-        return self.get_state(), reward, terminated, truncated, {}
+        return self.get_state(), reward, terminated, truncated, info
 
 
     # =========================
@@ -334,7 +366,9 @@ class Scenario(gym.Env):
                 "mode": "UAM",
                 "from": from_v,
                 "to": to_v,
-                "start_time": self.time,
+                "start_time": float(
+                    getattr(person, "spawn_time", self.time)
+                ),
                 "end_time": None
             })
 

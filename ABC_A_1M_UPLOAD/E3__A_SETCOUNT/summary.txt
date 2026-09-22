@@ -1,0 +1,11 @@
+E3/A_SETCOUNT M2-SetCount
+====================================================================================================
+final step          : 500,000
+final ATT           : 69.3967
+final completion    : 100.00%
+final Jsys/N        : 69.3967
+best checkpoint     : 500,000
+best Jsys/N         : 69.3967
+best rule           :  = nan
+final gap best rule : nan%
+late Jsys mean±std  : 71.7527 ± 1.6282

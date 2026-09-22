@@ -1,0 +1,45 @@
+{
+  "experiment": "UAGMC_CONTROLLED_6x6_800K",
+  "created": "2026-09-20T00:53:11",
+  "stages": [
+    "E0",
+    "E2",
+    "E3",
+    "E4",
+    "E5",
+    "E6"
+  ],
+  "methods": {
+    "M0": "EA_UAGMC",
+    "M1": "PASSENGER_RESIDUAL",
+    "M2": "COARSE_FUTURE",
+    "M3": "FINE_FUTURE_DEEPSET",
+    "M4": "ACTION_CENTER",
+    "M5": "ACTION_CENTER_CF"
+  },
+  "topology": "T2",
+  "timesteps_per_cell": 800000,
+  "n_cells": 36,
+  "total_requested_timesteps": 28800000,
+  "train_seed": 1,
+  "eval_seeds": [
+    123,
+    124,
+    125
+  ],
+  "passenger_trace": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\train_data\\passengers_300.csv",
+  "future_horizon_min": 30.0,
+  "max_events_per_type_per_candidate": 8,
+  "fleet_size_E2_E6": 40,
+  "pad_separation_min": 0.5,
+  "charger_capacity_E6": 2,
+  "compute": {
+    "n_envs": 16,
+    "n_steps": 1280,
+    "global_rollout": 20480,
+    "batch_size": 2048,
+    "n_epochs": 10,
+    "device": "cuda"
+  },
+  "evaluation": "After EACH cell finishes, replay every 50k checkpoint; save ATT/AWT/completion/backlog/Jsys/action stats and rule gaps."
+}

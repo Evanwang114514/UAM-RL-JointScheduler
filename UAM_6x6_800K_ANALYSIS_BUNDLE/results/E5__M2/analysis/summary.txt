@@ -1,0 +1,11 @@
+E5/M2 COARSE_FUTURE
+====================================================================================================
+final step          : 800,000
+final ATT           : 173.6139
+final completion    : 67.33%
+final Jsys/N        : 238.7500
+best checkpoint     : 200,000
+best Jsys/N         : 181.0067
+best rule           : SPF = 188.8167
+final gap best rule : 26.45%
+late Jsys mean±std  : 237.1667 ± 3.9767

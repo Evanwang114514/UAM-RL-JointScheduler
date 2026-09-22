@@ -1,0 +1,11 @@
+E2/M0 EA_UAGMC
+====================================================================================================
+final step          : 800,000
+final ATT           : 30.4257
+final completion    : 98.67%
+final Jsys/N        : 34.0433
+best checkpoint     : 200,000
+best Jsys/N         : 28.6167
+best rule           : STTF = 32.3233
+final gap best rule : 5.32%
+late Jsys mean±std  : 33.1660 ± 1.5376

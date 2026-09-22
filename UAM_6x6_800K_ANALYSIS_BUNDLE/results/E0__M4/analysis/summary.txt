@@ -1,0 +1,11 @@
+E0/M4 ACTION_CENTER
+====================================================================================================
+final step          : 800,000
+final ATT           : 32.5338
+final completion    : 98.67%
+final Jsys/N        : 38.0167
+best checkpoint     : 600,000
+best Jsys/N         : 37.0833
+best rule           : STTF = 36.0700
+final gap best rule : 5.40%
+late Jsys mean±std  : 37.5367 ± 0.4019

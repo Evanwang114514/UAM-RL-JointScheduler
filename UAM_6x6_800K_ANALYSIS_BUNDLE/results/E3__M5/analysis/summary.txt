@@ -1,0 +1,11 @@
+E3/M5 ACTION_CENTER_CF
+====================================================================================================
+final step          : 800,000
+final ATT           : 75.8900
+final completion    : 100.00%
+final Jsys/N        : 75.8900
+best checkpoint     : 700,000
+best Jsys/N         : 74.0500
+best rule           : QTTI2 = 60.9778
+final gap best rule : 24.46%
+late Jsys mean±std  : 75.8887 ± 1.1042

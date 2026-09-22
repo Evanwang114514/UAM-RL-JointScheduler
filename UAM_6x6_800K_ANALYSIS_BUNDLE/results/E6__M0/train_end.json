@@ -1,0 +1,12 @@
+{
+  "status": "TRAINED",
+  "cell_id": "E6__M0",
+  "actual_model_num_timesteps": 819200,
+  "requested_timesteps": 800000,
+  "elapsed_seconds": 494.8810703754425,
+  "fps": 1655.3472117624387,
+  "formal_model": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\serial_runs\\uagmc_6x6_T2_800k_seed1_20260920_005311\\E6__M0\\checkpoints\\uam_ppo_800000_steps.zip",
+  "formal_vecnormalize": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\serial_runs\\uagmc_6x6_T2_800k_seed1_20260920_005311\\E6__M0\\checkpoints\\uam_ppo_vecnormalize_800000_steps.pkl",
+  "cuda_peak_memory_mb": 298.5302734375,
+  "finished": "2026-09-20T06:44:54"
+}

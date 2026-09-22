@@ -1,0 +1,27 @@
+{
+  "cell_id": "E5__M0",
+  "row": "E5",
+  "row_name": "TURNAROUND_CHARGE_TLOF_LQ",
+  "method": "M0",
+  "method_name": "RESIDUAL",
+  "requested_timesteps": 800000,
+  "physics": {
+    "stage": "E6_CHARGING_RESOURCE",
+    "service_batch_size": 1,
+    "aircraft_reposition": "responsive_longest_queue",
+    "turnaround_delay_min": 3.0,
+    "turnaround_capacity": "unlimited",
+    "pad_enabled": true,
+    "pad_capacity": {
+      "0": 1,
+      "1": 1,
+      "2": 1
+    },
+    "pad_separation_min": 0.25,
+    "observation_augmented": false,
+    "reward_changed": false,
+    "finite_charger_capacity": 2,
+    "row": "E5",
+    "mapped_stage": "E6"
+  }
+}

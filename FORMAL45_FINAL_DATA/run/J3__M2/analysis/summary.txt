@@ -1,0 +1,11 @@
+J3/M2 SHARED_UQ
+====================================================================================================
+final step          : 800,000
+final ATT           : 37.6494
+final completion    : 51.33%
+final Jsys/N        : 227.5533
+best checkpoint     : 700,000
+best Jsys/N         : 207.3533
+best rule           :  = nan
+final gap best rule : nan%
+late Jsys mean±std  : 231.5653 ± 15.2408

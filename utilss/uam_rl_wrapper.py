@@ -70,7 +70,8 @@ class UAMRLWrapper(gym.Env):
     # Gym API
     # =====================
     def reset(self, *, seed=None, options=None):
-        self.state = self.env.reset()
+        # Propagate Gym/SB3 seed into Scenario.reset.
+        self.state = self.env.reset(seed=seed)
 
         obs = self.encoder.encode(self.env, self.state)
 

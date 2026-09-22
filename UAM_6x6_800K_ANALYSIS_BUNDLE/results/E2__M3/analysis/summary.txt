@@ -1,0 +1,11 @@
+E2/M3 FINE_FUTURE_DEEPSET
+====================================================================================================
+final step          : 800,000
+final ATT           : 31.6216
+final completion    : 98.67%
+final Jsys/N        : 35.7100
+best checkpoint     : 350,000
+best Jsys/N         : 29.4167
+best rule           : STTF = 32.3233
+final gap best rule : 10.48%
+late Jsys mean±std  : 33.6113 ± 2.6647

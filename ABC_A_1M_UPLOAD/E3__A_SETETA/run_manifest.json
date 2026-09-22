@@ -1,0 +1,91 @@
+{
+  "experiment": "UAGMC_CONTROLLED_6x6_800K",
+  "cell_id": "E3__A_SETETA",
+  "stage": "E3",
+  "method": "A_SETETA",
+  "method_name": "M3-SetETA",
+  "topology": "T2",
+  "train_seed": 1,
+  "requested_timesteps": 500000,
+  "formal_checkpoint": 500000,
+  "checkpoint_interval": 50000,
+  "fleet_size_E2_E6": 40,
+  "E0_fleet_mode": "legacy_replenish",
+  "future_horizon_min": 30.0,
+  "max_events_per_type_per_candidate": 8,
+  "pad_separation_min": 0.5,
+  "charger_capacity_E6": 2,
+  "passenger_trace": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\train_data\\passengers_300.csv",
+  "layout": {
+    "stage": "E3",
+    "method": "A_SETETA",
+    "topology": "T2",
+    "candidates": [
+      0,
+      1
+    ],
+    "n_candidates": 2,
+    "num_frames": 6,
+    "single_dim": 20,
+    "base_dim": 120,
+    "max_events": 8,
+    "dims": {
+      "base": 120,
+      "current": 5,
+      "passenger": 4,
+      "coarse": 0,
+      "fine": 64,
+      "project": 0,
+      "cf": 0
+    },
+    "slices": {
+      "base": [
+        0,
+        120
+      ],
+      "current": [
+        120,
+        125
+      ],
+      "passenger": [
+        125,
+        129
+      ],
+      "coarse": [
+        129,
+        129
+      ],
+      "fine": [
+        129,
+        193
+      ],
+      "project": [
+        193,
+        193
+      ],
+      "cf": [
+        193,
+        193
+      ]
+    },
+    "total_dim": 193
+  },
+  "compute": {
+    "n_envs": 16,
+    "n_steps": 1280,
+    "global_rollout": 20480,
+    "batch_size": 2048,
+    "n_epochs": 10,
+    "device": "cuda"
+  },
+  "control": {
+    "reward": "unchanged UAGMC",
+    "PPO": "same across all cells",
+    "history_frames": 6,
+    "future_information_first_introduced_at": "M2",
+    "M2_M3_same_event_population": true,
+    "M4_candidate_specific_effect_time": true,
+    "unrevealed_future_requests_used": false
+  },
+  "created": "2026-09-20T22:18:58"
+}

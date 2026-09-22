@@ -1,0 +1,23 @@
+{
+  "cell_id": "E2__M0",
+  "row": "E2",
+  "row_name": "TURNAROUND_LQ",
+  "method": "M0",
+  "method_name": "RESIDUAL",
+  "requested_timesteps": 800000,
+  "physics": {
+    "row": "E2",
+    "mapped_stage": "E4",
+    "joint_reposition": false,
+    "stage": "E4_TURNAROUND",
+    "service_batch_size": 1,
+    "aircraft_reposition": "responsive_longest_queue",
+    "turnaround_delay_min": 3.0,
+    "turnaround_capacity": "unlimited",
+    "pad_enabled": false,
+    "pad_capacity": null,
+    "pad_separation_min": null,
+    "observation_augmented": false,
+    "reward_changed": false
+  }
+}

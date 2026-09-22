@@ -1,0 +1,11 @@
+E5/M1 PASSENGER_RESIDUAL
+====================================================================================================
+final step          : 800,000
+final ATT           : 179.5586
+final completion    : 85.33%
+final Jsys/N        : 200.9600
+best checkpoint     : 600,000
+best Jsys/N         : 194.0967
+best rule           : SPF = 188.8167
+final gap best rule : 6.43%
+late Jsys mean±std  : 203.3893 ± 5.4447

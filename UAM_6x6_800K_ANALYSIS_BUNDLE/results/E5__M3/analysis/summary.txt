@@ -1,0 +1,11 @@
+E5/M3 FINE_FUTURE_DEEPSET
+====================================================================================================
+final step          : 800,000
+final ATT           : 191.6797
+final completion    : 77.00%
+final Jsys/N        : 226.7333
+best checkpoint     : 450,000
+best Jsys/N         : 211.2700
+best rule           : SPF = 188.8167
+final gap best rule : 20.08%
+late Jsys mean±std  : 223.9213 ± 4.8171

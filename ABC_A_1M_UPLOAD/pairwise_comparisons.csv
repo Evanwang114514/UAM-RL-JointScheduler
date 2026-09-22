@@ -1,0 +1,2 @@
+﻿group,stage,control,treatment,control_late_Jsys,treatment_late_Jsys,treatment_minus_control_late_abs,treatment_minus_control_late_pct,control_final_Jsys,treatment_final_Jsys,treatment_minus_control_final_abs,M0_300_500k_Jsys_ref,control_late_delta_vs_M0,treatment_late_delta_vs_M0
+A,E3,A_SETCOUNT,A_SETETA,71.75266666666667,89.95533333333334,18.202666666666673,25.368627414544417,69.39666666666666,82.48,13.083333333333343,83.048,-11.295333333333332,6.907333333333341

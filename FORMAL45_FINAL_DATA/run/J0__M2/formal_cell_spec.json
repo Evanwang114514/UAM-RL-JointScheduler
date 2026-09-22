@@ -1,0 +1,23 @@
+{
+  "cell_id": "J0__M2",
+  "row": "J0",
+  "row_name": "JOINT_SEPARATE_PARALLEL",
+  "method": "M2",
+  "method_name": "SHARED_UQ",
+  "requested_timesteps": 800000,
+  "physics": {
+    "row": "J0",
+    "mapped_stage": "E4",
+    "joint_reposition": true,
+    "stage": "E4_TURNAROUND",
+    "service_batch_size": 1,
+    "aircraft_reposition": "responsive_longest_queue",
+    "turnaround_delay_min": 3.0,
+    "turnaround_capacity": "unlimited",
+    "pad_enabled": false,
+    "pad_capacity": null,
+    "pad_separation_min": null,
+    "observation_augmented": false,
+    "reward_changed": false
+  }
+}
