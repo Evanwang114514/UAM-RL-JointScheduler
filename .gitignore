@@ -29,3 +29,5 @@ Thumbs.db
 diagnostics/
 fixed_fleet_fairness_scan/
 fixed_fleet_pretrain_baselines/
+# 本地实验数据归档；索引保存在仓库根目录，数据包不推送到 GitHub。
+/experiment_archives/
