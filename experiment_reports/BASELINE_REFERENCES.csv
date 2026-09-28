@@ -1,0 +1,61 @@
+﻿experiment,env,analytic_baseline,analytic_att_min,analytic_evidence,uagmc_baseline,uagmc_best_att_min,uagmc_final_att_min,uagmc_evidence,baseline_comparability_note
+exp01,early_LQ_vs_VertiSync,,,,本矩阵 longest_queue 组,,31.843333333333334,本矩阵实测；800k；100% 完成,简化 VertiSync 非完整 Sync；缺少配对解析基线
+exp02,E3_SINGLE_PAX,,,,,,,,本矩阵没有同物理且独立的解析与 UAGMC 对照；不得跨拓扑或删失比较
+exp02,E4_TURNAROUND,,,,,,,,本矩阵没有同物理且独立的解析与 UAGMC 对照；不得跨拓扑或删失比较
+exp02,E5_PAD,,,,,,,,本矩阵没有同物理且独立的解析与 UAGMC 对照；不得跨拓扑或删失比较
+exp03,E0,,,,,,,,本矩阵没有同物理且独立的解析与 UAGMC 对照；不得跨拓扑或删失比较
+exp03,E2,,,,,,,,本矩阵没有同物理且独立的解析与 UAGMC 对照；不得跨拓扑或删失比较
+exp03,E3,,,,,,,,本矩阵没有同物理且独立的解析与 UAGMC 对照；不得跨拓扑或删失比较
+exp03,E4,,,,,,,,本矩阵没有同物理且独立的解析与 UAGMC 对照；不得跨拓扑或删失比较
+exp03,E5,,,,,,,,本矩阵没有同物理且独立的解析与 UAGMC 对照；不得跨拓扑或删失比较
+exp03,E6,,,,,,,,本矩阵没有同物理且独立的解析与 UAGMC 对照；不得跨拓扑或删失比较
+exp04,E3,QTTI2,60.98,exp05 同包 T2 规则实测；exp04 仅 T2 可方向参考,,,,,仅 T2、同阶段、100% 完成可比较；其他阶段或拓扑暂无严格配对基线
+exp04,E4,QTTI2,74.90,exp05 同包 T2 规则实测；exp04 仅 T2 可方向参考,,,,,仅 T2、同阶段、100% 完成可比较；其他阶段或拓扑暂无严格配对基线
+exp04,E5,,,,,,,,仅 T2、同阶段、100% 完成可比较；其他阶段或拓扑暂无严格配对基线
+exp04,E6,,,,,,,,仅 T2、同阶段、100% 完成可比较；其他阶段或拓扑暂无严格配对基线
+exp05,E0,,,,,,,,仅 T2、同阶段、100% 完成可比较；其他阶段或拓扑暂无严格配对基线
+exp05,E2,,,,,,,,仅 T2、同阶段、100% 完成可比较；其他阶段或拓扑暂无严格配对基线
+exp05,E3,QTTI2,60.98,exp05 同包 T2 规则实测；exp04 仅 T2 可方向参考,M0 EA_UAGMC,,79.39,exp05 同包实测；800k；100% 完成,仅 T2、同阶段、100% 完成可比较；其他阶段或拓扑暂无严格配对基线
+exp05,E4,QTTI2,74.90,exp05 同包 T2 规则实测；exp04 仅 T2 可方向参考,M0 EA_UAGMC,,91.03,exp05 同包实测；800k；100% 完成,仅 T2、同阶段、100% 完成可比较；其他阶段或拓扑暂无严格配对基线
+exp05,E5,,,,,,,,仅 T2、同阶段、100% 完成可比较；其他阶段或拓扑暂无严格配对基线
+exp05,E6,,,,,,,,仅 T2、同阶段、100% 完成可比较；其他阶段或拓扑暂无严格配对基线
+exp06,E0,,,,,,,,没有本矩阵独立 UAGMC 分支；Joint 与 passenger-only 控制权不同；删失行不可排名
+exp06,E1,QTTI2,61.07,FORMAL25 同环境规则实测,,,,,没有本矩阵独立 UAGMC 分支；Joint 与 passenger-only 控制权不同；删失行不可排名
+exp06,E2,QTTI2,76.00,FORMAL25 同环境规则实测,,,,,没有本矩阵独立 UAGMC 分支；Joint 与 passenger-only 控制权不同；删失行不可排名
+exp06,E4,,,,,,,,没有本矩阵独立 UAGMC 分支；Joint 与 passenger-only 控制权不同；删失行不可排名
+exp06,E5,,,,,,,,没有本矩阵独立 UAGMC 分支；Joint 与 passenger-only 控制权不同；删失行不可排名
+exp06,J0,,,,,,,,没有本矩阵独立 UAGMC 分支；Joint 与 passenger-only 控制权不同；删失行不可排名
+exp06,J1,,,,,,,,没有本矩阵独立 UAGMC 分支；Joint 与 passenger-only 控制权不同；删失行不可排名
+exp06,J2,,,,,,,,没有本矩阵独立 UAGMC 分支；Joint 与 passenger-only 控制权不同；删失行不可排名
+exp06,J3,,,,,,,,没有本矩阵独立 UAGMC 分支；Joint 与 passenger-only 控制权不同；删失行不可排名
+exp07,J0,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定；本矩阵 guard=10000，后期参考 guard=2500
+exp07,S1,QTTI2,58.24,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,63.61,65.21,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算；本矩阵 guard=10000，后期参考 guard=2500
+exp07,S2,STTF,66.19,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,64.31,67.17,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算；本矩阵 guard=10000，后期参考 guard=2500
+exp07,S3,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算；本矩阵 guard=10000，后期参考 guard=2500
+exp08,S1,QTTI2,58.24,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,63.61,65.21,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp08,S2,STTF,66.19,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,64.31,67.17,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp08,S3,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp09,J0,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定；V4 wrapper 有已知混杂
+exp09,J1,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定；V4 wrapper 有已知混杂
+exp09,J2,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定；V4 wrapper 有已知混杂
+exp09,J4,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定；V4 wrapper 有已知混杂
+exp09,S1,QTTI2,58.24,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,63.61,65.21,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp09,S2,STTF,66.19,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,64.31,67.17,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp09,S3,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp10,J0,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定
+exp10,J1,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定
+exp10,J2,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定
+exp10,J3,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定
+exp10,J4,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定
+exp10,J5,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定
+exp10,J6,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定
+exp10,J7,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定
+exp10,S1,QTTI2,58.24,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,63.61,65.21,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp10,S2,STTF,66.19,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,64.31,67.17,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp10,S3,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp11,S1,QTTI2,58.24,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,63.61,65.21,本矩阵同包实测；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp11,S2,STTF,66.19,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,64.31,67.17,本矩阵同包实测；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp11,S3,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,本矩阵同包实测；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp12,J0,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,Joint 与 passenger-only 控制权不同；跨矩阵训练实现/guard 未必完全锁定
+exp12,S3,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
+exp13,S3,MPTC,85.33,项目交接参考；当前归档未找到原始 S 阶段解析 CSV,UAGMC_SOURCE passenger-only + LQ,84.19,128.76,exp11 同包曲线；训练种子 1；评估种子 123-125；本矩阵另有种子 2-5 四条 UAGMC 曲线,需核对同物理/guard/轨迹；解析值为交接参考，非本次独立复算
