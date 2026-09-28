@@ -23,7 +23,7 @@ GitHub 同步的是本索引与校验表，不是数十 GB 的训练数据。
 | exp10 | `train_uam_60m_jointfirst_v5_minimal_reposition.py` | `exp10_jointfirst_v5_60m__analysis_full.zip` | 100 格训练、100 格有效评估；包内没有模型或 checkpoint，本机未找到原始模型目录。 |
 | exp11 | `train_uam_s3_20x600k_litupgrade.py` | `exp11_s3_litupgrade20_12m__analysis.zip` | 20 格分析结果；包内没有模型。 |
 | exp12 | `train_uam_nextgen_100m_matrix.py` | `exp12_nextgen_100p2m__analysis_full.tar.gz` | 167 个 cell summary 和 `RUN_COMPLETE.json`；包内没有模型或 checkpoint。 |
-| exp13 | `train_uam_single70m_priority.py` | `exp13_single_priority_69p6m__snapshot_20260928.tar.gz` | 2026-09-28 快照含 66 个 cell summary，无 `RUN_COMPLETE.json`、模型或 checkpoint；不是最终完整归档。 |
+| exp13 | `train_uam_single70m_priority.py` | `exp13_single_priority_69p6m__analysis_snapshot_20260928.tar.gz` | 2026-09-28 新包含 66 个 cell summary；P0/P1/P2 有阶段完成标记，P3 仅见已启动。无全局 `RUN_COMPLETE.json`、模型或 checkpoint；虽然原包名含 COMPLETED，仍不能称为最终完整归档。 |
 | baseline01 | `run_uagmc_E0_E2_E6_rule_baselines.py` | `baseline01_e0e6_rules__analysis.zip` | 从历史总包拆出的规则基线分析记录。 |
 | baseline02 | `run_uagmc_6env_6baseline_36runs.py` | `baseline02_6env6rules__raw.tar.gz` | 本机完整原始结果目录。 |
 | baseline03 | `run_formal25_analytical_baselines.py` | `baseline03_formal25__raw.tar.gz`、`baseline03_formal25__analysis.zip` | 本机完整原始结果目录与原有小结果包。 |
