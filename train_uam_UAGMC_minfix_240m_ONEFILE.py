@@ -650,6 +650,7 @@ def min_main():
         save_json(root / 'SUITE_PLAN.json', dict(signature=signature, contract=contract, config=config,
                   script_sha256=digest(SCRIPT), previous_script=old.get('script_sha256') if old else None, time=now()))
         save_json(root / 'TASK_REGISTRY.json', tasks)
+        min_aggregate(root, tasks)
         print(f'[预算] 主216run={MAIN_BUDGET:,}；确认18run；总{TOTAL_BUDGET:,}；不改原物理/PPO', flush=True)
         # 先完成前三天最关键的96run，随后补齐；按24run分块穿插评估避免末尾积压。
         if args.phase in ('all', 'train'):
