@@ -169,10 +169,13 @@ def query_tables(scenario, k, focal, passenger_stage, joint):
         for v in CANDIDATES[k]]
     plans = [_empty_plan(scenario, k, i) if joint else [] for i in range(k)]
     reference = _empty_plan(scenario, k, None) if joint else []
-    a_anchor = [min((e['eta'] for e in plans[i]), default=600.) for i in range(k)]
+    air_valid = [bool(plans[i]) and background[i]['queue'] > 0 for i in range(k)]
+    a_anchor = [min((e['eta'] for e in plans[i]), default=600.) if air_valid[i] else 600. for i in range(k)]
     table = np.zeros((2, k, k + 2, 3, k, 8), np.float32)
     for role, anchors in enumerate((p_anchor, a_anchor)):
-        queries = list(anchors) + [float(statistics.median(anchors)), 0.]
+        legal_anchors = [a for i,a in enumerate(anchors) if not role or air_valid[i]]
+        common = float(statistics.median(legal_anchors)) if legal_anchors else 600.
+        queries = list(anchors) + [common, 0.]
         for candidate in range(k):
             for j, anchor in enumerate(queries):
                 # 每个候选保留所有站的变化，不能只给受益站而漏掉被挤占站的机会成本。
@@ -186,7 +189,7 @@ def query_tables(scenario, k, focal, passenger_stage, joint):
                         supply_eta=add_supply)
                     ref = _summary8(background[station_index], anchor, supply_eta=ref_supply)
                     table[role, candidate, j, :, station_index] = (base, plus, ref)
-    return table, np.asarray(p_anchor + a_anchor, np.float32) / 600., np.asarray([bool(p) for p in plans], np.float32)
+    return table, np.asarray(p_anchor + a_anchor, np.float32) / 600., np.asarray(air_valid, np.float32)
 
 
 def effect_initialize():
@@ -599,10 +602,11 @@ def effect_aggregate(root, tasks):
         trained = read_json(d / 'TRAIN_END.json'); result = read_json(d / 'CELL_SUMMARY.json')
         failures = [p for p in d.glob('FAILED_*.json') if '_RESOLVED_' not in p.name]
         live = read_json(d / 'LIVE.json', {})
+        recovery=read_json(d/'RECOVERY.json',{})
         status.append(dict(**task, trained=bool(trained), evaluated=bool(result), failed=bool(failures),
-            steps=trained['steps'] if trained else live.get('steps', 0)))
+            steps=trained['steps'] if trained else live.get('steps', 0),restarts=recovery.get('restarts',0)))
         if result:
-            results.append(dict(**task, **{k:v for k,v in result.items() if k not in ('task',)}))
+            results.append(dict(**task, **{k:v for k,v in result.items() if k not in ('task',)},restarts=recovery.get('restarts',0)))
     for path in Path(root).glob('cells/RULES__*/RULES_END.json'):
         record = read_json(path); t = record['task']
         for rule in ('SPF', 'STTF', 'QTTI'):
