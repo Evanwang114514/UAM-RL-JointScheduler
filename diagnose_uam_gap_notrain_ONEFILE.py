@@ -32,7 +32,7 @@ import zlib
 from collections import Counter, defaultdict
 from pathlib import Path, PurePosixPath
 
-VERSION = "UAM_GAP_NOTRAIN_20261030_V1"
+VERSION = "UAM_GAP_NOTRAIN_20261031_V2"
 SUITES = (
     "uam_source_K234_5methods_4seeds_60m_v1",
     "uam_source_K234_SPF_STTF_QTTI_v1",
@@ -252,7 +252,9 @@ class Audit:
         self.files += 1
         self.bytes += len(data)
         if self.files > self.args.max_files or self.bytes > self.args.max_read_gib * 1024**3:
-            raise RuntimeError("达到读取预算；本次标为未完成，不把截断当完整分析")
+            raise RuntimeError(f"达到读取预算：{self.files}个文件、{self.bytes / 1024**3:.3f}GiB；"
+                               f"上限{self.args.max_files}个、{self.args.max_read_gib}GiB。"
+                               "本次标为未完成，不把截断当完整分析")
         if rel.endswith("passengers_300.csv") and "/train_data/" in rel:
             self.trace_hashes[suite].add(sha)
             return
@@ -530,6 +532,8 @@ def runtime_source(runtime):
 def select_jobs(project, out, args):
     jobs, skipped = [], []
     for suite, runtime in ((SUITES[5], "240"), (SUITES[6], "198")):
+        if runtime not in args.replay_suites:
+            continue
         root = project / "serial_runs" / suite
         plan = read_json(root / "SUITE_PLAN.json")
         if not plan:
@@ -600,6 +604,39 @@ def physical_snapshot(env, module):
             float(getattr(p, "current_timer", 0) or 0), str(getattr(p, "origin_vertiport_id", ""))) for pid, p in s.persons.persons.items()))
     return dict(time=float(s.time), queues=q, idle=idle, aircraft_states=dict(Counter(e.state.name for e in planes)),
                 fingerprint=digest(json.dumps(signature, sort_keys=True).encode()))
+
+
+def original_episode_records(cell, step):
+    """兼容240M内嵌逐回放列表、198M计数摘要加独立逐回放文件两种格式。"""
+    cell = Path(cell).resolve()
+    scope = cell / "evaluation"
+    summary = scope / f"step_{step:09d}.json"
+    if summary.is_symlink() or not inside(summary, cell):
+        raise RuntimeError("原评估摘要路径不安全")
+    original = read_json(summary)
+    episodes = original.get("episodes")
+    if isinstance(episodes, list):
+        if not all(isinstance(e, dict) for e in episodes):
+            raise RuntimeError("原评估逐回放列表包含非对象记录")
+        return episodes, [str(summary)]
+    # 198M的episodes是数量，不是迭代列表；从对应checkpoint的明细读取，不修改源记录。
+    if not isinstance(episodes, int) or isinstance(episodes, bool) or episodes < 0:
+        raise RuntimeError("原评估摘要格式未知，拒绝猜测或绕过复现核验")
+    detail_dir = scope / "episodes"
+    if detail_dir.is_symlink() or not inside(detail_dir, cell):
+        raise RuntimeError("原评估明细目录路径不安全")
+    records, paths = [], []
+    for path in sorted(detail_dir.glob(f"step_{step:09d}__trace*__s*.json")):
+        if path.is_symlink() or not inside(path, cell):
+            raise RuntimeError("原评估明细路径不安全")
+        record = read_json(path)
+        if not isinstance(record, dict) or not record:
+            raise RuntimeError("原评估明细缺失或损坏：" + str(path))
+        records.append(record)
+        paths.append(str(path))
+    if len(records) != episodes:
+        raise RuntimeError(f"原评估摘要声明{episodes}条，实际读取{len(records)}条；不继续动作归因")
+    return records, paths
 
 
 def replay_worker(jobfile):
@@ -770,10 +807,10 @@ def replay_worker(jobfile):
 
     baseline = one_run()
     save_json(output / "冻结回放.json", dict(task=task, step=job["step"], episodes=[baseline]))
-    original = read_json(root / "cells" / task["id"] / "evaluation" / f"step_{job['step']:09d}.json")
-    old = [e for e in original.get("episodes", []) if e.get("eval_seed") == job["eval_seed"] and e.get("mode", "DET") == "DET"
+    original, original_paths = original_episode_records(root / "cells" / task["id"], job["step"])
+    old = [e for e in original if e.get("eval_seed") == job["eval_seed"] and e.get("mode", "DET") == "DET"
            and (not e.get("trace_sha256") or e["trace_sha256"] == digest(trace))]
-    validation = dict(original_available=len(old) == 1, metrics={}, comparable=False)
+    validation = dict(original_available=len(old) == 1, original_paths=original_paths, metrics={}, comparable=False)
     if len(old) == 1:
         for key in ("generated", "finished", "ATT_completed_only", "restricted_person_time_per_generated"):
             a, b = number(old[0].get(key)), number(baseline.get(key))
@@ -934,6 +971,8 @@ def main():
     parser.add_argument("--input", action="append", default=[])
     parser.add_argument("--trust-own-checkpoints", action="store_true")
     parser.add_argument("--max-replays", type=int, default=12)
+    parser.add_argument("--replay-suites", choices=("240", "198"), nargs="+", default=["240", "198"],
+                        help="只选择指定轮次的冻结回放；记录审计仍保留全部输入，用于补跑失败轮次")
     parser.add_argument("--branches-per-cell", type=int, default=2)
     parser.add_argument("--windows", type=int, nargs="+", default=[15, 60])
     parser.add_argument("--max-branch-ticks", type=int, default=30000)
