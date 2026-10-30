@@ -549,6 +549,10 @@ def select_jobs(project, out, args):
             base = task.get("variant") == "M0_BASE" if runtime == "240" else task.get("arm") == "R_SOURCE"
             if not base:
                 continue
+            manifest = read_json(folder / "MODEL_MANIFEST.json")
+            if manifest.get("code_sha256") and manifest["code_sha256"] not in hashes:
+                skipped.append(dict(suite=suite, cell=folder.name, reason="该模型的实际代码hash不同，不混版本回放"))
+                continue
             checkpoints = {}
             for p in (folder / "checkpoints").glob("step_*.json"):
                 cp = read_json(p)
@@ -642,6 +646,8 @@ def replay_worker(jobfile):
         norm = OwnNorm(f).load()
     norm.training = False
     norm.norm_reward = False
+    if norm.observation_space.shape != (module.FullSchema(task["k"]).dim,):
+        raise RuntimeError("归一化schema与本次模型/机场数不匹配")
     def no_training(*a, **kw):
         raise RuntimeError("本文件禁止新增训练或网络更新")
     model.learn = no_training
@@ -876,7 +882,11 @@ def write_report(out, episodes, runs, comparisons, audit, replay_results):
     coverage = dict(episodes=len(episodes), models=len(runs), paired_rule_rows=len(comparisons),
         decision_trace_episodes=sum(r["decision_samples"] > 0 for r in episodes),
         timeline_episodes=sum(r["timeline_samples"] > 0 for r in episodes), terminal_classes=dict(totals),
-        record_issues=len(audit.issues), new_training_transitions=0)
+        record_issues=len(audit.issues), new_training_transitions=0,
+        replay_jobs=len(replay_results),
+        replay_completed=sum(r["status"] in ("COMPLETE", "RESUMED_COMPLETE") for r in replay_results),
+        replay_failed=sum(r["status"] not in ("COMPLETE", "RESUMED_COMPLETE") for r in replay_results),
+        replay_skipped=read_json(out / "冻结回放计划.json").get("skipped", []))
     checks = [
         ("D0 数据/指标", "01、02、03、04表", "核对删失、CO与全体ATT、同bank对照；不将低CO自动判胜", "有指标错误先重算分析，不训练"),
         ("D1 结论稳定性", "逐模型Best/平台/回退，保留所有seed", "分开坏平台、后期回退、停摆；不自动给假说打分", "先定位不同seed的错误类型，不先换优化器"),
