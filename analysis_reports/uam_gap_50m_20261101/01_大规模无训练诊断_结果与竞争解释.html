@@ -1,0 +1,344 @@
+<!doctype html><html lang="zh"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>01_大规模无训练诊断_结果与竞争解释</title><style>body{font-family:"Microsoft YaHei",sans-serif;max-width:1160px;margin:36px auto;padding:0 24px;color:#183247;line-height:1.85;background:#fafcfe}h1{font-size:28px}h2{margin-top:35px;border-bottom:2px solid #b9d9eb;padding-bottom:8px}table{border-collapse:collapse;width:100%;font-size:14px;background:white}th,td{border:1px solid #d3e0e8;padding:9px;text-align:left}th{background:#e9f3fa}pre{background:#eaf0f5;padding:15px;overflow:auto}code{font-family:Consolas,monospace}a{color:#146f9e}strong{color:#123e61}</style><body><h1>这次大规模无训练诊断：剩余差距在哪里，哪些解释必须降级</h1>
+<p>2026-11-01。输入是已经完成的服务器诊断包；本次本地只做记录复算，没有载入模型、没有新增仿真或训练。</p>
+<h2>先读结论</h2>
+<ol>
+<li><strong>还有可改善空间，但不是之前看到的巨大Joint崩溃差距。</strong> K3人时奖励Joint五顺序RPT为61.01，READY规则56.97，差4.04分钟/人；Single为61.48，差4.51。这里只是固定600分钟边界的人时，不是未完成者的完整ATT。</li>
+<li><strong>原奖励仍是最强的竞争解释。</strong> 同4个Joint模型，SOURCE→PT后RPT从150.05降到61.01，4/4训练seed同向；不能再把旧奖励的大停摆当作新时序网络的立项依据。</li>
+<li><strong>尾批确实重要，但没有测出它占总差距的百分比。</strong> 另一个严格配对的三顺序子集上，PT Joint尾批离线修复60.55→57.56，Single60.00→56.43；两者12/12回放均找到完整完成的修复。它是提前知道整段动作序列的离线操作，不是在线算法。</li>
+<li><strong>现有“只模拟已知乘客”的系统代价，并未成为可靠的改进器。</strong> 每15次决策修正一次，SYSTEM使PT Joint平均变差1.79分钟/人、Single变差3.37。尾批修复后，Joint SYSTEM的平均额外收益也只有0.31，且仅1/4 seed为正。</li>
+<li><strong>时间接口确实缺信息，但性能因果关系尚未成立。</strong> 18,000个决策中的972,000个原时间槽全部为0，同时15,267个决策有正的已承诺空机返航ETA。不能把这直接称为“STIN压没ETA导致ATT损失”；输入端就已经是零。</li>
+</ol>
+<p>所以：这些结果足以支持一次有明确竞争假说的归因训练，<strong>不足以直接支持“已发现新交通缺口，接下来上WM/MARL即可”</strong>。</p>
+<h2>1．数据可信度与统计口径</h2>
+<ul>
+<li>88个已训练模型：strict家族60个、30M家族28个。528次模型回放、160次规则/替换回放、120次完整干预回放。</li>
+<li>分支数据是1,080个状态×60/120/240三个窗口＝3,240条窗口记录；不是3,240个独立状态，更不是训练seed。</li>
+<li>仅用<code>branches_v2 / intervene_v2 / tail_v2</code>；旧克隆错误产生的v1目录与FAILURE.json不进入结果。</li>
+<li>本次独立从原episode的ledger重新积分：<strong>3,240/3,240个原动作参考成本完全一致</strong>。逐候选成本也满足total=focal+existing+future。</li>
+<li>归档声明权重未改变、新训练0步；本次未重新载入权重，只独立核对记录，不把声明偷换成重新运行认证。</li>
+<li>原顺序加4201–4204：到达时刻及OD联合多重集不变，只换请求顺序。不是新需求分布；4204已经用于本次判断，不能再称未来的untouched test。</li>
+<li>主表每个模型先对5个顺序的eval123等权平均，再对4个训练seed统计。原顺序eval124保留在逐行数据中，不重复提高原顺序权重。n=4是小样本，报告SD和每seed，不作显著性海选。</li>
+<li>READY在相同场景是固定规则，多次相同回放不等于独立训练重复。源SOURCE家族与PT家族训练合同不同，不跨家族硬算奖励的因果效果。</li>
+<li>这里的K是出发候选机场数，另有共同目的站V2；不是把K当作系统机场总数。</li>
+</ul>
+<h2>2．先看修正奖励后的剩余问题</h2>
+<table>
+<thead>
+<tr>
+<th>K3组别</th>
+<th>独立模型数</th>
+<th>五顺序RPT均值±SD</th>
+<th>完成率</th>
+<th>完整episode比例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>J_PT_CHARGE</td>
+<td>4</td>
+<td>66.34 ± 6.21</td>
+<td>97.47%</td>
+<td>10.0%</td>
+</tr>
+<tr>
+<td>J_PT_RAW</td>
+<td>4</td>
+<td>61.01 ± 2.26</td>
+<td>98.80%</td>
+<td>20.0%</td>
+</tr>
+<tr>
+<td>J_SRC_CHARGE</td>
+<td>4</td>
+<td>184.75 ± 81.04</td>
+<td>61.20%</td>
+<td>0.0%</td>
+</tr>
+<tr>
+<td>J_SRC_RAW</td>
+<td>4</td>
+<td>150.05 ± 91.19</td>
+<td>70.73%</td>
+<td>5.0%</td>
+</tr>
+<tr>
+<td>S_PT_RAW</td>
+<td>4</td>
+<td>61.48 ± 2.05</td>
+<td>98.53%</td>
+<td>5.0%</td>
+</tr>
+<tr>
+<td>S_SRC_RAW</td>
+<td>4</td>
+<td>66.18 ± 2.96</td>
+<td>98.53%</td>
+<td>0.0%</td>
+</tr>
+</tbody>
+</table>
+<p>SOURCE Joint→PT的配对改善分别为40.66、54.37、228.03、33.09分钟/人。大幅差异包含奖励语义、幅度/时间分布、归一化与优化路径，不把它唯一归为“漏罚了谁”。PT下Joint比Single均值好0.47，但不能称Joint稳定获胜。</p>
+<p>充电输入单独修复仍没有普遍收益：J_PT_CHARGE为66.34±6.21，高于RAW的61.01±2.26。这个负结果保留；它既不否定全部时间信息，也不支持“再加多一点时间就一定有效”。</p>
+<h2>3．强在线规则和冻结飞机替换</h2>
+<table>
+<thead>
+<tr>
+<th>K3控制/替换</th>
+<th>RPT</th>
+<th>相对原策略改善（正为好）</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>J_PT_RAW / AIR_LQ</td>
+<td>67.18 ± 1.63</td>
+<td>-6.17 ± 2.89</td>
+<td>冻结乘客策略，闭环更换飞机</td>
+</tr>
+<tr>
+<td>J_PT_RAW / READY</td>
+<td>56.97 ± 0.00</td>
+<td>4.04 ± 2.26</td>
+<td>READY固定规则不是四个独立训练模型</td>
+</tr>
+<tr>
+<td>S_PT_RAW / AIR_LQ</td>
+<td>61.48 ± 2.05</td>
+<td>0.00 ± 0.00</td>
+<td>冻结乘客策略，闭环更换飞机</td>
+</tr>
+<tr>
+<td>S_PT_RAW / READY</td>
+<td>56.97 ± 0.00</td>
+<td>4.51 ± 2.05</td>
+<td>READY固定规则不是四个独立训练模型</td>
+</tr>
+</tbody>
+</table>
+<p>PT Joint的乘客策略直接改用LQ飞机后，4/4模型更差，平均增加6.17分钟/人。<strong>这反驳“Joint的飞机侧一定只有负作用”</strong>；不证明该飞机控制器全局最优，因为乘客策略已经适应了原飞机侧。</p>
+<p>READY只用当前已知乘客、本站供给和简单循环估计，不看未来请求，也不完整模拟所有返航供给竞争。它是强在线启发式，不是最优解或数学下界。K2 PT Joint vs READY为54.33 vs49.40；K4为68.36 vs60.71，但这两个K各只有1个训练seed。</p>
+<h2>4．局部能改动作，不等于全程能变好</h2>
+<p>下面全是同状态、同后续冻结策略的<strong>局部人分钟</strong>，不能与上一节“分钟/人”的RPT直接相加，也不能把不同状态的最优收益累加成全局提升。</p>
+<table>
+<thead>
+<tr>
+<th>K3控制</th>
+<th>窗口/min</th>
+<th>事后最佳局部差距</th>
+<th>无新到达SYSTEM实际收益</th>
+<th>焦点/既有/未来贡献</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>J3</td>
+<td>120</td>
+<td>54.30 ± 11.02</td>
+<td>0.17 ± 9.96</td>
+<td>0.88/18.25/35.16</td>
+</tr>
+<tr>
+<td>J3</td>
+<td>240</td>
+<td>187.24 ± 67.99</td>
+<td>-42.52 ± 36.57</td>
+<td>-2.23/21.68/167.79</td>
+</tr>
+<tr>
+<td>J3</td>
+<td>60</td>
+<td>10.20 ± 2.34</td>
+<td>2.61 ± 2.57</td>
+<td>1.91/4.11/4.18</td>
+</tr>
+<tr>
+<td>LQ</td>
+<td>120</td>
+<td>42.24 ± 22.26</td>
+<td>-0.96 ± 13.80</td>
+<td>-1.38/11.31/32.32</td>
+</tr>
+<tr>
+<td>LQ</td>
+<td>240</td>
+<td>182.81 ± 41.23</td>
+<td>-18.44 ± 48.83</td>
+<td>-11.14/24.95/169.00</td>
+</tr>
+<tr>
+<td>LQ</td>
+<td>60</td>
+<td>7.43 ± 3.32</td>
+<td>2.57 ± 1.36</td>
+<td>3.82/3.00/0.61</td>
+</tr>
+</tbody>
+</table>
+<p>PT Joint的120分钟216个状态中，136个存在更好的事后候选；无新到达SYSTEM实际改善41个、伤害43个，其余不变。最优候选有63个会让焦点乘客更差，说明个人和系统利益有冲突实例；这并不证明系统修正器已经学会处理冲突。</p>
+<p>Joint在120分钟的平均乘客单改差距43.76、飞机单改12.67、联合最优54.30人分钟。这些不是可相加的原因百分比，合法动作集合及交互都不同；只能说本样本的乘客分流值得优先查，不能宣布飞机信用不重要。</p>
+<p>240分钟时，Joint最佳候选的平均收益187.24，其中未来新到达乘客贡献167.79；Single为182.81，其中未来169.00。<strong>这是对固定后续策略和具体实现序列的事后归因，不等于“未知未来是唯一原因”或“必须用世界模型”。</strong> 更长窗口还包含后续策略响应与轨迹分叉。</p>
+<p>COMMITTED把尚未揭示的新请求清空，仍保留满4座条件。它会改变后续凑批和竞争，本身就是有偏近似。不能将其错误排名直接归罪于原模型，也不能拿这种标签不加检验地训练新候选Q。</p>
+<h2>5．完整回放干预：目前最重要的负结果</h2>
+<p>同候选数、每15个乘客一次、120分钟、平局保留原动作，只改SELF/SYSTEM的成本目标；飞机继续原控制器。</p>
+<table>
+<thead>
+<tr>
+<th>K3控制</th>
+<th>干预</th>
+<th>三顺序平均改善±SD</th>
+<th>逐训练seed改善值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>J3</td>
+<td>SELF</td>
+<td>0.57 ± 3.45</td>
+<td>4.85, -3.35, -0.58, 1.36</td>
+</tr>
+<tr>
+<td>J3</td>
+<td>SYSTEM</td>
+<td>-1.79 ± 3.70</td>
+<td>3.49, -2.63, -5.16, -2.88</td>
+</tr>
+<tr>
+<td>LQ</td>
+<td>SELF</td>
+<td>-2.20 ± 3.25</td>
+<td>-2.60, -0.35, -6.60, 0.75</td>
+</tr>
+<tr>
+<td>LQ</td>
+<td>SYSTEM</td>
+<td>-3.37 ± 2.83</td>
+<td>-2.04, -4.35, -6.80, -0.27</td>
+</tr>
+</tbody>
+</table>
+<p>PT Joint SYSTEM的均值差近似t区间为[-7.69,+4.10]分钟/人（正为改善，n=4，正态均值差只是工作假设，不是小样本有效性保证）。该区间很宽，不能说数学上无效，但<strong>当前证据不足以为它开一个大训练主线</strong>。Single SYSTEM四seed全部变差。</p>
+<p>4204单独看：Joint SYSTEM仍平均变差1.46，Single变差2.67；不是只在用于探索的前两条顺序失效。SELF的Joint均值改善0.57，但4seed只有2个改善，不能选择性宣布成功。</p>
+<h2>6．尾批解释及其边界</h2>
+<p>使用每站最后“分配人数mod4”的少量乘客重分配，保持四座、机队、充电和其他乘客动作不变，枚举目标并完整回放。</p>
+<table>
+<thead>
+<tr>
+<th>三顺序子集</th>
+<th>原策略RPT</th>
+<th>最好离线尾批修复后ATT/RPT</th>
+<th>平均减少</th>
+<th>找到全完成修复</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>K3 PT Single</td>
+<td>60.00</td>
+<td>56.43</td>
+<td>3.56</td>
+<td>12/12</td>
+</tr>
+<tr>
+<td>K3 PT Joint</td>
+<td>60.55</td>
+<td>57.56</td>
+<td>2.99</td>
+<td>12/12</td>
+</tr>
+</tbody>
+</table>
+<p>这些离线修复会连带改变其他乘客服务和随后飞机决策，不能叫“严格只去掉尾批损失”。该三顺序的READY未修复RPT为56.19，但READY没有做相同尾批修复，<strong>不可因此说修复后所有剩余差距只有0.24/1.37，也不可相减宣称已解释75%</strong>。</p>
+<p>相同尾批处理后，PT Single SELF/SYSTEM相对原策略仍平均差1.88/3.18；PT Joint SELF/SYSTEM改善0.94/0.31但各seed不一致。由此保留的主张是“尾批很值得隔离”，不是“纯时序外部性已经坐实”。</p>
+<h2>7．从严格E1起的旧五方法复评也没有丢</h2>
+<p>下表均为旧SOURCE奖励、Single+LQ、每K四训练seed，不能与PT组混排为同合同冠军。</p>
+<table>
+<thead>
+<tr>
+<th>SOURCE单侧方法</th>
+<th>K2 RPT</th>
+<th>K3 RPT</th>
+<th>K4 RPT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UAGMC_SOURCE_L</td>
+<td>54.17 ± 0.85</td>
+<td>66.31 ± 1.23</td>
+<td>78.11 ± 9.45</td>
+</tr>
+<tr>
+<td>UAGMC_OD_FOCAL</td>
+<td>55.65 ± 1.92</td>
+<td>67.08 ± 2.36</td>
+<td>77.33 ± 2.14</td>
+</tr>
+<tr>
+<td>S_EFFECT_EVENT</td>
+<td>58.91 ± 4.26</td>
+<td>69.13 ± 6.65</td>
+<td>81.48 ± 6.37</td>
+</tr>
+<tr>
+<td>AC_ICM</td>
+<td>75.09 ± 27.31</td>
+<td>78.21 ± 17.06</td>
+<td>85.77 ± 5.00</td>
+</tr>
+<tr>
+<td>SA_EFFECT_ICM</td>
+<td>56.49 ± 2.73</td>
+<td>65.08 ± 4.99</td>
+<td>85.53 ± 3.54</td>
+</tr>
+</tbody>
+</table>
+<p>K2/K4源基线仍是难以稳定超过的参照；K3 SA均值稍低但波动更大。旧方法没有形成跨K稳定规律，这与先前方法重审一致。没有因这次结果不好而删除任何旧方法。</p>
+<h2>8．下一步可以推翻什么</h2>
+<table>
+<thead>
+<tr>
+<th>现在保留的竞争假说</th>
+<th>本轮50M怎样判别</th>
+<th>不支持时怎样处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主要只是源奖励引导错误</td>
+<td>全部新臂统一PT，不再复跑巨大SOURCE崩溃作为“新方法收益”</td>
+<td>旧SOURCE只留历史反例</td>
+</tr>
+<tr>
+<td>普通网络不易算四座余数</td>
+<td>相同网络BATCH开/关；与TIME作2×2因子</td>
+<td>无一致增益就降低批信息路线</td>
+</tr>
+<tr>
+<td>已知到达/就绪输入确有遗漏价值</td>
+<td>TIME开/关，冻结物理与奖励，不用无新到达搜索标签</td>
+<td>无收益不能继续维护“时间遗漏是主因”</td>
+</tr>
+<tr>
+<td>需要专用新网络才能利用这些信息</td>
+<td>普通Transformer与LSTM读取完全相同BOTH信息</td>
+<td>普通模型已够好就接受，不造新结构</td>
+</tr>
+<tr>
+<td>这些问题是Joint特有</td>
+<td>同seed、同因子完整Single/Joint交叉</td>
+<td>两侧都出现则不包装成Joint专属问题</td>
+</tr>
+</tbody>
+</table>
+<p>这里没有因果原因的全局百分比排名。当前证据强度排序只能是：<strong>奖励合同影响最明确；尾批是明确但带事后信息的竞争解释；合法时间接口遗漏是事实但性能作用待测；直接SYSTEM候选代价目前不可靠；WM/MARL必要性未获证明。</strong></p>
+<h2>9．证据与可复核文件</h2>
+<ul>
+<li>详细数据：同目录<code>07_逐回放基线.csv</code>至<code>11_候选成本与分支归因.csv</code>，以及<code>分析汇总.json</code>。</li>
+<li>输入SHA256：<code>19434fe6744be50a8e9ab7eda54dcb5801e86c43fea7f21cd6ceba9f97db098f</code>。</li>
+<li>实际执行诊断入口SHA256：<code>c47d3980fab1abc68d73e97f26da62b28192c528c89f34d948b47d812dd6950f</code>。</li>
+<li>独立复算脚本：<code>analyze_uam_large_diagnostic_records.py</code>，只用标准库，不载入torch或权重。</li>
+<li>延续旧报告：2026-10-31《30M归因分析》与2026-10-30《系统缺口寻找方案》《WM与MARL候选及进入条件》；本次更新实证结论，不重新认领旧文献阅读工作量。</li>
+<li>程序性参考：Kassis, Agarwal, He, Patel &amp; Brueckner (2026), <a href="https://arxiv.org/abs/2609.00065">Scientific Agent Skills</a>，核对v2（2026-09-02）。技能仅用于因子设计与统计单位，不是UAM机制证据。本次未安装其建议的Python3.12统计栈，使用现有Python3.11+标准库复算，没有使用受版本影响的混合ANOVA实现。</li>
+</ul></body></html>

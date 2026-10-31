@@ -1,0 +1,10 @@
+{
+  "diagnostic_sha256": "19434fe6744be50a8e9ab7eda54dcb5801e86c43fea7f21cd6ceba9f97db098f",
+  "training_script_sha256": "f9a8e8b0998cc74a37f6aaa7fae99a21c29e712e9cc32f21507eeba65ef2e077",
+  "planned_transitions": 48168960,
+  "budget_cap": 50000000,
+  "new_training_executed_here": 0,
+  "tests": "7 pure/static unit tests PASS; no model or simulator instantiated",
+  "github_anchor": "ef7da1190621cbfa6282ce0da0913b798fad1d97",
+  "version": "2026-11-01"
+}
