@@ -26,6 +26,7 @@ AUDITOR_SHA = "f0f853c281dfd09e07aac37e696f3d590320e67ca87981a5975710ccb9f0e5ad"
 EXPECTED_FILES = 27386
 EXPECTED_BYTES = 113694308016
 EXPECTED_KEEP = 1436
+PROCESS_PROTOCOL = "confirm_exited_pid_v2_20261101"
 GROUPS = {
     "uam_100m_two_tracks_v1": 304,
     "uam_100m_two_tracks_BC_v2": 4462,
@@ -47,6 +48,7 @@ FILE_HASHES = {
     "本地归档证据索引.json": "810544c2223735ea7ee10cb5d43268e3525d456448c5ea0ce0a9e1a3d9c7cf45",
     "清点汇总.json": "b092f4803d71f6cb4d7f6ff4cbf36f6882eeb7696709bc1447823d664b85d052",
 }
+PROCESS_DETAILS = {}
 
 
 def digest(data):
@@ -171,13 +173,66 @@ def check_current_candidates(fresh_rows, remaining, missing):
         raise RuntimeError("当前可删文件与已批准清单不同，未删除；不自动扩大或缩小范围")
 
 
+def inspect_process(process, uid):
+    """仅忽略已证实退出的PID；仍存在但无法读取的进程继续拦截。"""
+    last_error = ""
+    for _ in range(2):
+        try:
+            before = process.stat()
+            if before.st_uid != uid:
+                return "other", []
+            arguments = (process / "cmdline").read_bytes().split(b"\0")
+            after = process.stat()
+            if after.st_uid != before.st_uid or after.st_ino != before.st_ino:
+                last_error = "读取期间PID身份变化"
+                continue
+            return "ok", [item.decode("utf-8", "replace") for item in arguments if item]
+        except OSError as error:
+            last_error = type(error).__name__ + ": " + str(error)
+            try:
+                # cmdline失败不等于进程退出，必须再次确认进程根目录是否已消失。
+                process.stat()
+            except (FileNotFoundError, ProcessLookupError):
+                return "gone", []
+            except OSError as probe_error:
+                last_error += "; 根目录复查 " + type(probe_error).__name__
+                break
+    return "unreadable", [last_error]
+
+
+def precise_process_references(run_name, script_names, proc_root=None):
+    """保持原引用判据，修复PID退出竞态；不打印可能含敏感参数的完整命令行。"""
+    PROCESS_DETAILS.clear()
+    active, unreadable = [], []
+    root = Path("/proc") if proc_root is None else proc_root
+    for process in root.iterdir():
+        if not process.name.isdigit() or int(process.name) == os.getpid():
+            continue
+        status, values = inspect_process(process, os.getuid())
+        pid = int(process.name)
+        if status == "unreadable":
+            unreadable.append(pid)
+            PROCESS_DETAILS[pid] = values[0]
+        elif status == "ok" and (any(run_name in item for item in values) or
+                                  any(Path(item).name in script_names for item in values)):
+            active.append(pid)
+            PROCESS_DETAILS[pid] = "仍在运行且引用本批旧实验"
+    return active, unreadable
+
+
+def process_block_message(name, active, unreadable):
+    return ("旧实验进程检查未通过：" + name + "; active_pids=" + str(active) +
+            "; unreadable_pids=" + str(unreadable) + "; 原因=" +
+            json.dumps({pid: PROCESS_DETAILS.get(pid, "") for pid in active + unreadable}, ensure_ascii=False))
+
+
 def no_old_processes(auditor, evidence):
     """确认后和清理期间再次检查，避免用户停留在确认提示时新启动旧实验。"""
     for name in GROUPS:
         scripts = {item["name"] for item in evidence[name].get("scripts", [])}
         active, unreadable = auditor.process_references(name, scripts)
         if active or unreadable:
-            raise RuntimeError("发现旧实验进程引用或无法核验的进程，停止：" + name)
+            raise RuntimeError(process_block_message(name, active, unreadable))
 
 
 def main():
@@ -200,6 +255,8 @@ def main():
     spec = importlib.util.spec_from_file_location("verified_uam_auditor", source)
     auditor = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(auditor)
+    # 原审计文件和其哈希保持不动；仅在本进程中修正/proc采样的退出竞态。
+    auditor.process_references = precise_process_references
     auditor.file_info(PACKAGE, AUDIT, os.getuid(), AUDIT.stat().st_dev)
     candidates, all_rows, proofs, evidence, summary = load_package(PACKAGE)
     validate_manifest(candidates, all_rows)
@@ -234,8 +291,11 @@ def main():
         fresh_rows = []
         for name in GROUPS:
             result, rows, _, issues = auditor.audit_run(PROJECT, name, evidence[name])
-            if issues or result.get("active_pids") or result.get("unreadable_processes"):
-                raise RuntimeError("路径或旧实验进程仍有待查项，未删除：" + name)
+            if issues:
+                raise RuntimeError("路径仍有待查项，未删除：" + name + "; " + str(issues[:3]))
+            if result.get("active_pids") or result.get("unreadable_processes"):
+                raise RuntimeError(process_block_message(name, result.get("active_pids", []),
+                                                        result.get("unreadable_processes", [])))
             fresh_rows.extend(rows)
             print("[复核通过]", name, flush=True)
         check_current_candidates(fresh_rows, remaining, missing)
@@ -269,7 +329,8 @@ def main():
                     if not stat.S_ISREG(info.st_mode) or any(
                             getattr(info, attribute) != int(row[key]) for key, attribute in FINGERPRINT.items()):
                         raise RuntimeError("删除前文件指纹变化，停止：" + str(path))
-                    handle.write(json.dumps(dict(package_sha256=PACKAGE_SHA, action="intent", row=row),
+                    handle.write(json.dumps(dict(package_sha256=PACKAGE_SHA, action="intent", row=row,
+                                                 process_protocol=PROCESS_PROTOCOL),
                                             ensure_ascii=False) + "\n")
                     handle.flush()
                     # 只删除经过确认的单个文件；不删除目录、JSON、CSV或最终模型。
@@ -287,6 +348,7 @@ def main():
                 current_fingerprint(row, auditor)
         end = dict(status="COMPLETE", deleted_this_run=removed, previously_deleted=len(missing),
                    package_sha256=PACKAGE_SHA, final_files_retained=1436,
+                   process_protocol=PROCESS_PROTOCOL, delete_code_sha256=digest(Path(__file__).read_bytes()),
                    logical_bytes_deleted_this_run=sum(int(row["bytes"]) for row in remaining))
         end_path = AUDIT / ("DELETE_END_" + time.strftime("%Y%m%d_%H%M%S") + "_" + str(os.getpid()) + ".json")
         with end_path.open("x", encoding="utf-8") as handle:

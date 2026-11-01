@@ -4,6 +4,7 @@ import importlib.util
 import json
 from pathlib import Path, PurePosixPath
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest import mock
 
@@ -115,6 +116,54 @@ class PackageAndJournalTests(unittest.TestCase):
                 self.assertEqual(module.prior_intents(path, {row["path"]: row}), {row["path"]})
                 with self.assertRaises(RuntimeError):
                     module.prior_intents(path, {row["path"]: dict(row, inode="456")})
+
+
+class ProcessRaceTests(unittest.TestCase):
+    def process(self, *, error=None, data=b"python\0train_uam_round3_uagmc_causal_ONEFILE.py\0"):
+        process = mock.MagicMock()
+        process.name = "12345"
+        process.stat.return_value = SimpleNamespace(st_uid=998, st_ino=42)
+        handle = process.__truediv__.return_value
+        if error:
+            handle.read_bytes.side_effect = error
+        else:
+            handle.read_bytes.return_value = data
+        return process
+
+    def test_exited_before_stat_is_not_unreadable(self):
+        process = self.process()
+        process.stat.side_effect = FileNotFoundError("进程已退出")
+        self.assertEqual(module.inspect_process(process, 998)[0], "gone")
+
+    def test_exited_between_stat_and_cmdline_is_not_unreadable(self):
+        process = self.process(error=FileNotFoundError("cmdline已消失"))
+        process.stat.side_effect = [SimpleNamespace(st_uid=998, st_ino=42), FileNotFoundError("进程已退出")]
+        self.assertEqual(module.inspect_process(process, 998)[0], "gone")
+
+    def test_live_permission_denied_still_blocks(self):
+        process = self.process(error=PermissionError("权限不足"))
+        status, details = module.inspect_process(process, 998)
+        self.assertEqual(status, "unreadable")
+        self.assertIn("PermissionError", details[0])
+
+    def test_missing_cmdline_with_live_pid_still_blocks(self):
+        process = self.process(error=FileNotFoundError("cmdline缺失但PID仍在"))
+        self.assertEqual(module.inspect_process(process, 998)[0], "unreadable")
+
+    def test_actual_reference_still_blocks_with_pid(self):
+        process = self.process()
+        root = mock.Mock()
+        root.iterdir.return_value = [process]
+        with mock.patch.object(module.os, "getuid", return_value=998, create=True):
+            active, unreadable = module.precise_process_references("uam_round3_uagmc_causal_V1",
+                {"train_uam_round3_uagmc_causal_ONEFILE.py"}, root)
+        self.assertEqual(active, [12345])
+        self.assertEqual(unreadable, [])
+
+    def test_process_identity_change_is_not_ignored(self):
+        process = self.process()
+        process.stat.side_effect = [SimpleNamespace(st_uid=998, st_ino=value) for value in (42, 43, 44, 45)]
+        self.assertEqual(module.inspect_process(process, 998)[0], "unreadable")
 
 
 if __name__ == "__main__":
