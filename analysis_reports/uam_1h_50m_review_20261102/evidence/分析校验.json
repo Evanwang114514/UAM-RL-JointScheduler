@@ -1,0 +1,26 @@
+[
+  {
+    "check": "重算late_rpt",
+    "max_absolute_error": 1.4210854715202004e-14,
+    "passed": true
+  },
+  {
+    "check": "重算late_completion",
+    "max_absolute_error": 2.220446049250313e-16,
+    "passed": true
+  },
+  {
+    "check": "重算late_full_fraction",
+    "max_absolute_error": 0.0,
+    "passed": true
+  },
+  {
+    "check": "重算late_blocked_fraction",
+    "max_absolute_error": 0.0,
+    "passed": true
+  },
+  {
+    "check": "同种子同骨架初始参数一致",
+    "passed": true
+  }
+]

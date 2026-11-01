@@ -1,0 +1,26 @@
+{
+  "capability": {
+    "dependency": "Python standard library",
+    "depth": "bounded schema, aggregate profile, missingness, and sensitivity audit",
+    "format": "CSV",
+    "reference": "references/general_scientific_formats.md",
+    "suffix": ".csv",
+    "tier": "automated_core"
+  },
+  "file": {
+    "basename": "filename_e2a461a33475ef99",
+    "file_id": "file_c6fb0efee28256f5",
+    "full_path_emitted": false,
+    "regular_file": true,
+    "sha256": "0812fde74ac5339e7be7e0837e5d7f2f491d3c817c2eae84e9dc7968a112acc4",
+    "sha256_explicitly_requested": true,
+    "size_bytes": 832857,
+    "symlink": false
+  },
+  "inspection": {
+    "content_values_read": false,
+    "format_signature_checked": false,
+    "reference_only": false
+  },
+  "schema_version": "1.1"
+}

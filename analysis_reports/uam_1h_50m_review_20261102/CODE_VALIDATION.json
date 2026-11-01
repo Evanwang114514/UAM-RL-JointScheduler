@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-02",
+  "code_sha256": {
+    "diagnose_uam_50m_credit_1h_ONEFILE.py": "6633504190c15b16b7c1c296fb8ee287c0cfe0ebc5125001cdcf9ff90a551af6",
+    "train_uam_credit_horizon_18h_ONEFILE.py": "1a5f5031b1eb23d0a99b05bf14a7a89ffe3f4dd63dd3bd8c666fb84bf309718c",
+    "analyze_uam_1h_50m_results_20261102.py": "d89c93161bd2dbd9ce211bf0a0a5f9703861526366d14eaacc2c19c274fc476f"
+  },
+  "static_syntax_passed": true,
+  "tested": [
+    "32格登记与唯一性",
+    "76,677,120实际步数与整rollout",
+    "联合16格优先",
+    "早中晚各2状态",
+    "单侧无效飞机动作位规范化",
+    "玩具账本PRE/POST和已知/真实后续配对",
+    "禁止导入训练框架的静态检查"
+  ],
+  "real_uam_replay_run": false,
+  "checkpoint_loaded": false,
+  "training_run": false,
+  "server_connected": false,
+  "warning": "没有以语法或玩具单元检查冒充真实模型和共享服务器运行认证"
+}

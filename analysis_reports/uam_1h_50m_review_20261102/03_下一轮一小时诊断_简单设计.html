@@ -1,0 +1,118 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>下一轮一小时无训练诊断：用最新模型检查“到底还剩什么”</title><style>body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;margin:auto;max-width:1100px;padding:28px 24px 70px;color:#20303b;line-height:1.8;background:#fff}h1{font-size:29px;line-height:1.4}h2{font-size:23px;margin-top:36px;border-bottom:1px solid #dbe2e7;padding-bottom:8px}h3{font-size:19px;margin-top:28px}a{color:#005a8d}table{border-collapse:collapse;width:100%;font-size:14px;display:block;overflow:auto;margin:20px 0}th,td{padding:10px 12px;border:1px solid #dbe2e7;vertical-align:top}th{background:#edf3f7;text-align:left}tr:nth-child(even){background:#f8fafb}pre{white-space:pre;overflow:auto;padding:16px;background:#f0f3f5;border:1px solid #dbe2e7;font-size:13px}code{font-family:Consolas,monospace}img{max-width:100%;height:auto;border:1px solid #e0e5e8}nav{font-size:14px;padding:12px 0;border-bottom:1px solid #dbe2e7}nav a{margin-right:18px}blockquote{border-left:3px solid #8297a5;margin-left:0;padding-left:18px}strong{color:#152633}footer{margin-top:40px;font-size:13px;color:#556874}</style></head><body><nav><a href="README.html">先看总结</a><a href="01_无训练诊断结果_哪些问题已经站住.html">诊断分析</a><a href="02_五千万训练结果_逐方法与稳定性.html">训练分析</a><a href="03_下一轮一小时诊断_简单设计.html">后续诊断</a><a href="04_下一轮十八小时训练_简单设计.html">18小时训练</a></nav><h1>下一轮一小时无训练诊断：用最新模型检查“到底还剩什么”</h1>
+<p>2026-11-02｜状态：设计与代码已交付，尚未执行。不训练、不改变源环境，不把本报告的预期当结果。</p>
+<h2>一句话目的</h2>
+<p><strong>把50M的普通模型逐个重新拿出来：先公平处理尾批，再看正常阶段是否还有改善；最后检查，动作好坏是否取决于评价多久、如何考虑后来的请求。</strong></p>
+<p>旧诊断针对30M与更早模型，不能替代最新模型的过程分析。这次不增加机场、座位、充电、天气或新网络。</p>
+<h2>一、用哪些模型，预计多大规模</h2>
+<ul>
+<li>K3全部40个最终模型：5种信息/网络条件×单侧/联合×4训练种子，不按成绩挑模型。</li>
+<li>一条真正的强READY规则，飞机仍用最长队；不按seed复制规则样本。</li>
+<li>原顺序、4301、4302，共3条已知验证顺序。与50M最终原记录作配套复现，不能把它们叫新分布测试。</li>
+<li>CPU最多2个worker，每个单线程，不分配GPU。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>模块</th>
+<th style="text-align: right;">上限计划</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>整场基线</td>
+<td style="text-align: right;">41案例×3顺序＝123场</td>
+<td>确认模型和归一化配套、记录服务过程</td>
+</tr>
+<tr>
+<td>同等事后尾批</td>
+<td style="text-align: right;">每场复现原乘客序列，并比较最多3个聚合目标</td>
+<td>所有模型与READY采用同规则，不给某方法单独优惠</td>
+</tr>
+<tr>
+<td>保人数交换</td>
+<td style="text-align: right;">每场12个事先随机提案，最多1,476次</td>
+<td>查正常阶段可行改善，不改各站最终人数；比上轮每场24次更浅，不能直接比较搜索最小值</td>
+</tr>
+<tr>
+<td>候选分支</td>
+<td style="text-align: right;">25案例×3顺序×6状态＝450个状态上限</td>
+<td>L00、L11、T11的两种控制×4种子，加READY；早中晚各抽2次</td>
+</tr>
+<tr>
+<td>每状态</td>
+<td style="text-align: right;">合法乘客/飞机候选，原后续与共同READY，60/120/240分钟</td>
+<td>检查候选排序，不把多个窗口当新样本</td>
+</tr>
+<tr>
+<td>额外成本标签</td>
+<td style="text-align: right;">同一分支同时积算gamma=.99和1；区分500分钟之后</td>
+<td>不增加新的物理回放，不改变策略输入</td>
+</tr>
+</tbody>
+</table>
+<p>每个真实后续分支再配对一个“后面不再出现新请求”的近似分支。Joint候选最多9个，实际往往更少；READY和Single不凭空授予联合权限。预计整场回放约两千次量级、候选模拟约一万次量级，按上轮27分钟的已完成工作率留足进程启动、Transformer与新模型数量余量。</p>
+<p><strong>一小时是时间上限，不是承诺所有项目全部完成。</strong> 前55%时间优先整场、同等尾批和交换，后45%优先候选分支。超时只保留配对完成单元，标BUDGET_PARTIAL，不把未跑填0。恢复需同代码、同输入hash，已完成单元跳过；再次<code>--resume</code>是新的一小时会话，不偷偷累计成“只跑一小时”。</p>
+<h2>二、核心只回答四个问题</h2>
+<h3>1．当前差距是不是主要在尾部？</h3>
+<p>先比较同一顺序下：原RPT、完成率、截止未完成人；再做相同的事后尾批处理。给READY同样待遇后，重新算每个模型的差距。</p>
+<p>不把事后分流修正当在线救援，也不提前终止后抹去未完成人的成本。主表继续保留原始未完成结果。</p>
+<h3>2．普通Transformer是否已经把正常阶段做够好了？</h3>
+<p>对L00、L11、T11分别看：同等尾批后的绝对差距，固定每站最终人数的交换还可减少多少，以及是否重复出现在四个种子和三条顺序。</p>
+<p>如果只有旧基座有空间而Transformer已经贴近强规则，不再以“普通时序网络不行”为前提开发新方法。若READY也找不到足够的正常阶段整场改善，则交通共同缺口仍未站住。</p>
+<h3>3．我们是不是在用错误的“看多远”评价动作？</h3>
+<p>从同一克隆分支同时计算：不折扣累计成本、.99折扣成本，以及成本中500分钟训练截止以后的部分。记录最优动作集合是否完全不相交，不能把平局误算成翻转。</p>
+<p>评估沿用分钟起点人时PRE，训练奖励用事件后人时POST；代码分别保存两套账，并分别比较折扣排序，不能把起点/终点边界差也归给gamma。</p>
+<p>这只检查局部目标偏好。即使排序不同，也不能直接宣布gamma=.99导致全部性能损失；策略学习、价值估计、GAE和后续分流会共同影响结果。<strong>训练负责验证它能否转化为真实闭环改善。</strong></p>
+<h3>4．只是未来不知道，还是已知部分也用错？</h3>
+<p>比较真实后续请求继续出现的事后分支，与删除未揭示请求的近似分支。记录近似选中动作在真实分支里究竟改善还是变差；把当前乘客、其他已出现乘客、后来乘客的成本分开。</p>
+<p>真实未来CSV只在离线诊断环境逐步出现，绝不输入在线策略。这个诊断也<strong>没有检验一个合法的未来需求预测器</strong>，不能把Oracle收益当线上可得收益。</p>
+<h2>三、决策本身的时间含义，不再只盯输入特征</h2>
+<p>保存每次乘客选择的时刻、动作、地面到站时长、各站队列、已承诺乘客与返航空机、当前可用/充电飞机；候选分支通过原来的“乘客先选、再准备飞机调度、最后完成这一分钟”接口。</p>
+<p>据此可以区分：选择时刻与实际到站时刻；当前动作与之后策略反应；短期受益与长期受损；乘客侧与飞机侧在当时是否真有选择。</p>
+<p><strong>本次不改变决策触发频率、不增加撤回/改派权限、不允许不满座起飞。</strong> 因而不能声称已检验“增加一次决策机会是否解决问题”。如果记录指向可用权限不足，应另列控制接口反事实，不能混进表示方法优劣。</p>
+<h2>四、不同结果怎么走</h2>
+<table>
+<thead>
+<tr>
+<th>结果</th>
+<th>后续处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>同等尾批后普通网络已经贴近READY，交换也几乎无收益</td>
+<td>不开新WM/MARL；18小时预算可以不花完。当前切口可能主要是评估/收尾合同</td>
+</tr>
+<tr>
+<td>普通网络仍明显差于READY，但READY本身几乎无额外整场空间</td>
+<td>下一组只能叫普通基线与目标范围校准，不能包装“普遍交通缺口”</td>
+</tr>
+<tr>
+<td>折扣与不折扣经常选不同动作，变化集中在延迟收益</td>
+<td>支持执行第4报告的折扣因子训练对照；是否可学仍由训练回答</td>
+</tr>
+<tr>
+<td>只有真实未来分支有效，已知事件近似经常选反</td>
+<td>不直接训练这个近似的标签；先建立合法未来需求模型及无泄漏校验，再考虑WM</td>
+</tr>
+<tr>
+<td>改乘客即可取得大部分收益，飞机额外组合收益很小</td>
+<td>保留单侧作为合法候选，不为了联合而引入新MARL</td>
+</tr>
+<tr>
+<td>强READY和普通网络都出现跨顺序、跨种子的整场非尾批改善</td>
+<td>才进入交通问题定义与文献最近邻核对；根据成本输出选方法</td>
+</tr>
+<tr>
+<td>原动作复现或克隆一致性失败</td>
+<td>该单元标失败，不发布候选标签；其他已通过单元保留</td>
+</tr>
+</tbody>
+</table>
+<p>这里没有“诊断结束自动选冠军并训练”。建议先读<code>TRAINING_ADVICE.json</code>与完整性状态，再启动正式训练。没有找到有价值结果是允许的，不因已经写好代码就要求烧完预算。</p>
+<h2>五、代码、输出和运行边界</h2>
+<p>入口：项目根目录<code>diagnose_uam_50m_credit_1h_ONEFILE.py</code>。内部封存已跑50M运行时和修复后的克隆工具，hash校验后加载，不依赖另一个矩阵入口文件。读取服务器已有<code>serial_runs/uam_gap_factors_48run_50m_v1</code>的最终checkpoint与配套归一化；DATAONLY包不能替代模型。</p>
+<p>输出：<code>workspace/artifacts/uam_50m_credit_diag_1h_20261102_v1</code>，包含逐模型完整/尾批/交换表、折扣与已知/真实未来排序表、全部配对状态、manifest、失败/超时状态、模型hash及DATAONLY包。不改原实验。</p>
+<p>代码通过语法、计划规模和纯函数检查；<strong>尚未在服务器做真实模型加载或回放验证</strong>。正式运行内嵌原回放复现、克隆参考成本、权重不变与资源检查，失败会保留证据；不给你另加一轮smoke命令。</p>
+<p>上传、启动、打包及下载见<a href="05_运行命令.html">命令</a>。</p><footer>2026-11-02｜已分析与未执行设计严格区分；原始归档未改。</footer></body></html>

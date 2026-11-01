@@ -1,0 +1,380 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>无训练诊断结果：哪些问题已经站住，哪些还没站住</title><style>body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;margin:auto;max-width:1100px;padding:28px 24px 70px;color:#20303b;line-height:1.8;background:#fff}h1{font-size:29px;line-height:1.4}h2{font-size:23px;margin-top:36px;border-bottom:1px solid #dbe2e7;padding-bottom:8px}h3{font-size:19px;margin-top:28px}a{color:#005a8d}table{border-collapse:collapse;width:100%;font-size:14px;display:block;overflow:auto;margin:20px 0}th,td{padding:10px 12px;border:1px solid #dbe2e7;vertical-align:top}th{background:#edf3f7;text-align:left}tr:nth-child(even){background:#f8fafb}pre{white-space:pre;overflow:auto;padding:16px;background:#f0f3f5;border:1px solid #dbe2e7;font-size:13px}code{font-family:Consolas,monospace}img{max-width:100%;height:auto;border:1px solid #e0e5e8}nav{font-size:14px;padding:12px 0;border-bottom:1px solid #dbe2e7}nav a{margin-right:18px}blockquote{border-left:3px solid #8297a5;margin-left:0;padding-left:18px}strong{color:#152633}footer{margin-top:40px;font-size:13px;color:#556874}</style></head><body><nav><a href="README.html">先看总结</a><a href="01_无训练诊断结果_哪些问题已经站住.html">诊断分析</a><a href="02_五千万训练结果_逐方法与稳定性.html">训练分析</a><a href="03_下一轮一小时诊断_简单设计.html">后续诊断</a><a href="04_下一轮十八小时训练_简单设计.html">18小时训练</a></nav><h1>无训练诊断结果：哪些问题已经站住，哪些还没站住</h1>
+<p>2026-11-02｜材料状态：已复算分析（ANALYZED），不是本轮重新回放认证。来源：用户下载的修复版诊断包；本轮没有连接服务器、训练或运行策略。</p>
+<h2>先读这五句话</h2>
+<ol>
+<li><strong>确实还能把部分模型的选择做得更好，但不能把所有收益都叫“正常运营中的协调改善”。</strong> 最后几个人分散在各站、凑不满四座，对结果有明显影响。</li>
+<li><strong>公平地给强规则也做同样的事后收尾后，学习模型仍没有超过它。</strong> 三出发站的强READY规则从56.89降到54.37分钟/人；新奖励联合模型从60.41降到56.71。两者仍差2.34分钟/人。</li>
+<li><strong>固定每站最终分配人数、交换前期两个人的选站，还能改善模型。</strong> 联合平均额外减少1.34分钟/人，几乎全来自少等飞机；但强READY在三出发站的同等24次交换搜索中，没有找到额外改善。</li>
+<li><strong>“只模拟已经出现的人，假设以后不来新人”不是可靠答案。</strong> 与真实后续到达相比，120分钟局部最优动作集合在单侧44.4%、联合38.9%的抽查状态上完全不相交。把这个简化预测用于整场纠偏，也没有跨种子一致收益。</li>
+<li><strong>现在最值得保留的是“乘客分流会改变后续乘客的候机代价”，而不是“联合一定卡死”或“ETA输入是唯一瓶颈”。</strong> 它仍是待收窄的交通问题候选，尚未证明强规则普遍存在一个大而稳定、在线可学的缺口。</li>
+</ol>
+<h2>一、这次到底做了多少，花了多久</h2>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th style="text-align: right;">完成规模</th>
+<th>正确理解</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>案例</td>
+<td style="text-align: right;">16</td>
+<td>8个新奖励单侧/联合模型、4个旧源模型、4个规则案例</td>
+</tr>
+<tr>
+<td>请求顺序</td>
+<td style="text-align: right;">每案例3条</td>
+<td>原顺序与4401/4402；不是3个独立训练种子</td>
+</tr>
+<tr>
+<td>汇总完整回放记录</td>
+<td style="text-align: right;">120条</td>
+<td>包含原策略、强规则和简化预测修正，不能全叫独立模型</td>
+</tr>
+<tr>
+<td>同等尾批处理记录</td>
+<td style="text-align: right;">120条</td>
+<td>对各策略采用同一套事后候选处理</td>
+</tr>
+<tr>
+<td>固定站点总人数的交换搜索</td>
+<td style="text-align: right;">48场，每场24提案</td>
+<td>有限搜索，不是最优解</td>
+</tr>
+<tr>
+<td>局部候选窗口汇总</td>
+<td style="text-align: right;">5,562行</td>
+<td>同状态的多个窗口/后续策略重复，不能当5,562个独立样本</td>
+</tr>
+<tr>
+<td>实际完成工作计数</td>
+<td style="text-align: right;">1,706次整场回放；10,650次候选模拟</td>
+<td>这些才适合估算以后诊断计算量</td>
+</tr>
+<tr>
+<td>已完成模拟分钟</td>
+<td style="text-align: right;">3,235,706</td>
+<td>不是实际占机分钟</td>
+</tr>
+<tr>
+<td>两次执行的有效墙钟时间</td>
+<td style="text-align: right;">1,618.39秒，约26分58秒</td>
+<td>首次1,414.76秒，修复后补跑203.63秒；两worker、各单线程</td>
+</tr>
+</tbody>
+</table>
+<p>两次会话的起止跨度约61分钟，其中含人工排错、上传和等待，不能当成纯计算时间。修复只统一了单侧中没有物理作用的飞机动作位；保留了首版清单和修复审计，完成标记为COMPLETE，封存记录声明权重未改变、新训练0步。本轮核查包完整性和表内结果，<strong>没有在本地重新核验模型行为</strong>。</p>
+<p>依据：原包<code>SESSION_END.json</code>、<code>SESSIONS.json</code>、<code>IMPLEMENTATION_REPAIRS.json</code>；派生数据见<a href="evidence/诊断总览.csv">诊断总览</a>、<a href="evidence/诊断逐模型.csv">逐模型表</a>。</p>
+<h2>二、先看整场，不先看局部“最好动作”</h2>
+<p>以下先在每个模型的三条顺序内平均，再跨四个训练种子平均。规则只有一个控制器，不能复制成四个训练样本。</p>
+<table>
+<thead>
+<tr>
+<th>控制器</th>
+<th style="text-align: right;">原回放累计耗时</th>
+<th style="text-align: right;">同等事后收尾后</th>
+<th style="text-align: right;">保人数交换后的最好结果</th>
+<th style="text-align: right;">交换额外减少</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>新奖励单侧，4种子</td>
+<td style="text-align: right;">62.56</td>
+<td style="text-align: right;">58.12</td>
+<td style="text-align: right;">56.87</td>
+<td style="text-align: right;">1.25</td>
+</tr>
+<tr>
+<td>新奖励联合，4种子</td>
+<td style="text-align: right;">60.41</td>
+<td style="text-align: right;">56.71</td>
+<td style="text-align: right;">55.37</td>
+<td style="text-align: right;">1.34</td>
+</tr>
+<tr>
+<td>旧源单侧，4种子</td>
+<td style="text-align: right;">67.46</td>
+<td style="text-align: right;">63.61</td>
+<td style="text-align: right;">61.66</td>
+<td style="text-align: right;">1.95</td>
+</tr>
+<tr>
+<td>作者QTTI，三出发站</td>
+<td style="text-align: right;">64.39</td>
+<td style="text-align: right;">61.28</td>
+<td style="text-align: right;">60.49</td>
+<td style="text-align: right;">0.79</td>
+</tr>
+<tr>
+<td>强READY，两出发站</td>
+<td style="text-align: right;">50.17</td>
+<td style="text-align: right;">49.07</td>
+<td style="text-align: right;">48.83</td>
+<td style="text-align: right;">0.24</td>
+</tr>
+<tr>
+<td>强READY，三出发站</td>
+<td style="text-align: right;">56.89</td>
+<td style="text-align: right;">54.37</td>
+<td style="text-align: right;">54.37</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr>
+<td>强READY，四出发站</td>
+<td style="text-align: right;">62.43</td>
+<td style="text-align: right;">57.41</td>
+<td style="text-align: right;">56.72</td>
+<td style="text-align: right;">0.69</td>
+</tr>
+</tbody>
+</table>
+<p>单位均为分钟/人；越低越好。原回放含未完成人，数值是<strong>固定截止时的人均累计耗时</strong>，简称RPT，不冒充全员完成后的平均旅时ATT。此有限候选集的120条尾批处理均找到了全员完成结果；这不等于在线已经解决收尾。</p>
+<p>这里的“收尾”不是把未完成人忽略、提前停止然后少计罚时，也不是允许不满座起飞。它是<strong>事后回头改变少数乘客最初去哪个站，再完整重放</strong>。它使用全场动作序列，线上不知道谁是最后一批。既改变局部分配，也可能改变后续派机，所以不能说其收益严格等于“尾批独立贡献”。</p>
+<p>同等处理后，联合仍比READY多2.34分钟/人，单侧多3.75；连后续有限交换搜索也做完后，联合仍多1.01，单侧多2.50。<strong>有模型提升空间，但不能把“模型比强规则差”包装成“现有交通调度方法共同解决不了”。</strong></p>
+<p>不同机场数改变候选位置和初始配置，本表不能证明“机场越多就必然越容易卡死”。</p>
+<p>旧源模型与新奖励模型的结构和训练合同并非全部相同，表中并列用于定位，不把它们的差值当成仅修改奖励的因果效应。</p>
+<h2>三、每个新奖励模型分别怎样</h2>
+<table>
+<thead>
+<tr>
+<th>控制</th>
+<th style="text-align: right;">训练种子</th>
+<th style="text-align: right;">原回放</th>
+<th style="text-align: right;">同等收尾后</th>
+<th style="text-align: right;">交换后</th>
+<th style="text-align: right;">交换额外减少</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单侧</td>
+<td style="text-align: right;">1601</td>
+<td style="text-align: right;">61.28</td>
+<td style="text-align: right;">56.76</td>
+<td style="text-align: right;">55.65</td>
+<td style="text-align: right;">1.11</td>
+</tr>
+<tr>
+<td>单侧</td>
+<td style="text-align: right;">1602</td>
+<td style="text-align: right;">61.92</td>
+<td style="text-align: right;">57.95</td>
+<td style="text-align: right;">57.39</td>
+<td style="text-align: right;">0.56</td>
+</tr>
+<tr>
+<td>单侧</td>
+<td style="text-align: right;">1603</td>
+<td style="text-align: right;">67.25</td>
+<td style="text-align: right;">61.57</td>
+<td style="text-align: right;">58.57</td>
+<td style="text-align: right;">3.00</td>
+</tr>
+<tr>
+<td>单侧</td>
+<td style="text-align: right;">1604</td>
+<td style="text-align: right;">59.76</td>
+<td style="text-align: right;">56.18</td>
+<td style="text-align: right;">55.86</td>
+<td style="text-align: right;">0.32</td>
+</tr>
+<tr>
+<td>联合</td>
+<td style="text-align: right;">1601</td>
+<td style="text-align: right;">60.36</td>
+<td style="text-align: right;">57.08</td>
+<td style="text-align: right;">54.39</td>
+<td style="text-align: right;">2.69</td>
+</tr>
+<tr>
+<td>联合</td>
+<td style="text-align: right;">1602</td>
+<td style="text-align: right;">60.35</td>
+<td style="text-align: right;">56.19</td>
+<td style="text-align: right;">55.26</td>
+<td style="text-align: right;">0.93</td>
+</tr>
+<tr>
+<td>联合</td>
+<td style="text-align: right;">1603</td>
+<td style="text-align: right;">62.39</td>
+<td style="text-align: right;">58.12</td>
+<td style="text-align: right;">56.78</td>
+<td style="text-align: right;">1.35</td>
+</tr>
+<tr>
+<td>联合</td>
+<td style="text-align: right;">1604</td>
+<td style="text-align: right;">58.53</td>
+<td style="text-align: right;">55.45</td>
+<td style="text-align: right;">55.07</td>
+<td style="text-align: right;">0.37</td>
+</tr>
+</tbody>
+</table>
+<p>交换只动前240位乘客中原本分配到不同站的一对，保持各站最终人数不变。联合中的飞机仍根据改变后的状态作反应，并非固定飞机轨迹。联合平均减少1.3356，其中候机占用减少1.3289、地面占用减少0.0067分钟/人。因此不是主要靠更短的地面路程获益；但“候机减少”还不足以唯一归因到时间错配。</p>
+<p>对READY三出发站，三条顺序都没在24个提案中找到改善。<strong>这只否定“本次有限交换已证明READY也有明显整场缺口”，不证明READY最优。</strong> 后面要扩大的是具有明确目的的可行改善检查，不是另开十个网络。</p>
+<h2>四、局部决策透露了什么</h2>
+<p>所有候选从同一状态克隆，原动作分支须复现原轨迹。分别让之后继续原策略，或统一继续强READY规则。下面用240分钟窗口，每个新奖励控制方式各4模型×3顺序×18状态＝216个状态；不是216个训练种子。</p>
+<table>
+<thead>
+<tr>
+<th>控制/后续</th>
+<th style="text-align: right;">平均可减少的局部人分钟</th>
+<th style="text-align: right;">当前乘客</th>
+<th style="text-align: right;">其他已出现乘客</th>
+<th style="text-align: right;">后来才出现的乘客</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>联合／原策略</td>
+<td style="text-align: right;">183.85</td>
+<td style="text-align: right;">1.07</td>
+<td style="text-align: right;">19.97</td>
+<td style="text-align: right;">162.81</td>
+</tr>
+<tr>
+<td>联合／共同READY</td>
+<td style="text-align: right;">105.15</td>
+<td style="text-align: right;">4.37</td>
+<td style="text-align: right;">14.00</td>
+<td style="text-align: right;">86.79</td>
+</tr>
+<tr>
+<td>单侧／原策略</td>
+<td style="text-align: right;">284.04</td>
+<td style="text-align: right;">-9.90</td>
+<td style="text-align: right;">18.09</td>
+<td style="text-align: right;">275.85</td>
+</tr>
+<tr>
+<td>单侧／共同READY</td>
+<td style="text-align: right;">102.04</td>
+<td style="text-align: right;">-5.61</td>
+<td style="text-align: right;">18.22</td>
+<td style="text-align: right;">89.43</td>
+</tr>
+</tbody>
+</table>
+<p>负数表示那个对象反而多花时间。<strong>主要受益者往往不是正在选站的这个人，而是后来的人。</strong> 例如共同READY后续下，联合局部收益86.79/105.15约82.5%落在后来乘客；这是这组事后赢家的成本组成，不是“82.5%的总ATT损失来自未来信息”。窗口重叠、赢家选择与不同后续策略，均不允许把这些数相加成整场改善。</p>
+<p>在联合原策略后续下，单改乘客、固定当前飞机动作的局部收益为165.50人分钟；单改飞机、固定当前乘客动作是22.87；同时改两者超过较好单分量的额外收益为6.59。共同READY后续下，相应为87.24、20.63、4.43。<strong>目前更像应优先检查乘客分流及其后续影响，而不是先宣称必须发明更复杂的联合协作。</strong> 这些收益相互重叠，不能拆成可相加的因果百分比。</p>
+<p>三出发站READY自身也有局部事后改善，平均56人分钟，但其整场保人数交换收益为0。这正说明：<strong>局部Oracle有用，不等于线上一定有相同收益。</strong></p>
+<p>依据：<a href="evidence/局部候选分组.csv">局部候选分组</a>、<a href="evidence/局部候选逐模型.csv">逐模型分支</a>。</p>
+<h2>五、时间确实有信号，但要换一种提问</h2>
+<p>短窗口60分钟和长窗口240分钟的最优动作集合完全不相交：联合原后续38.4%、共同READY后续26.9%；单侧分别35.6%、25.0%。这是<strong>评价多远会影响动作好坏</strong>的证据，不能直接等同于“STIN压掉ETA造成退化”。</p>
+<p>“只看已承诺事件、删除后续新请求”的近似，与真实请求继续到来的事后标签也不一致：</p>
+<table>
+<thead>
+<tr>
+<th>后续策略</th>
+<th>控制</th>
+<th style="text-align: right;">120分钟最优集合完全不相交</th>
+<th style="text-align: right;">240分钟</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>原策略</td>
+<td>单侧</td>
+<td style="text-align: right;">44.4%</td>
+<td style="text-align: right;">45.8%</td>
+</tr>
+<tr>
+<td>原策略</td>
+<td>联合</td>
+<td style="text-align: right;">38.9%</td>
+<td style="text-align: right;">45.8%</td>
+</tr>
+<tr>
+<td>共同READY</td>
+<td>单侧</td>
+<td style="text-align: right;">33.3%</td>
+<td style="text-align: right;">38.9%</td>
+</tr>
+<tr>
+<td>共同READY</td>
+<td>联合</td>
+<td style="text-align: right;">27.8%</td>
+<td style="text-align: right;">26.4%</td>
+</tr>
+</tbody>
+</table>
+<p>每行每个窗口的抽样分母为72个状态（4模型×3顺序×6状态）。这不是预测准确率的完整评估；集合相交也不保证在线选到同一个好动作。</p>
+<p>把该近似每15次决策用于纠偏，完整回放的平均变化如下，负数才是改善：</p>
+<table>
+<thead>
+<tr>
+<th>控制/简化预测后续</th>
+<th style="text-align: right;">原RPT变化</th>
+<th style="text-align: right;">同等尾批处理后变化</th>
+<th style="text-align: right;">原RPT改善种子数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单侧／原后续或READY</td>
+<td style="text-align: right;">-0.73</td>
+<td style="text-align: right;">+0.08</td>
+<td style="text-align: right;">2/4</td>
+</tr>
+<tr>
+<td>联合／原后续</td>
+<td style="text-align: right;">+1.22</td>
+<td style="text-align: right;">+0.21</td>
+<td style="text-align: right;">2/4</td>
+</tr>
+<tr>
+<td>联合／READY</td>
+<td style="text-align: right;">+0.03</td>
+<td style="text-align: right;">-0.07</td>
+<td style="text-align: right;">2/4</td>
+</tr>
+</tbody>
+</table>
+<p>所以不能把这种近似生成的局部赢家，直接当可靠监督标签喂给世界模型或策略。更值得查的顺序是：<strong>标签看多远 → 后续到达怎样假设 → 正常阶段能否获得整场收益 → 普通模型能否学会。</strong></p>
+<h2>六、归因优先级，不编“原因贡献率”</h2>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>判断</th>
+<th>证据强度与边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>四座满批和尾部分流显著影响完成与截止指标</td>
+<td>同等事后处理重复可行；但不是在线方案，也不是严格单因素占比</td>
+</tr>
+<tr>
+<td>2</td>
+<td>当前模型的乘客分流存在非单纯地面距离的改善空间</td>
+<td>保人数交换几乎通过候机减少获益；强READY三站未复现整场额外空间</td>
+</tr>
+<tr>
+<td>3</td>
+<td>未来到达与评价窗口会改变动作排序</td>
+<td>同状态对照支持；真实未来标签只能作为离线诊断</td>
+</tr>
+<tr>
+<td>4</td>
+<td>联合动作的额外组合价值</td>
+<td>观察到但本次小于乘客单分量，不足以优先开新MARL</td>
+</tr>
+<tr>
+<td>未立住</td>
+<td>ETA遗漏是主要损失、简单Transformer原则上无法弥补</td>
+<td>本次不能证明；下一份训练报告也未给出这种强结论</td>
+</tr>
+</tbody>
+</table>
+<p>这不是文献新颖性排名。既有文献已讨论UAM时序与再平衡，不能写“现有研究普遍忽略时间”。参照历史报告<a href="../uam_system_gap_1h_20261101/02_文献与自己过去工作的核对.html">文献与自己工作的核对</a>，本轮不重新认证其中所有论文全文。</p>
+<h2>七、怎样接到下一轮</h2>
+<p>先用<strong>本次50M最终模型</strong>重做同等尾批、有限交换和候选窗口检查，尤其看普通Transformer。旧30M模型的诊断，不能直接当新模型已经证实的问题。下一轮额外记录“同一回放按0.99折扣或不折扣时，动作排序是否变化”，并区分500分钟训练截止后的成本；这不改变物理，只检查我们究竟在鼓励模型看多远。</p>
+<p>训练只负责无训练回答不了的那一问：<strong>普通网络在相同合法信息下，改变折扣范围并给予相同更长训练，能否学出更好的完整闭环决策？</strong> 它不是提前宣布新的AI贡献。</p>
+<p>流程来源、数据字典和11类误读检查见<a href="README.html">交付索引</a>。</p><footer>2026-11-02｜已分析与未执行设计严格区分；原始归档未改。</footer></body></html>

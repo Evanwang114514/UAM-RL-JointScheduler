@@ -1,0 +1,136 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>两组结果与下一步：先读这一页</title><style>body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;margin:auto;max-width:1100px;padding:28px 24px 70px;color:#20303b;line-height:1.8;background:#fff}h1{font-size:29px;line-height:1.4}h2{font-size:23px;margin-top:36px;border-bottom:1px solid #dbe2e7;padding-bottom:8px}h3{font-size:19px;margin-top:28px}a{color:#005a8d}table{border-collapse:collapse;width:100%;font-size:14px;display:block;overflow:auto;margin:20px 0}th,td{padding:10px 12px;border:1px solid #dbe2e7;vertical-align:top}th{background:#edf3f7;text-align:left}tr:nth-child(even){background:#f8fafb}pre{white-space:pre;overflow:auto;padding:16px;background:#f0f3f5;border:1px solid #dbe2e7;font-size:13px}code{font-family:Consolas,monospace}img{max-width:100%;height:auto;border:1px solid #e0e5e8}nav{font-size:14px;padding:12px 0;border-bottom:1px solid #dbe2e7}nav a{margin-right:18px}blockquote{border-left:3px solid #8297a5;margin-left:0;padding-left:18px}strong{color:#152633}footer{margin-top:40px;font-size:13px;color:#556874}</style></head><body><nav><a href="README.html">先看总结</a><a href="01_无训练诊断结果_哪些问题已经站住.html">诊断分析</a><a href="02_五千万训练结果_逐方法与稳定性.html">训练分析</a><a href="03_下一轮一小时诊断_简单设计.html">后续诊断</a><a href="04_下一轮十八小时训练_简单设计.html">18小时训练</a></nav><h1>两组结果与下一步：先读这一页</h1>
+<p>2026-11-02。四份正式报告＋两份单文件实验入口。报告状态：已分析；新实验状态：已设计、未运行。</p>
+<h2>最重要的结论</h2>
+<ol>
+<li>新增时间/凑批信息没有证明稳定增益，联合双信息的平均改善受一个差基座种子明显影响。</li>
+<li>普通Transformer与双信息LSTM接近；当前不能写“普通PPO＋Transformer无法解决”。</li>
+<li>后期未完成场次中，871/877在截止时只剩各站不足4人的队列、飞机空闲。不能把它们统一叫联合死锁。</li>
+<li>给强规则同样的事后尾批处理后，学习模型仍有差距；但强READY三站的有限整场交换未找到进一步改善，普遍交通缺口尚未立住。</li>
+<li>候选好坏随评价窗口和后续新请求而变化。下一轮先用最新模型复诊，再公平检验普通网络的折扣范围，不先加WM/MARL。</li>
+</ol>
+<h2>四份报告</h2>
+<ul>
+<li><a href="01_无训练诊断结果_哪些问题已经站住.html">1．无训练诊断分析</a>：系统空间、尾批、乘客分流与局部标签可靠性。</li>
+<li><a href="02_五千万训练结果_逐方法与稳定性.html">2．50M训练分析</a>：所有5方法×两控制×四种子，K2/K4补充、稳定性、真实速度。</li>
+<li><a href="03_下一轮一小时诊断_简单设计.html">3．下一轮一小时诊断</a>：最新40模型＋强规则，过程检查与不同结果分支。</li>
+<li><a href="04_下一轮十八小时训练_简单设计.html">4．下一轮18小时训练</a>：32格、76,677,120实际步；普通网络×折扣范围的配对验证。</li>
+</ul>
+<p>HTML版同名可直接打开。<a href="05_运行命令.html">上传/运行/打包/下载命令</a>单列，不算第五份研究报告。</p>
+<h2>两份实验代码</h2>
+<ul>
+<li><a href="../../diagnose_uam_50m_credit_1h_ONEFILE.py">一小时冻结策略诊断</a>：CPU最多2 worker，不训练、不改物理。</li>
+<li><a href="../../train_uam_credit_horizon_18h_ONEFILE.py">18小时训练</a>：一张明确指定GPU，逐格隔离、可续跑，保留实际重做预算。</li>
+<li><a href="../../analyze_uam_1h_50m_results_20261102.py">本次只读分析代码</a>：复算逐格评估、统计、速度与图，不加载模型。</li>
+</ul>
+<p>新代码在封存运行时外增加本轮控制逻辑，内嵌hash检查，不依赖另一个矩阵入口文件。原始数据、历史报告和冻结文件未修改。没有代连服务器、启动训练、加载真实checkpoint、安装依赖或清理文件。</p>
+<p>给GPT聊天版的入口：<a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/tree/main/analysis_reports/uam_1h_50m_review_20261102">GitHub报告与派生证据目录</a>、<a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_1h_50m_review_20261102/README.md">可直接读取的交付索引</a>。<a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/main/diagnose_uam_50m_credit_1h_ONEFILE.py">诊断代码</a>与<a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/main/train_uam_credit_horizon_18h_ONEFILE.py">训练代码</a>也同步到main；封存编码段很长，先读报告和后面的函数逻辑。原始大包和模型未在本轮公开上传，聊天版如需逐人/真实回放仍须用户提供原包，不能从这些公网摘要恢复模型。</p>
+<h2>来源与可追溯性</h2>
+<table>
+<thead>
+<tr>
+<th>输入包</th>
+<th style="text-align: right;">大小</th>
+<th>SHA-256</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>uam_gap_factors_48run_50m_v1_DATAONLY.tar.gz</td>
+<td style="text-align: right;">13,853,712字节</td>
+<td>67862746641e411c38a9237c323955ad469c84361b7ddd0cdff204492facdb1f</td>
+</tr>
+<tr>
+<td>uam_system_gap_1h_20261101_FIXED_DATAONLY.tar.gz</td>
+<td style="text-align: right;">10,561,628字节</td>
+<td>10f8476dacf533bb238f9765b8f36c3efabe21595e3ca582a3fcfa184db13d91</td>
+</tr>
+</tbody>
+</table>
+<p>本地原包：<code>E:/Study Files/github/UAM-predict/UAGMC-main/experiment_archives</code>。两包安全读取完整；展开路径检查拒绝越界、链接与重复成员；没有执行包内脚本或反序列化模型。分析读取了48格结果、逐检查点评估、曲线与插桩，以及诊断的汇总和原始候选状态。</p>
+<p>关键派生证据：<a href="evidence/分析复算.json">复算与来源</a>、<a href="evidence/分析校验.json">校验</a>、<a href="evidence/训练逐模型.csv">逐模型训练</a>、<a href="evidence/训练配对差_全部.csv">配对差</a>、<a href="evidence/诊断逐模型.csv">逐模型诊断</a>。CSV保留英文代码字段，含义如下。</p>
+<h2>只需记住这些词</h2>
+<table>
+<thead>
+<tr>
+<th>词</th>
+<th>人话与单位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RPT</td>
+<td>截止前所有已出现乘客累计耗时÷人数，分钟/人；不是最终全员ATT</td>
+</tr>
+<tr>
+<td>ATT</td>
+<td>所有人完成后的平均旅时；未全完成时空值，不补0</td>
+</tr>
+<tr>
+<td>Single/LQ</td>
+<td>乘客学习选站，飞机按最长队规则</td>
+</tr>
+<tr>
+<td>Joint/J3</td>
+<td>乘客与飞机都由该策略实现控制；不是HAPPO等算法认证</td>
+</tr>
+<tr>
+<td>seed</td>
+<td>一次独立训练的随机种子；一模型多次回放不增加训练样本数</td>
+</tr>
+<tr>
+<td>TIME/BATCH</td>
+<td>合法时间描述／四座人数余数；后者不是优化器batch_size</td>
+</tr>
+<tr>
+<td>L00/L10/L01/L11/T11</td>
+<td>不新增／只时间／只余数／两者都给LSTM／两者都给普通Transformer</td>
+</tr>
+<tr>
+<td>gamma</td>
+<td>折扣因子：较远成本相对现在成本的权重；不是新交通奖励项</td>
+</tr>
+<tr>
+<td>BASE/READY后续</td>
+<td>当前动作之后继续原策略／统一用强规则；当前动作仍按原控制接口执行</td>
+</tr>
+<tr>
+<td>COMMITTED</td>
+<td>这里特指删除未出现请求的近似分支，不是完整合法需求预测器</td>
+</tr>
+<tr>
+<td>REALIZED/Oracle</td>
+<td>真实后续请求继续出现的事后诊断；不允许输入在线策略</td>
+</tr>
+<tr>
+<td>人分钟</td>
+<td>局部总成本单位，不是分钟/人；窗口重叠的收益不可相加</td>
+</tr>
+<tr>
+<td>WM/MARL</td>
+<td>世界模型／多智能体强化学习；本轮不开发这类新方法</td>
+</tr>
+</tbody>
+</table>
+<p>分层：评估行嵌套于存档、请求顺序和训练模型；主要独立单位是训练种子。诊断状态也嵌套在策略和顺序内。缺失ATT代表删失，不是零。<code>final_area_before/after_300</code>只来自最终模型完整分钟记录，不与缺失中间轨迹混算。图的横轴是存档标签；例如1000000存档和1003520最终存档的更新次数分别480/490，不是完全相同的两个模型；训练预算以TRAIN_END的实际transitions计。</p>
+<h2>对旧报告的继承与纠偏</h2>
+<p>已回读本项目50M白话设计、前置大诊断说明，以及一小时诊断的文献/历史工作核对。保留“问题→可行改善→归因→选方法”的顺序；不把旧奖励严重失败、旧40机队结果或真实未来Oracle当新奖励模型的线上缺口。</p>
+<p>S/AC、WM/MARL、机场/座位/充电扩展都保留为历史或条件性选项，暂不作为本轮主线。决策时机、可撤回性、可用动作权限是下一轮诊断必须解释清楚的边界，不同时偷偷改动。</p>
+<h2>方法与完整性说明</h2>
+<p>使用academic-research-suite做分析/设计结构核对；实验设计、统计分析、EDA与科学绘图流程用于正确的配对、分层、缺失处理及真实曲线显示。现有Python3.11环境的NumPy2.4.6、pandas3.0.5、SciPy1.17.1、Matplotlib3.11.1完成只读统计；没有安装技能示例所列的其他运行环境。</p>
+<p>程序化数据能力检查和有界CSV概况保存在evidence；没有删异常点、挑坏状态或对确认顺序作全新测试声明。四训练种子的区间和探索检验功效有限，不给出“已证明等价”或伪造事前功效计算。</p>
+<p>11/11类误读已检查：</p>
+<ol>
+<li>不把单侧、联合与不同K混合，避免总体趋势掩盖分组反转。</li>
+<li>不由均值推每名乘客的收益。</li>
+<li>诊断抽样按既定早中晚位置，不只选失败状态。</li>
+<li>完成率可能受方法影响，不以只完成者筛选作主排名。</li>
+<li>所有比例给出状态/回放/种子分母。</li>
+<li>不把基座极差种子上的重测改善直接当普适机制；报告留一种子敏感性。</li>
+<li>未完成者保留，ATT空值不丢弃；RPT与完成率并列。</li>
+<li>所有方法和因子对比均保留，14项探索对比统一校正。</li>
+<li>这是看完数据后的探索分析；下一轮新种子对照才承担确认角色。</li>
+<li>事后搜索、局部窗口与不同后续策略不冒充单因素因果贡献率。</li>
+<li>时间顺序与反事实通过克隆核验，但分组相关性不写成唯一机制。</li>
+</ol>
+<p>流程软件来源（不是UAM科学证据）：Kassis, T., Agarwal, V., He, Y., Patel, D., &amp; Brueckner, A. M. (2026), <a href="https://arxiv.org/abs/2609.00065">Scientific Agent Skills: A Library of Procedural Knowledge for Research Agents</a>。本轮核对原始元数据，当前记录为2026-09-02修订；不把技能流程当作实验结论的外部验证。</p>
+<p>新实验的论文意义仍需后续结果与最近邻文献核对；本轮不宣称已经形成可稳定中ITSC的新颖性。</p><footer>2026-11-02｜已分析与未执行设计严格区分；原始归档未改。</footer></body></html>

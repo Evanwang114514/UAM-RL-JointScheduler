@@ -1,0 +1,51 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>上传、启动、结果下载</title><style>body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;margin:auto;max-width:1100px;padding:28px 24px 70px;color:#20303b;line-height:1.8;background:#fff}h1{font-size:29px;line-height:1.4}h2{font-size:23px;margin-top:36px;border-bottom:1px solid #dbe2e7;padding-bottom:8px}h3{font-size:19px;margin-top:28px}a{color:#005a8d}table{border-collapse:collapse;width:100%;font-size:14px;display:block;overflow:auto;margin:20px 0}th,td{padding:10px 12px;border:1px solid #dbe2e7;vertical-align:top}th{background:#edf3f7;text-align:left}tr:nth-child(even){background:#f8fafb}pre{white-space:pre;overflow:auto;padding:16px;background:#f0f3f5;border:1px solid #dbe2e7;font-size:13px}code{font-family:Consolas,monospace}img{max-width:100%;height:auto;border:1px solid #e0e5e8}nav{font-size:14px;padding:12px 0;border-bottom:1px solid #dbe2e7}nav a{margin-right:18px}blockquote{border-left:3px solid #8297a5;margin-left:0;padding-left:18px}strong{color:#152633}footer{margin-top:40px;font-size:13px;color:#556874}</style></head><body><nav><a href="README.html">先看总结</a><a href="01_无训练诊断结果_哪些问题已经站住.html">诊断分析</a><a href="02_五千万训练结果_逐方法与稳定性.html">训练分析</a><a href="03_下一轮一小时诊断_简单设计.html">后续诊断</a><a href="04_下一轮十八小时训练_简单设计.html">18小时训练</a></nav><h1>上传、启动、结果下载</h1>
+<p>两份入口均已写入本地项目。以下沿用本轮确认过的路径：Windows <code>E:\Study Files\github\UAM-predict\UAGMC-main</code>；服务器 <code>/home/SY/uam/UAGMC-main</code>。不是实时登录核验；如你实际已迁移项目，应统一替换路径。Windows CMD和服务器Linux分开粘贴，不能混用。</p>
+<h2>1．本地Windows CMD上传</h2>
+<pre><code class="language-cmd">cd /d &quot;E:\Study Files\github\UAM-predict\UAGMC-main&quot;
+scp -O -P 10111 &quot;diagnose_uam_50m_credit_1h_ONEFILE.py&quot; &quot;train_uam_credit_horizon_18h_ONEFILE.py&quot; SY@22.tcp.vip.cpolar.cn:/home/SY/uam/UAGMC-main/
+ssh -p 10111 SY@22.tcp.vip.cpolar.cn
+</code></pre>
+<h2>2．服务器Linux：先跑约一小时的无训练诊断</h2>
+<p>按共享服务器要求，先看下面两项，确认没有别人重度使用再启动。无需另跑smoke。</p>
+<pre><code class="language-bash">cd /home/SY/uam/UAGMC-main
+top -b -n 1
+nvidia-smi
+mkdir -p /home/SY/wyw/logs
+nohup env OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 /home/SY/wyw/conda/envs/uam_server/bin/python -B -u /home/SY/uam/UAGMC-main/diagnose_uam_50m_credit_1h_ONEFILE.py --source /home/SY/uam/UAGMC-main/serial_runs/uam_gap_factors_48run_50m_v1 --out /home/SY/uam/UAGMC-main/workspace/artifacts/uam_50m_credit_diag_1h_20261102_v1 --wall-seconds 3600 --workers 2 --resume --retry-failed &gt;&gt; /home/SY/wyw/logs/uam_50m_credit_diag_1h.log 2&gt;&amp;1 &lt; /dev/null &amp;
+echo &quot;诊断PID：$!&quot;
+</code></pre>
+<p>读取进度：</p>
+<pre><code class="language-bash">tail -n 25 /home/SY/wyw/logs/uam_50m_credit_diag_1h.log
+cat /home/SY/uam/UAGMC-main/workspace/artifacts/uam_50m_credit_diag_1h_20261102_v1/progress.json
+</code></pre>
+<h2>3．服务器Linux：再启动18小时训练</h2>
+<p>建议诊断完成后先看<code>SESSION_END.json</code>、<code>TRAINING_ADVICE.json</code>和两份CSV。如果诊断否定了正常阶段的研究空间，可以暂不启动；下面不会自动跟随诊断运行。<strong>这轮训练是普通基线的目标范围校准，不是新方法擂台。</strong></p>
+<pre><code class="language-bash">cd /home/SY/uam/UAGMC-main
+top -b -n 1
+nvidia-smi
+nohup env CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 /home/SY/wyw/conda/envs/uam_server/bin/python -B -u /home/SY/uam/UAGMC-main/train_uam_credit_horizon_18h_ONEFILE.py --resume --retry-failed --device cuda --eval-device cpu --wall-hours 18 &gt;&gt; /home/SY/wyw/logs/uam_credit_horizon18h.log 2&gt;&amp;1 &lt; /dev/null &amp;
+echo &quot;训练PID：$!&quot;
+</code></pre>
+<pre><code class="language-bash">tail -n 25 /home/SY/wyw/logs/uam_credit_horizon18h.log
+cat /home/SY/uam/UAGMC-main/serial_runs/uam_credit_horizon_32run_18h_v1/progress.json
+cat /home/SY/uam/UAGMC-main/serial_runs/uam_credit_horizon_32run_18h_v1/RUNNING.json
+</code></pre>
+<p>重复启动同一实验会被父进程锁拒绝；不要开两个相同入口。训练中断或时间预算结束后，同代码同命令<code>--resume</code>可续跑，这是新的一次会话预算。创建自己实验目录里的<code>STOP_REQUESTED</code>可请求停止；不要对共享账号执行pkill/killall。</p>
+<h2>4．完成后服务器自动打包；需要时补打训练包</h2>
+<p>诊断正常结束或预算截止会自动在本轮输出目录打DATAONLY包。训练会自动在<code>experiment_archives</code>生成DATAONLY；全部32格完整完成后另生成最终模型＋归一化包。</p>
+<p>若需要在训练退出后重新打包已有结果：</p>
+<pre><code class="language-bash">cd /home/SY/uam/UAGMC-main
+/home/SY/wyw/conda/envs/uam_server/bin/python -B -u /home/SY/uam/UAGMC-main/train_uam_credit_horizon_18h_ONEFILE.py --phase pack --resume
+</code></pre>
+<p>这条只压已有记录，不训练。PARTIAL包不冒充完整结果，未全完成时不会声称已有全套最终回放模型。</p>
+<h2>5．本地Windows CMD下载到项目experiment_archives</h2>
+<p>在Windows另开CMD，或先<code>exit</code>退出SSH再执行：</p>
+<pre><code class="language-cmd">cd /d &quot;E:\Study Files\github\UAM-predict\UAGMC-main&quot;
+if not exist &quot;experiment_archives&quot; mkdir &quot;experiment_archives&quot;
+scp -O -P 10111 SY@22.tcp.vip.cpolar.cn:/home/SY/uam/UAGMC-main/workspace/artifacts/uam_50m_credit_diag_1h_20261102_v1/uam_50m_credit_diag_1h_20261102_v1_DATAONLY.tar.gz &quot;experiment_archives\uam_50m_credit_diag_1h_20261102_v1_DATAONLY.tar.gz&quot;
+scp -O -P 10111 SY@22.tcp.vip.cpolar.cn:/home/SY/uam/UAGMC-main/experiment_archives/uam_credit_horizon_32run_18h_v1_DATAONLY.tar.gz &quot;experiment_archives\uam_credit_horizon_32run_18h_v1_DATAONLY.tar.gz&quot;
+</code></pre>
+<p>全部完成且需要再次回放时，再下载模型包：</p>
+<pre><code class="language-cmd">scp -O -P 10111 SY@22.tcp.vip.cpolar.cn:/home/SY/uam/UAGMC-main/experiment_archives/uam_credit_horizon_32run_18h_v1_FINAL_REPLAY_MODELS.tar.gz &quot;experiment_archives\uam_credit_horizon_32run_18h_v1_FINAL_REPLAY_MODELS.tar.gz&quot;
+</code></pre>
+<p>确切本地存放目录：<code>E:\Study Files\github\UAM-predict\UAGMC-main\experiment_archives</code>。这些是将来运行后才生成的包，本次没有伪称它们已经存在。</p><footer>2026-11-02｜已分析与未执行设计严格区分；原始归档未改。</footer></body></html>
