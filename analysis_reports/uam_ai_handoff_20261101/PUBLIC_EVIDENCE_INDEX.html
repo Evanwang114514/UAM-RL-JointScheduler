@@ -1,0 +1,459 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PUBLIC_EVIDENCE_INDEX</title><style>body{font:16px/1.8 'Microsoft YaHei',system-ui,sans-serif;color:#213547;background:#f7f9fc;margin:0}main{max-width:1140px;margin:30px auto;padding:38px;background:white}h1{font-size:30px}h2{margin-top:44px;border-bottom:2px solid #d6e3f0;padding-bottom:8px}h3{margin-top:28px}table{border-collapse:collapse;width:100%;font-size:14px;display:block;overflow-x:auto}td,th{border:1px solid #d8e0e8;padding:9px 12px;vertical-align:top}th{background:#edf4fa;text-align:left}tr:nth-child(even){background:#f8fafc}a{color:#125ea3}code{overflow-wrap:anywhere;background:#f0f3f7;padding:2px 4px}pre{overflow-x:auto;background:#f0f3f7;padding:16px}blockquote{border-left:4px solid #7da6cd;padding:8px 18px;background:#eff6fc}@media print{main{margin:0;padding:10px}body{background:white}h2,h3{break-after:avoid}tr{break-inside:avoid}}</style></head><body><main><h1 id="gptuam2026-11-01">GPT聊天版：UAM代码与数据入口（2026-11-01）</h1>
+<p>先读总报告，不要从旧文献报告恢复已经暂存的S/AC/WM模型竞赛。当前任务是50M归因结果，不是追加训练。</p>
+<h2 id="1">1．推荐阅读顺序</h2>
+<ol>
+<li><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/AI_HANDOFF_UAM_20261101.md">AI交接总报告（纯文本）</a>；重点第0/1/8/9节。</li>
+<li><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/claim_ledger.csv">20条结论状态账本</a>；区分事实、假说、负结果和未知。</li>
+<li><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/experiment_inventory.csv">全部训练与诊断清单</a>；8条训练系列＋9条诊断记录，不是17项独立训练。</li>
+<li><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/sources.json">来源与内容SHA256</a>、<a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/model_inventory.json">权重库存边界</a>。</li>
+<li><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/UAM_HANDOFF_EVIDENCE_20261101.zip">轻量派生证据ZIP下载</a>。</li>
+</ol>
+<p>ZIP包含本次报告、原样历史自写报告、逐模型/配对/曲线CSV、诊断成本表和代码快照；不含原始DATAONLY合集、权重、Conda、外部论文全文。不能仅凭ZIP重新运行策略。GPT若不能解压或抓取二进制，直接读下面的单文件raw链接；也可由用户上传ZIP。</p>
+<h2 id="2">2．实验代码：固定版本优先</h2>
+<p>下面根目录脚本固定在本次交接前的main commit <code>42109a01575aeeb1a5cf62514ef4c77e0d89d2be</code>。只读；执行旧模型仍应对照当轮归档代码/hash，不能把最新main自动替换进旧运行。</p>
+<table>
+<thead>
+<tr>
+<th>实验</th>
+<th>脚本（GitHub查看）</th>
+<th>原始文本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T00</td>
+<td><a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_source_K234_5methods_4seeds_60m_ONEFILE.py">train_uam_source_K234_5methods_4seeds_60m_ONEFILE.py</a></td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_source_K234_5methods_4seeds_60m_ONEFILE.py">raw</a></td>
+</tr>
+<tr>
+<td>RULES</td>
+<td><a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/run_uam_source_K234_SPF_STTF_QTTI_ONEFILE.py">run_uam_source_K234_SPF_STTF_QTTI_ONEFILE.py</a></td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/run_uam_source_K234_SPF_STTF_QTTI_ONEFILE.py">raw</a></td>
+</tr>
+<tr>
+<td>T01</td>
+<td><a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_strictE1_LQ_fleet40m_methods60m_ONEFILE.py">train_uam_strictE1_LQ_fleet40m_methods60m_ONEFILE.py</a></td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_strictE1_LQ_fleet40m_methods60m_ONEFILE.py">raw</a></td>
+</tr>
+<tr>
+<td>T02</td>
+<td><a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_E01_full5_4seeds_120m_ONEFILE.py">train_uam_E01_full5_4seeds_120m_ONEFILE.py</a></td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_E01_full5_4seeds_120m_ONEFILE.py">raw</a></td>
+</tr>
+<tr>
+<td>T04</td>
+<td><a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_UAGMC_minfix_240m_ONEFILE.py">train_uam_UAGMC_minfix_240m_ONEFILE.py</a></td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_UAGMC_minfix_240m_ONEFILE.py">raw</a></td>
+</tr>
+<tr>
+<td>T05</td>
+<td><a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_E01_S_AC_198m_ONEFILE.py">train_uam_E01_S_AC_198m_ONEFILE.py</a></td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_E01_S_AC_198m_ONEFILE.py">raw</a></td>
+</tr>
+<tr>
+<td>T06</td>
+<td><a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_E1_reward_charge_attribution_30m_ONEFILE.py">train_uam_E1_reward_charge_attribution_30m_ONEFILE.py</a></td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_E1_reward_charge_attribution_30m_ONEFILE.py">raw</a></td>
+</tr>
+<tr>
+<td>T07</td>
+<td><a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_gap_factors_50m_ONEFILE.py">train_uam_gap_factors_50m_ONEFILE.py</a></td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/train_uam_gap_factors_50m_ONEFILE.py">raw</a></td>
+</tr>
+<tr>
+<td>N05/N06</td>
+<td><a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/diagnose_uam_gap_notrain_ONEFILE.py">diagnose_uam_gap_notrain_ONEFILE.py</a></td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/42109a01575aeeb1a5cf62514ef4c77e0d89d2be/diagnose_uam_gap_notrain_ONEFILE.py">raw</a></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/code_snapshots/diagnose_uam_large_notrain_20261101_ONEFILE.py">N09实际运行v2诊断代码</a>，SHA256 <code>c47d3980fab1abc68d73e97f26da62b28192c528c89f34d948b47d812dd6950f</code>。</li>
+<li><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/code_snapshots/N08_strict_replay_archived_run.py">N08严格E1分支回放归档入口</a>：取自其代码与结果包的code/run.py，可能依赖原归档工作目录，勿当自足新矩阵直接启动。</li>
+<li><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/code_snapshots/diagnose_uam_eval_replay_ONEFILE.py">N04评估效率当前解释入口</a>、<a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/code_snapshots/run_uam_future_oracle_bounded.py">N02 Oracle当前解释入口</a>：未在本轮认证它们与当时执行全文逐字一致。</li>
+<li><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/code_snapshots/train_uam_E01_share_ac_diagnosis_48m_ONEFILE.py">48M当前解释用脚本</a>：未获得旧执行全文/hash认证，不能冒称原运行逐字版。</li>
+</ul>
+<p>本轮不修改这些训练脚本，不启动/停止服务器任务，不新增实验。50M代码本地已核SHA为<code>f9a8e8b0998cc74a37f6aaa7fae99a21c29e712e9cc32f21507eeba65ef2e077</code>，服务器未在本轮现场比对。</p>
+<h2 id="3">3．可以直接读取的证据表</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>文件</th>
+<th style="text-align: right;">CSV数据行数</th>
+<th>支持的报告</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D01</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/240m/model_results.csv">data/240m/model_results.csv</a></td>
+<td style="text-align: right;">468</td>
+<td>S08</td>
+</tr>
+<tr>
+<td>D02</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/240m/paired_effects.csv">data/240m/paired_effects.csv</a></td>
+<td style="text-align: right;">540</td>
+<td>S08</td>
+</tr>
+<tr>
+<td>D03</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/240m/rule_results.csv">data/240m/rule_results.csv</a></td>
+<td style="text-align: right;">33</td>
+<td>S08</td>
+</tr>
+<tr>
+<td>D04</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/240m/audit.json">data/240m/audit.json</a></td>
+<td style="text-align: right;">JSON</td>
+<td>S08</td>
+</tr>
+<tr>
+<td>D05</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/240m/learning_curves.csv">data/240m/learning_curves.csv</a></td>
+<td style="text-align: right;">7956</td>
+<td>S08</td>
+</tr>
+<tr>
+<td>D06</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/30m/model_results.csv">data/30m/model_results.csv</a></td>
+<td style="text-align: right;">28</td>
+<td>S15</td>
+</tr>
+<tr>
+<td>D07</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/30m/paired_effects.csv">data/30m/paired_effects.csv</a></td>
+<td style="text-align: right;">38</td>
+<td>S15</td>
+</tr>
+<tr>
+<td>D08</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/30m/rules.csv">data/30m/rules.csv</a></td>
+<td style="text-align: right;">18</td>
+<td>S15</td>
+</tr>
+<tr>
+<td>D09</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/30m/frozen_reward_pairs.csv">data/30m/frozen_reward_pairs.csv</a></td>
+<td style="text-align: right;">20</td>
+<td>S15</td>
+</tr>
+<tr>
+<td>D10</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/30m/audit.json">data/30m/audit.json</a></td>
+<td style="text-align: right;">JSON</td>
+<td>S15</td>
+</tr>
+<tr>
+<td>D11</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/30m/learning_curves.csv">data/30m/learning_curves.csv</a></td>
+<td style="text-align: right;">588</td>
+<td>S15</td>
+</tr>
+<tr>
+<td>D12</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/large_notrain/baseline_episodes.csv">data/large_notrain/baseline_episodes.csv</a></td>
+<td style="text-align: right;">528</td>
+<td>S16</td>
+</tr>
+<tr>
+<td>D13</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/large_notrain/rule_paired_effects.csv">data/large_notrain/rule_paired_effects.csv</a></td>
+<td style="text-align: right;">160</td>
+<td>S16</td>
+</tr>
+<tr>
+<td>D14</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/large_notrain/intervention_pairs.csv">data/large_notrain/intervention_pairs.csv</a></td>
+<td style="text-align: right;">120</td>
+<td>S16</td>
+</tr>
+<tr>
+<td>D15</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/large_notrain/tail_cases.csv">data/large_notrain/tail_cases.csv</a></td>
+<td style="text-align: right;">180</td>
+<td>S16</td>
+</tr>
+<tr>
+<td>D16</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/large_notrain/branch_costs.csv">data/large_notrain/branch_costs.csv</a></td>
+<td style="text-align: right;">3240</td>
+<td>S16</td>
+</tr>
+<tr>
+<td>D17</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/large_notrain/summary.json">data/large_notrain/summary.json</a></td>
+<td style="text-align: right;">JSON</td>
+<td>S16</td>
+</tr>
+<tr>
+<td>D18</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/literature/faculty_audit_544.csv">data/literature/faculty_audit_544.csv</a></td>
+<td style="text-align: right;">544</td>
+<td>L01,L02</td>
+</tr>
+<tr>
+<td>D19</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/literature/thu_papers_66.json">data/literature/thu_papers_66.json</a></td>
+<td style="text-align: right;">JSON</td>
+<td>L01</td>
+</tr>
+<tr>
+<td>D20</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/literature/traffic_papers.csv">data/literature/traffic_papers.csv</a></td>
+<td style="text-align: right;">83</td>
+<td>L03,L05</td>
+</tr>
+<tr>
+<td>D21</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/literature/ai_papers.csv">data/literature/ai_papers.csv</a></td>
+<td style="text-align: right;">93</td>
+<td>L04,L05</td>
+</tr>
+<tr>
+<td>D22</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/strict_replay/branch_costs.csv">data/strict_replay/branch_costs.csv</a></td>
+<td style="text-align: right;">3888</td>
+<td>S14</td>
+</tr>
+<tr>
+<td>D23</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/strict_replay/model_results.csv">data/strict_replay/model_results.csv</a></td>
+<td style="text-align: right;">12</td>
+<td>S14</td>
+</tr>
+<tr>
+<td>D24</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/data/strict_replay/states.csv">data/strict_replay/states.csv</a></td>
+<td style="text-align: right;">432</td>
+<td>S14</td>
+</tr>
+</tbody>
+</table>
+<p>主表先按训练模型聚合；不要把分支行、eval seed、checkpoint或同OD重排当独立训练seed。CSV保持原报告数值，本轮只复制索引，没有重算或改写原数。</p>
+<h2 id="4">4．历史报告（旧建议不自动生效）</h2>
+<table>
+<thead>
+<tr>
+<th>来源ID</th>
+<th>原报告</th>
+<th>阅读/版本边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S01</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S01_strict100.md">严格E1一亿步_E0与解析基线对照_20261021</a></td>
+<td>已读取主要结果；本轮未重训或重算全部原始记录</td>
+</tr>
+<tr>
+<td>S02</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S02_source_audit.md">论文与官方源码核验_关键入口错误</a></td>
+<td>核对关键入口、固定源版本和复现边界</td>
+</tr>
+<tr>
+<td>S03</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S03_120m48m_summary.md">00_两轮补分析_核心结论与下一步_20261028</a></td>
+<td>核心结论全文复读</td>
+</tr>
+<tr>
+<td>S04</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S04_120m.md">01_120M完整五方法_结果与联合服务失配分析_20261028</a></td>
+<td>本轮重读核心章节；未重复整轮分析</td>
+</tr>
+<tr>
+<td>S05</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S05_48m.md">02_48M_Shared_AC_配对诊断与机制验证_20261028</a></td>
+<td>本轮重读方法与核心证据；执行代码未封存问题保留</td>
+</tr>
+<tr>
+<td>S06</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S06_method_review.md">自严格E1一亿以来_按方法逐环境机场seed重审_20261029</a></td>
+<td>重读覆盖和核心结论；逐seed附表作为原报告保留</td>
+</tr>
+<tr>
+<td>S07</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S07_old_ledger.md">研究结论与数据证据总账_20261028</a></td>
+<td>历史账本，不覆盖更新的奖励归因结论</td>
+</tr>
+<tr>
+<td>S08</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S08_240m.md">01_240M系统分析_先看结论再看方法</a></td>
+<td>核心证据重读；配套逐模型、规则、配对CSV公开</td>
+</tr>
+<tr>
+<td>S09</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S09_240m_old_followup.md">02_后续无训练诊断与条件性训练</a></td>
+<td>旧建议仅保留，不自动恢复为当前任务</td>
+</tr>
+<tr>
+<td>S10</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S10_eval_efficiency.md">诊断包分析与1500万步铺路_20261030</a></td>
+<td>评估耗时和完成情况核心证据</td>
+</tr>
+<tr>
+<td>S11</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S11_gap_notrain.md">01_无训练诊断_明确结果与尚未解决的问题</a></td>
+<td>已有记录诊断与未完成分支的边界</td>
+</tr>
+<tr>
+<td>S12</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S12_trace_oracle.md">E01_Trace与Oracle_系统分析_20261024</a></td>
+<td>读取核心结果；Oracle不作为合法在线基线</td>
+</tr>
+<tr>
+<td>S13</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S13_temporal_screen.md">无训练短诊断_结论与下一步</a></td>
+<td>人工trace短筛，不将标记直接称交通损失</td>
+</tr>
+<tr>
+<td>S14</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S14_strict_replay.md">无训练诊断_结论与证据</a></td>
+<td>旧SOURCE模型分支；不推广为PT已验证</td>
+</tr>
+<tr>
+<td>S15</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S15_30m.md">01_30M归因分析_结论与证据</a></td>
+<td>关键奖励转折；原CSV与多顺序统计隔离</td>
+</tr>
+<tr>
+<td>S16</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S16_large_notrain.md">01_大规模无训练诊断_结果与竞争解释</a></td>
+<td>最新N09主要分析及竞争解释</td>
+</tr>
+<tr>
+<td>S17</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S17_50m_design.md">02_五千万训练设计_时间与批服务归因</a></td>
+<td>当前固定设计；没有新增运行或修改</td>
+</tr>
+<tr>
+<td>S18</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/S18_198m_design.md">05_近期2亿步_198run固定实施方案</a></td>
+<td>设计不是最终结果；本地缺最终包</td>
+</tr>
+<tr>
+<td>L01</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/L01_thu_search.md">01_扩展教师与文献完整搜索报告</a></td>
+<td>历史检索报告；本轮不刷新人员、文献或引文</td>
+</tr>
+<tr>
+<td>L02</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/L02_thu_people.md">02_查找过的全部教师_544条记录</a></td>
+<td>544条覆盖记录不等于544名去重教师</td>
+</tr>
+<tr>
+<td>L03</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/L03_traffic_literature.md">01_交通UAM文献与研究缺口_完整版</a></td>
+<td>保留检索层级；不是全部全文精读</td>
+</tr>
+<tr>
+<td>L04</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/L04_ai_literature.md">02_AI前沿与四篇研究路线_完整版</a></td>
+<td>历史How工具箱，不自动启动新模型</td>
+</tr>
+<tr>
+<td>L05</td>
+<td><a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/evidence_reports/L05_literature_scope.md">研究范围与进度</a></td>
+<td>文献数量、阅读层级和会议版缺全文限制</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5">5．原始包在哪里：本地/服务器地址不是公网</h2>
+<p>下列原始tar.gz<strong>本轮没有上传GitHub，公开URL为空</strong>。本轮公开的是派生证据ZIP和以上单文件CSV/JSON/报告。要审核更细的原始事件或重放模型，由用户从下面本地目录上传对应原包；不要说已从GitHub读取了这些原包。</p>
+<p>本地统一目录：<code>E:\Study Files\github\UAM-predict\UAGMC-main\experiment_archives</code>。服务器历史项目：<code>/home/SY/uam/UAGMC-main</code>，常见归档目录<code>experiment_archives</code>。本轮未连接服务器，不认证路径当前存在。</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>原始文件名</th>
+<th style="text-align: right;">本地字节数</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T00</td>
+<td><code>uam_source_K234_5methods_4seeds_60m_v1_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">22016376</td>
+<td>完整/已分析</td>
+</tr>
+<tr>
+<td>T01</td>
+<td><code>uam_strictE1_LQ_fleet40m_methods60m_v1_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">71687699</td>
+<td>完整/已分析</td>
+</tr>
+<tr>
+<td>T02</td>
+<td><code>uam_E01_full5_4seeds_120m_v1_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">38734217</td>
+<td>完整/已分析</td>
+</tr>
+<tr>
+<td>T03</td>
+<td><code>uam_E01_share_ac_diagnosis_48m_v1_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">11751873</td>
+<td>完整/已分析；热启动</td>
+</tr>
+<tr>
+<td>T04</td>
+<td><code>uam_UAGMC_minfix_240m_v1_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">77633149</td>
+<td>完整/已分析</td>
+</tr>
+<tr>
+<td>T05</td>
+<td><code>uam_E01_S_AC_198m_v1_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">尚未收到</td>
+<td>最终包未收到；最后明确到191启动</td>
+</tr>
+<tr>
+<td>T06</td>
+<td><code>uam_E1_reward_charge_28run_30m_v1_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">7530860</td>
+<td>完整/已分析</td>
+</tr>
+<tr>
+<td>T07</td>
+<td><code>uam_gap_factors_48run_50m_v1_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">尚未收到</td>
+<td>用户16:48快照19训19评；第20格进行中</td>
+</tr>
+<tr>
+<td>N02</td>
+<td><code>uam_E01_trace_oracle_20261024_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">1981190</td>
+<td>完成/已分析</td>
+</tr>
+<tr>
+<td>N04</td>
+<td><code>uam_eval_diag_20261030_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">528575</td>
+<td>完成/已分析</td>
+</tr>
+<tr>
+<td>N05</td>
+<td><code>uam_gap_notrain_20261030_local_16725_28016_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">1505763</td>
+<td>已有记录重复分析</td>
+</tr>
+<tr>
+<td>N06</td>
+<td><code>uam_gap_notrain_20261031_full_v2_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">4088727</td>
+<td>部分分支失败，报告保留边界</td>
+</tr>
+<tr>
+<td>N09</td>
+<td><code>uam_large_notrain_20261101_DATAONLY.tar.gz</code></td>
+<td style="text-align: right;">18077066</td>
+<td>v2完成/已分析</td>
+</tr>
+</tbody>
+</table>
+<p>N09服务器历史原包位于：<code>workspace/artifacts/uam_large_notrain_20261101_server_v1/uam_large_notrain_20261101_DATAONLY.tar.gz</code>。N09/30M/240M最关键派生表已在第3节公开，可据此阅读交接结论；它们不等价于完整原包。</p>
+<p>严格E1回放必须用本地带<code>VERIFIED</code>的943,124,945字节包；无VERIFIED的427,556,864字节包是截断遗留。48M当时权重库存为0，198M最终包未收到；不因缺包重训。</p>
+<h2 id="6">6．接手限制</h2>
+<p>优先复核当前50M的最终包（尚未收到），按TIME×BATCH及普通Transformer预设对照分析。不要恢复完整S/AC、WM/MARL、调场景等暂存路线；不要将旧SOURCE巨大联合损失当正确目标后的可用headroom；不要从时序输入为零直接声称时序是性能主因。用户自行执行Windows CMD上传和服务器命令，AI不代连。</p>
+<p>本目录是追加交接，不覆盖旧原报告/实验，GitHub main可变化；需要固定引用时在本次交接提交的commit下打开同一路径。</p></main></body></html>

@@ -1,0 +1,34 @@
+[
+  {
+    "name": "uam_strictE1_LQ_fleet40m_methods60m_v1_REPLAY_MODELS_20261031_VERIFIED.tar.gz",
+    "local": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\experiment_archives\\uam_strictE1_LQ_fleet40m_methods60m_v1_REPLAY_MODELS_20261031_VERIFIED.tar.gz",
+    "bytes": 943124945,
+    "sha256": "f94383c22ce38454fc142992f640498e3c948dbea531b5d0f8cadabc1c1968b0",
+    "status": "本轮此前已重算hash并匹配服务器公布值；可用包",
+    "public_url": "NOT_PUBLISHED"
+  },
+  {
+    "name": "uam_strictE1_LQ_fleet40m_methods60m_v1_REPLAY_MODELS_20261031.tar.gz",
+    "local": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\experiment_archives\\uam_strictE1_LQ_fleet40m_methods60m_v1_REPLAY_MODELS_20261031.tar.gz",
+    "bytes": 427556864,
+    "sha256": null,
+    "status": "截断下载遗留；禁止用于回放",
+    "public_url": "NOT_PUBLISHED"
+  },
+  {
+    "name": "uam_E1_reward_charge_28run_30m_v1_FINAL_MODELS_20261101.tar.gz",
+    "local": null,
+    "bytes": null,
+    "sha256": null,
+    "status": "服务器N09历史输入成功；当前本地未见，非本轮远程核验",
+    "public_url": "NOT_PUBLISHED"
+  },
+  {
+    "name": "uam_gap_factors_48run_50m_v1_FINAL_REPLAY_MODELS.tar.gz",
+    "local": null,
+    "bytes": null,
+    "sha256": null,
+    "status": "当前代码完整结束后计划自动生成；尚未收到，不声称存在",
+    "public_url": "NOT_PUBLISHED"
+  }
+]

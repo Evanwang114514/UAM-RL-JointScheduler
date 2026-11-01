@@ -1,0 +1,73 @@
+{
+  "archive": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\experiment_archives\\uam_E1_reward_charge_28run_30m_v1_DATAONLY.tar.gz",
+  "bytes": 7530860,
+  "sha256": "26459ff6396bdcf2bc5a905d98331a8195b5a39c960fc8b998a557bbab61a266",
+  "safe_member_count": 1753,
+  "extensions": {
+    ".json": 1552,
+    ".csv": 60,
+    ".md": 1,
+    ".py": 50,
+    ".log": 90
+  },
+  "entrypoint_sha256": "1704d488d59658a69a76032c980b3462658b742b68396f7994d630252f993e76",
+  "trace_sha256": "1fa07ac9c9ebe00c6b400d76a815c8333ad46272ccbec12b461e03bc36f67632",
+  "models": 28,
+  "curve_points": 588,
+  "episode_counts": {
+    "FROZEN_LQ": 40,
+    "POLICY": 1176,
+    "RULE": 36
+  },
+  "initial_groups": 10,
+  "initial_pairing_passed": true,
+  "max_ledger_errors": {
+    "telescope": 0.0,
+    "rpt_area": 1.4551915228366852e-11,
+    "applied_reward": 0.0,
+    "completion": 0.0,
+    "unfinished": 0.0,
+    "decision_source_reward": 3.383320290595293e-10,
+    "decision_applied_reward": 3.346940502524376e-10,
+    "decision_unfinished_before": 0.0,
+    "decision_unfinished_after": 0.0
+  },
+  "numeric_issues": [],
+  "new_training_transitions": 0,
+  "ppo": {
+    "n_envs": 5,
+    "n_steps": 4096,
+    "batch_size": 512,
+    "n_epochs": 10,
+    "learning_rate": 0.0005,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_range": 0.25,
+    "ent_coef": 0.01,
+    "vf_coef": 0.5,
+    "max_grad_norm": 0.5
+  },
+  "same_code": true,
+  "source_commit": "83317ea21f13526c15e951545af9bf1b500b9a13",
+  "end": {
+    "status": "COMPLETE",
+    "progress": {
+      "total": 28,
+      "trained": 28,
+      "evaluated": 28,
+      "failed_cells": 0,
+      "planned_actual_budget": 28098560,
+      "budget_cap": 30000000,
+      "rules_completed": 3,
+      "rules_total": 3,
+      "failed_rules": 0,
+      "completed_training_transitions": 28098560,
+      "measured_training_work": 28098560,
+      "interrupted_unlogged_upper_bound": 0,
+      "time": "2026-10-31T19:13:39+0800"
+    },
+    "time": "2026-10-31T19:13:39+0800",
+    "note": "未自动筛选新方法；K2/K4仅一个训练seed"
+  },
+  "note": "本分析按原始UTF-8数据、数值、SHA与代码合同复核，不修写原件；不以终端显示编码判断文件损坏"
+}

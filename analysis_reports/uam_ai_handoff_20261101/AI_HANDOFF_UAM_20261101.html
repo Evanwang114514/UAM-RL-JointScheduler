@@ -1,0 +1,960 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI_HANDOFF_UAM_20261101</title><style>body{font:16px/1.8 'Microsoft YaHei',system-ui,sans-serif;color:#213547;background:#f7f9fc;margin:0}main{max-width:1140px;margin:30px auto;padding:38px;background:white}h1{font-size:30px}h2{margin-top:44px;border-bottom:2px solid #d6e3f0;padding-bottom:8px}h3{margin-top:28px}table{border-collapse:collapse;width:100%;font-size:14px;display:block;overflow-x:auto}td,th{border:1px solid #d8e0e8;padding:9px 12px;vertical-align:top}th{background:#edf4fa;text-align:left}tr:nth-child(even){background:#f8fafc}a{color:#125ea3}code{overflow-wrap:anywhere;background:#f0f3f7;padding:2px 4px}pre{overflow-x:auto;background:#f0f3f7;padding:16px}blockquote{border-left:4px solid #7da6cd;padding:8px 18px;background:#eff6fc}@media print{main{margin:0;padding:10px}body{background:white}h2,h3{break-after:avoid}tr{break-inside:avoid}}</style></head><body><main><h1 id="uamaie1">UAM研究项目AI接手报告：严格E1一亿步以来的证据、路线取舍与当前任务</h1>
+<p>版本：2026-11-01。面向下一位AI；目标投稿ITSC 2027，不承诺录用。<strong>先读第0、1、8、9节，再按需查其他节。</strong></p>
+<p>公网入口：<a href="https://github.com/Evanwang114514/UAM-RL-JointScheduler/blob/main/analysis_reports/uam_ai_handoff_20261101/PUBLIC_EVIDENCE_INDEX.md">代码与数据地址索引</a> · <a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/PUBLIC_EVIDENCE_INDEX.md">索引纯文本</a> · <a href="https://raw.githubusercontent.com/Evanwang114514/UAM-RL-JointScheduler/main/analysis_reports/uam_ai_handoff_20261101/UAM_HANDOFF_EVIDENCE_20261101.zip">轻量派生证据包</a>。原始DATAONLY与模型归档未因此公开，见第11节及索引。</p>
+<h2 id="material-passport">Material Passport</h2>
+<ul>
+<li>Origin Skill：academic-research-suite / experiment-agent，采用证据核查与交接规范，不运行实验。</li>
+<li>Origin Mode：validate / synthesis；Verification Status：ANALYZED，而非本次重新训练或重放后的VERIFIED。</li>
+<li>主要材料：已完成实验的本地数据分析报告、归档清单、已核对的脚本，以及本对话用户提供的运行日志。</li>
+<li>状态时间：50M累计完成数取用户提供的<strong>2026-11-01 16:48:26 +08:00</strong>快照；第20格步数取<strong>16:54:07</strong>记录。不是实时服务器状态。</li>
+<li>本报告不修改物理、奖励、PPO、历史数据或训练入口，不连接服务器，不启动或停止实验。</li>
+<li>“事实”仅指指定代码/样本中的事实；描述性重复不等于普遍因果或新颖性证明。旧报告与本报告冲突时，以更晚且有直接数据支持的收窄判断为准，原报告仍保留。</li>
+</ul>
+<h2 id="0ai">0．给接手AI的一页执行摘要</h2>
+<ol>
+<li><strong>当前目标不是找到一个更低Best的模型，而是：证明剩余gap存在→对主要竞争解释排序→再选具体方法。</strong> 时序仍值得关注，但不锁死“已承诺”“时间错配”“S/AC”这几个词。</li>
+<li>起点是<code>uam_strictE1_LQ_fleet40m_methods60m_v1</code>，实际100,352,000步。文件名中的<code>fleet40m</code>是40M机队扫描预算，<strong>不是这一轮固定40架</strong>。主方法部分是12架、四座满批、源码风格LSTM。</li>
+<li>本系列必须区分两种目标：SOURCE每分钟惩罚已完成乘客的平均旅时；PT_POST惩罚已生成未完成乘客的人时。早期40架/gamma1的Stage-II又是另一合同，不能混排。</li>
+<li>严格E1源UAGMC并非普遍崩溃。K2/K3原单侧平台相当稳定；“加生命周期→UAGMC一定输解析→S/AC修好”没有得到证明。</li>
+<li>120M/240M等旧SOURCE联合模型确有<strong>受限执行器内的整批服务停摆</strong>。它不是Python卡死，也不只是1–3人凑不满；但这不证明现实UAM必然死锁。</li>
+<li><strong>30M奖励归因是目前最重要的转折。</strong> K3 Joint最终RPT由156.45降到58.42，完成率68.00%→98.67%，4/4训练seed改善；旧巨大Joint损失不能继续作为新时序网络的收益空间。</li>
+<li>奖励不解释全部问题；改奖励同时改变幅度、时序和归一化/优化路径，且K4只有一个训练seed、PT仍有阻塞个例。不能写成“漏罚未完成者是唯一根因”。</li>
+<li>原时间输入缺失是实测事实，<strong>不是STIN压缩掉原本非零ETA的证据</strong>。补充电输入、就绪描述符、时间差坐标都没有普遍成功。</li>
+<li>最新大无训练诊断覆盖88个旧模型；PT K3五顺序RPT：Single61.48、Joint61.01、READY56.97。还有差距，但量级和旧奖励崩溃不同，而且尚未普遍全完成。</li>
+<li>最新SYSTEM“清掉未揭示请求、只传播已知系统”的全程修正没有稳定收益；离线最佳候选有收益，不等于这种合法近似已经能选对动作。<strong>现在不直接训练SYSTEM候选Q、WM或MARL。</strong></li>
+<li>当前唯一已授权的新矩阵是50M归因：48run、计划48,168,960步；核心为S/J各自TIME×BATCH四臂，再加同信息普通Transformer。最近确认19训/19评/0失败，第20格约49%；<strong>尚无性能结论</strong>。</li>
+<li>偏离主线的旧路线明确暂存：不继续扩张完整S/AC、辅助头、WM/MARL模型族、环境难度或机场/座位扫描。保留成果、代码和负结果，不删除，也不默认重启。详见第9节。</li>
+</ol>
+<p>下一步顺序：只读确认50M运行状态→取得完成包→核对合同/完整性→按预设对照分析→决定还有哪个无训练无法识别的问题值得训练。<strong>不要自行另开新矩阵。</strong></p>
+<h2 id="1">1．研究任务、用户判断及不可退回的方向</h2>
+<h3 id="11">1.1 当前问题是什么</h3>
+<p>研究on-demand UAM中乘客出发机场选择与飞机空返优先级的闭环决策。目标仍是服务所有已生成乘客并降低其旅时，而不是队列均匀、机场均匀利用或奖励曲线漂亮。PPO只是优化器；闭环、调机、充电、Transformer、动作中心也不是天然创新。</p>
+<p>导师给出的“响应式→预测式”是方向线索，不是已证实的必要性。用户希望最终能形成：</p>
+<p><strong>识别可重复的协调损失 → 把损失转成合法可学习/可计算的候选代价 → 选择适合这种输出的AI → 用错误类型及真实成本对照验证。</strong></p>
+<p>当前只完成了这条链的部分前端证据，远没有证明完整方法闭环成立。不能为了交论文宣称已有交通文献“普遍忽略”某个仅在本源码中发现的缺陷。</p>
+<h3 id="12">1.2 用户七点意见的当前落地</h3>
+<table>
+<thead>
+<tr>
+<th>讨论点</th>
+<th>接手时应保留的判断</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UAGMC已证明AI能超过解析</td>
+<td>它能超过若干原作者规则，不等于本扩展环境中超过更强READY/滚动优化；不能反过来要求扩展一定使解析更差。</td>
+</tr>
+<tr>
+<td>单侧也可作论文，但飞机侧怎样交代</td>
+<td>Single+明确公开LQ是可解释系统结构；须报告飞机后端、权限和强规则替换。不为避免“太简单”而发明新飞机规则或强推Joint。</td>
+</tr>
+<tr>
+<td>时间必须从trace立住</td>
+<td>先检查真实到达/充电/服务就绪与输入；不能从一条疑似重复补机直接推导总体可避免损失。</td>
+</tr>
+<tr>
+<td>S/AC只是How备选</td>
+<td>已解除必选主线地位。WM/MARL也只有条件性资格；目前不是已选方法。</td>
+</tr>
+<tr>
+<td>论文和源码有差异</td>
+<td>以固定公开源码快照和已复现数据作为明确的源风格参照，不冒充论文所有版本和主表完整忠实复现。</td>
+</tr>
+<tr>
+<td>“不稳定”主要指结论不稳</td>
+<td>区分数值/实现错误、跨seed平台差异、同run回退、删失及场景条件反转；不笼统称数据垃圾。</td>
+</tr>
+<tr>
+<td>交通缺口要超越修UAGMC</td>
+<td>需要强在线规则之后仍有值得研究的损失；最近邻文献边界与可部署方法价值都还要证明。</td>
+</tr>
+</tbody>
+</table>
+<p>“一次选到契合方法”是希望减少无结构试错，不是可保证的一次训练成功。不能通过改需求、机队、机场位置、座位、reward权重或指标来帮预设方法过关。</p>
+<h2 id="2">2．命名、合同与读数：这是最容易接错的地方</h2>
+<h3 id="21">2.1 三套合同严格隔离</h3>
+<table>
+<thead>
+<tr>
+<th>合同家族</th>
+<th>环境/训练要点</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>更早Stage-II V2</td>
+<td>40架、旧S1/S2/S3、generated-unfinished修正奖励、gamma1、10×2048、batch4096等</td>
+<td>历史证据；不作为本系列的同协议比较。</td>
+</tr>
+<tr>
+<td>近期源合同：60M/严格100M/120M/48M/240M/198M</td>
+<td>E0源自动补机；严格E1固定12架；SOURCE奖励；5×4096、batch512、epochs10、gamma.99、GAE.95、clip.25、entropy.01；500训练/600评估</td>
+<td>本报告大部分旧训练证据。</td>
+</tr>
+<tr>
+<td>30M与当前50M派生</td>
+<td>维持近期物理和PPO；30M显式比较SOURCE/PT_POST；50M全部PT_POST</td>
+<td>目标归因与正确目标下剩余信息价值；不隐式修正旧数据。</td>
+</tr>
+</tbody>
+</table>
+<p>49个完整rollout×20,480＝<strong>1,003,520步/run</strong>。新训练长度必须有自己的完整LR schedule，不能拿旧长训中间checkpoint冒充同预算新训练。</p>
+<p>近期E1的生命周期是载客抵达V2→充满→空返候选站→按目的站充电率充满→IDLE→再次满四座服务。没有在这组严格E1里悄悄加入早期S3的有限pad/充电位/新周转约束。</p>
+<p>K是候选出发站数量，另有共同目的站V2。原坐标V0=(0,0)、V1=(10,10)、V2=(54,54)，K3新增V3=(0,10)，K4新增V4=(10,0)。N12初始配机K2=9/3、K3=7/3/2、K4=6/2/2/2。因此K并非纯动作维数因素：同时变了资源空间分布、批次分裂和返航反馈。<strong>不支持机场越多必然越差的单调因果。</strong></p>
+<h3 id="22">2.2 指标和独立样本</h3>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>正确含义</th>
+<th>不能怎样用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全体ATT/AWT</td>
+<td>全体生成乘客最终服务完毕时才有完整值；源终点为航空到达</td>
+<td>未全完成时保持null/NaN，不补造未建模的目的地末段地面。</td>
+</tr>
+<tr>
+<td>CO-ATT</td>
+<td>已完成乘客平均旅时</td>
+<td>不同完成率/乘客构成下不能作为全体服务冠军；不能与RPT混读。</td>
+</tr>
+<tr>
+<td>RPT600</td>
+<td>固定截断边界内未完成人数面积/生成数；日志可能计到601</td>
+<td>不是无限时域最终ATT，也不是数学最优regret。时钟边界保持归档原样。</td>
+</tr>
+<tr>
+<td>Best</td>
+<td>同一个run先对同checkpoint回放平均，再挑最低点</td>
+<td>不从所有seed挑最低一个；不能单独作为稳定或最终测试成绩。</td>
+</tr>
+<tr>
+<td>Late/Final</td>
+<td>固定窗口/最终点；不同报告4点与5点窗口要注明</td>
+<td>不把两个窗口、CO和RPT、不同LR horizon合成一条曲线。</td>
+</tr>
+<tr>
+<td>独立复制</td>
+<td>训练seed及其训练需求实现，若适用</td>
+<td>eval123/124、检查点、分支状态、窗口、同OD重排都不能伪增训练n。</td>
+</tr>
+</tbody>
+</table>
+<p>原CSV已反复用于开发；4201–4204已被诊断和设计使用，不能再称untouched final test。4301–4304是当前50M代码固定后的条件顺序确认bank，<strong>仍不是新的需求分布</strong>。</p>
+<h3 id="23">2.3 源代码与论文基线</h3>
+<p>固定作者源码commit：<code>83317ea21f13526c15e951545af9bf1b500b9a13</code>。历史审计内嵌51个文件与其Git对象一致；本地根目录定制文件与隔离作者副本不能混淆。</p>
+<p>当前<code>UAGMC_SOURCE_L</code>为真实接通源LSTM的适配，不等于论文Attention主版本UAGMC-A，也不能宣称已排除所有普通Transformer基线。旧SPF标签对应<code>methods/minimum_distance.py</code>，实含等待项；纯距离入口、Native QTTI与作者适配QTTI不是同一实现。</p>
+<p>参考基线必须分层：作者函数SPF/STTF/QTTI；增强合法READY+LQ/相同J3权限规则；源RL及同信息同控制普通网络；必要时合法滚动优化。它们不是数学下界，也没有一个可不经同合同复现就直接认领的“公认UAM SOTA”。</p>
+<h2 id="3">3．训练实验总账：哪些完整、哪些尚缺包</h2>
+<p>本报告的“一亿起点”明确指严格E1机队40M＋方法60M，不是9月NextGen100.2M、40架Stage-II或10月更早two_tracks/3d的同名一亿。为对照向前纳入E0 60M。</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>实验目录简称</th>
+<th style="text-align: right;">实际计划步数</th>
+<th>运行/分析状态</th>
+<th>当前角色</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>T00</td>
+<td>uam_source_K234_5methods_4seeds_60m_v1</td>
+<td style="text-align: right;">60,211,200</td>
+<td>60run完整，已分析</td>
+<td>E0源锚点，不新增训练。</td>
+</tr>
+<tr>
+<td>T01</td>
+<td>uam_strictE1_LQ_fleet40m_methods60m_v1</td>
+<td style="text-align: right;">100,352,000</td>
+<td>100run完整：P1 40＋P2 60，已分析</td>
+<td>生命周期与机队校准的起点。</td>
+</tr>
+<tr>
+<td>T02</td>
+<td>uam_E01_full5_4seeds_120m_v1</td>
+<td style="text-align: right;">120,422,400</td>
+<td>120训/120评/0失败，已分析</td>
+<td>完整结构负结果、旧SOURCE联合服务失配。</td>
+</tr>
+<tr>
+<td>T03</td>
+<td>uam_E01_share_ac_diagnosis_48m_v1</td>
+<td style="text-align: right;">48,168,960</td>
+<td>48训/48评/0失败，已分析</td>
+<td>冻结预选源checkpoint的残差2×2；不是从零。</td>
+</tr>
+<tr>
+<td>T04</td>
+<td>uam_UAGMC_minfix_240m_v1</td>
+<td style="text-align: right;">234,823,680</td>
+<td>234训/234评/0失败，最终包已分析</td>
+<td>六小修与独立否证确认，主要路线暂存。</td>
+</tr>
+<tr>
+<td>T05</td>
+<td>uam_E01_S_AC_198m_v1</td>
+<td style="text-align: right;">198,696,960</td>
+<td>有部分诊断；用户10/31最后明确到第191格启动。<strong>本地未见最终DATAONLY</strong></td>
+<td>不宣称198/198完成、不补造最终效果、不默认重跑。</td>
+</tr>
+<tr>
+<td>T06</td>
+<td>uam_E1_reward_charge_28run_30m_v1</td>
+<td style="text-align: right;">28,098,560</td>
+<td>28训/28评/0失败，已分析</td>
+<td>SOURCE/PT奖励×控制归因，当前关键转折。</td>
+</tr>
+<tr>
+<td>T07</td>
+<td>uam_gap_factors_48run_50m_v1</td>
+<td style="text-align: right;">48,168,960（上限50M）</td>
+<td>最近用户快照19训/19评/0失败，第20格进行中</td>
+<td>当前唯一在推进的新增归因矩阵；成绩未分析。</td>
+</tr>
+</tbody>
+</table>
+<p>T00–T04及T06这些已完整归档主系列共590条训练运行记录，计划完成转移592,076,800；<strong>不是全项目总算力，也不是590个独立从零实验</strong>，其中48M继承旧权重，中断上界另存，未把T05/T07计划预算算成已完成。</p>
+<p>前序A150、CM150、H150、HAPPO（文件名132而有180条记录）、21×7、two_tracks、3d、旧500M及70/80M等仅作前史档案。它们不同物理/reward/协议，暂不扩分析或复跑；原始文件仍在experiment_archives索引中。别把文件名预算/格数当执行认证。</p>
+<h2 id="4">4．每批训练留下的有效认识</h2>
+<h3 id="41-t00t01">4.1 T00/T01：源模型并非必败；物理等待确实增加</h3>
+<p>下面是旧报告末期五点<strong>CO-ATT</strong>，n=4，非完整全体ATT；±为跨训练seed SD。</p>
+<table>
+<thead>
+<tr>
+<th>严格E1单侧方法</th>
+<th>K2</th>
+<th>K3</th>
+<th>K4</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UAGMC_SOURCE_L</td>
+<td>51.85±1.42</td>
+<td>61.60±2.12</td>
+<td>69.51±5.48</td>
+<td>保留强源风格参照。</td>
+</tr>
+<tr>
+<td>UAGMC_OD_FOCAL</td>
+<td>53.04±2.01</td>
+<td>63.16±1.22</td>
+<td>73.79±2.67</td>
+<td>额外OD不普遍带来收益；不能把OD捷径包装成新机制。</td>
+</tr>
+<tr>
+<td>S_EFFECT_EVENT</td>
+<td>55.72±3.41</td>
+<td>64.80±7.01</td>
+<td>75.05±6.99</td>
+<td>没有普遍胜源；旧S还漏了部分返航供给。</td>
+</tr>
+<tr>
+<td>AC_ICM</td>
+<td>68.78±19.37</td>
+<td>75.04±15.88</td>
+<td>77.19±5.04</td>
+<td>跨seed或较差平台问题，不能用“分类学会”当价值证据。</td>
+</tr>
+<tr>
+<td>SA_EFFECT_ICM</td>
+<td>54.40±1.77</td>
+<td>61.69±3.19</td>
+<td>79.28±2.70</td>
+<td>K3小信号，其他K不一致。</td>
+</tr>
+</tbody>
+</table>
+<p>原版K2纳入同配置P1 N12补充后有8seed、8/8胜当时已测三作者规则；但加入READY后结论必须收窄。机队扫描8→12→16架CO约131.20→53.98→32.58；20架以后边际改善趋缓。N12是相对那组三规则的校准工作点，不是为UAGMC失效挑的机队；不再调机队讲故事。</p>
+<p>新增主要差值出现在等待而非飞行。就绪紧张、更多站点分走初始飞机、满四座批次分裂、仅V2返航都属于竞争解释；不能把所有等待叫可避免协调损失。</p>
+<h3 id="42-t02-120mfullco">4.2 T02 120M：FULL也没稳健胜强规则；低CO掩盖未服务</h3>
+<p>五组合：<code>SINGLE_EVENTGRAPH_FULL</code>、<code>SINGLE_EVENTQ_FULL</code>、<code>J3_MATCHED_BASE</code>、<code>J3_TDM_EVENT_FULL</code>、<code>J3_ICM_AC_FULL</code>。E0所有组合实际仍Single，只有E1后三者是J3。没有把同一个方法同时LQ/J3全交叉，所以跨组合差异不是纯控制因果。</p>
+<ul>
+<li>Graph/EventQ在E1多数是稳定但比源模型差；不是所有负结果都因训练乱跳。</li>
+<li>E1 K3 ICM Best CO40.09，对应仅40.5%完成；平台完成率63.9%。不能称服务提升。</li>
+<li>最后72次联合确定性回放67次有整批积压；48次单侧没有整批积压。后来认证停摆充分条件更严格，两个计数不能当同一个事件。</li>
+<li>Ready-LQ在原顺序的CO约50.28/53.69/58.48，RPT50.28/55.36/61.81；它明显强于只列作者三规则的参照，须保留同控制和trace边界。</li>
+</ul>
+<h3 id="43-t03-48m">4.3 T03 48M：热启动/残差贡献必须扣除</h3>
+<p>E0/E1×K234×四臂×两个新seed801/802；继承源601/602各自已看过曲线的Best。R00基础残差、R10_SHARED_READY、R01_AC_UPDATE、R11_SHARED_AC全为Single+LQ。</p>
+<ul>
+<li>初始最大概率差4.47e-8，支持接入时保真；不保证随后不会退化。</li>
+<li>E1 K3源Best锚点58.35；R00 Best51.73；R01 Best49.60。AC净增量约2.13，而不是把对源的8.75全算给AC；同时R01 Best完成率97.33%，不能只看这个低值。</li>
+<li>Shared相对R00在K3 Best差0.55、平台差1.58；组合交互正负不一。</li>
+<li>即时辅助更新KL约5.63e-6，PPO约5e-3；<strong>不支持本冻结小残差配置下普遍巨大的即时aux破坏</strong>，不推广为所有大模型无梯度冲突。</li>
+<li>n=2且源点经过选择，不作为从零同总预算冠军证据；48M归档未封存入口全文/hash，当前脚本仅用于解释，不能冒称逐字执行版本已核对。</li>
+</ul>
+<h3 id="44-t04-240m">4.4 T04 240M：逐小修保留负结果，不能再称冠军筛选</h3>
+<p>216 MAIN＋18 CONFIRM，实际234,823,680步；完整15912次回放，摘要复算0差异。<strong>全部仍SOURCE奖励</strong>，不是修正目标后的方法结论。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>有效信息</th>
+<th>当前处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M0_BASE</td>
+<td>E1 Single晚期RPT跨seed CV约2.1%–2.7%；Joint显著差</td>
+<td>作为历史源参照，不将旧reward失败扩成RL普遍失败。</td>
+</tr>
+<tr>
+<td>M1_READY</td>
+<td>近似已承诺最早就绪，MAIN联合更差；K4确认反而改善</td>
+<td>结论方向未复现；暂不追加同类训练。</td>
+</tr>
+<tr>
+<td>M2_EFFECT_SLACK</td>
+<td>就绪−乘客到站时间坐标；部分优于M1但不稳胜M0</td>
+<td>时间对齐未立住，Best不能代替服务。</td>
+</tr>
+<tr>
+<td>M3_INVERSE</td>
+<td>逆动力学辅助；多数Joint终点更差</td>
+<td>暂停扩大；逆分类准确率不是严格因果可控性。</td>
+</tr>
+<tr>
+<td>M4_PROJECTED</td>
+<td>K3 Joint四seed对M0/M3服务均改善；K2/K4不复制</td>
+<td>只保留窄线索，无独立确认、仍SOURCE且未胜READY，不继续开投影矩阵。</td>
+</tr>
+<tr>
+<td>M5_VALUE_AUX</td>
+<td>场景正负反转；没有完整规划WM</td>
+<td>暂存，不据此宣布WM无效或再开WM族。</td>
+</tr>
+</tbody>
+</table>
+<p>M0最终RPT/完成率：K2 Single55.02/99.17%、Joint112.65/80.33%；K3 63.15/98.50% vs176.41/66.67%；K4 72.95/98.17% vs160.17/70.50%。</p>
+<p>K3 M4最终RPT85.92、完成89.83%，优于M0 176.41/66.67%，但仍差于同控制READY58.37/98.67%；不能把90分钟的旧目标修补增量当新交通突破。</p>
+<p>没有候选通过原晋级门槛，18run是预设M1/M2否证复核，不是“胜者独立确认”。81个联合模型有50个Best→Final CO上升但RPT和完成率改善，这类曲线不是全体服务回退。</p>
+<h3 id="45-t05-198m">4.5 T05 198M：知道设计，不代表拿到了完整结果</h3>
+<p>九条件：E0 K234 Single＋E1 K234×LQ/J3；六臂<code>R_SOURCE / R_SHARED / R00_NOALIGN / R10_S / R01_AC / R11_SAC</code>。K3 E1每臂每控制6seed，其余3；162主run＋36固定确认。</p>
+<p>这里AC是<strong>显式候选影响差分的确定性组织</strong>，不是ICM辅助loss；全部无ICM/WM辅助优化。增强五臂同信息；普通R00也能见候选锚点，因此在检验归纳偏置，不证明普通模型不能表达。</p>
+<p>本地只有部分诊断/设计，未见最终DATAONLY。末次用户完整日志到10/31第191格启动；“后来GPU空闲”不能替代END证明。以后只需补结果归档并分析与当前问题相关的对照，<strong>不因本轮缺包而重训198M，也不继续扩大S/AC</strong>。</p>
+<h3 id="46-t06-30m">4.6 T06 30M：奖励×控制的关键定位</h3>
+<p>K3六臂×四新seed1601–1604＝24run；K2/K4各SOURCE/PT Joint×单seed1605＝4run，总28,098,560步，完整完成。CHARGE只修本站平均/最短充电两个槽，不等于240M M1/M2。</p>
+<table>
+<thead>
+<tr>
+<th>K3组（原CSV，Final，两eval先模型内平均）</th>
+<th>RPT均值±SD</th>
+<th>完成率</th>
+<th>认证受限阻塞回放</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S_SRC_RAW</td>
+<td>67.29±1.39</td>
+<td>98.00%</td>
+<td>0/8</td>
+</tr>
+<tr>
+<td>S_PT_RAW</td>
+<td>57.56±3.38</td>
+<td>98.83%</td>
+<td>0/8</td>
+</tr>
+<tr>
+<td>J_SRC_RAW</td>
+<td>156.45±75.76</td>
+<td>68.00%</td>
+<td>8/8</td>
+</tr>
+<tr>
+<td>J_PT_RAW</td>
+<td>58.42±1.26</td>
+<td>98.67%</td>
+<td>0/8</td>
+</tr>
+<tr>
+<td>J_SRC_CHARGE</td>
+<td>183.00±87.42</td>
+<td>61.83%</td>
+<td>8/8</td>
+</tr>
+<tr>
+<td>J_PT_CHARGE</td>
+<td>69.37±15.10</td>
+<td>95.83%</td>
+<td>1/8</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Joint SOURCE→PT四seed改善，平均RPT减少98.03；Single减少9.72。SOURCE的J−S约89.17，PT约0.86；不能继续说Joint必然比Single更糟。</li>
+<li>冻结SOURCE Joint改LQ，实际服务改善但SOURCE折扣回报四seed都更低，提供明确的<strong>替代策略间目标排序冲突</strong>。</li>
+<li>PT补CHARGE四seed最终都更差；时间输入不是必然收益。</li>
+<li>K4单seed PT仍1/2回放认证阻塞；不能宣布奖励根治全部规模。</li>
+<li>改奖励同时改变语义/幅度/分布/VecNormalize和优化轨迹；gamma.99且训练500/评估600，不能称严格未折扣ATT等价，也不能唯一归因漏罚未完成者。</li>
+</ul>
+<h2 id="5">5．无训练诊断总账：复用不算新训练，计划不算执行</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>材料/诊断</th>
+<th>已得到的有效信息</th>
+<th>边界/是否继续</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>N01</td>
+<td>尾批延时/官方源码审计，10/20–21</td>
+<td>延长时限不能解决所有满座尾批；源文件、规则映射、源码与论文版本差异可追溯</td>
+<td>不改主时钟或把有限边界ATT补造出来。</td>
+</tr>
+<tr>
+<td>N02</td>
+<td>Trace＋future_oracle_bounded，10/24包</td>
+<td>12/12离线Oracle找到300人全完成；固定机队重分配和满批缺机状态重要</td>
+<td>复用T00/T01；720提案不是720独立样本；真未来不是在线输入。</td>
+</tr>
+<tr>
+<td>N03</td>
+<td>48M附带12探针/144状态/更新KL</td>
+<td>时间槽为零、初始保真、即时aux冲击量级</td>
+<td>小型诊断并入T03，不另记训练。</td>
+</tr>
+<tr>
+<td>N04</td>
+<td>eval_diag_20261030</td>
+<td>333cell/19496旧回放＋10新回放；10/10复评一致；5组S/J耗时接近</td>
+<td>不支持J评估时间数量级爆炸。</td>
+</tr>
+<tr>
+<td>N05</td>
+<td>gap_notrain records，本地多个随机名输出</td>
+<td>汇总已有归档、质量检查</td>
+<td>多个目录是重复读取，不是多次新训练/独立实验证据。</td>
+</tr>
+<tr>
+<td>N06</td>
+<td>gap_notrain_20261031_full_v2</td>
+<td>42475旧回放、695曲线、850明细；240M六任务分支通过，198M六任务分支因接口错误未完成</td>
+<td>198M基线可补核，缺失分支不能补造；旧15min无差异不证明无价值。</td>
+</tr>
+<tr>
+<td>N07</td>
+<td>新奖励Joint单条人工trace＋24回放短筛</td>
+<td>疑似重复补机可见，但冻成LQ后标记减少而服务更差</td>
+<td>标记不等于错误或可避免成本；16状态补分支当时只是计划，不另算已执行。</td>
+</tr>
+<tr>
+<td>N08</td>
+<td>严格E1既有模型gap-replay，11/01</td>
+<td>12源模型24次正式复评一致；432状态/1296候选分支；离线完整方案</td>
+<td>SOURCE Single旧模型，不能直接推广PT/Joint。</td>
+</tr>
+<tr>
+<td>N09</td>
+<td>large_notrain_20261101，服务器v2</td>
+<td>88模型、528模型回放、160规则/替换、120全程干预、1080状态×3窗口</td>
+<td>最新主要诊断；详细结果见下一节。</td>
+</tr>
+</tbody>
+</table>
+<p>10/30原评估包的19496/19496条记录均止于601；源Scenario固定terminated=False，按时间截断，即使全部完成也不自动提前结束。5组J相对Single回放耗时约−0.14%到+4.79%，<strong>服务停摆不等于仿真分钟无限延长</strong>。未完成者可能增加每分钟扫描，但该样本没有评估爆炸。</p>
+<p>“检测零星卡死后直接提前结束”尚未作为新主合同上线。任意早停会改变RPT边界及尾部责任，不能只为提速丢掉未完成等待。可以将来做等价工程提速，但与研究方法收益分开。</p>
+<h3 id="51">5.1 停摆的严格含义</h3>
+<p>需求已结束；未完成者都在站内；12架全空闲在候选站；V2无可返飞机；某站至少四人却没机；有机站都不足四人；执行器只允许V2→候选站空返。例：240M K3 s1101，V0 1人/4架、V1 3人/8架、V3 96人/0架，完成200/300。</p>
+<p>在该动作集合内无后续可自行服务的转移，不是现实永久无解。增加横向调机属于权限反事实，不能只给新方法偷偷加入；规则能从episode起点避开它，不代表规则能从已锁死终态救援。</p>
+<h3 id="52">5.2 小规模决策诊断留下什么</h3>
+<p>N08随机层288状态有141个存在更好120min候选，67个状态中每个系统最优都让当前乘客更差，36个60→120min最优集合严格翻转。15min大多打平与20分钟量级飞行有关，不是网络失败。候选成本是固定后续策略和窗口的局部比较，不能跨状态求和成全局regret。</p>
+<p>真未来离线搜索相对<strong>已修尾批的READY</strong>仅找到约0.57–1.85分钟的额外改善（原CSV单初始化），不是全局headroom上限，也不证明线上可学到；先把强规则和尾批放回参照，不能用旧源到Oracle的全部差距论证新AI必要。</p>
+<h2 id="6n09">6．最新N09大诊断：当前最有价值的新证据</h2>
+<p>归档：<code>uam_large_notrain_20261101_DATAONLY.tar.gz</code>，18,077,066字节，SHA256 <code>19434fe6744be50a8e9ab7eda54dcb5801e86c43fea7f21cd6ceba9f97db098f</code>。</p>
+<p>输入strict P2五方法×K234×4seed＝60模型，以及30M 28模型；均为最终1,003,520步。每模型原顺序eval123/124＋order4201–4204各eval123，共528。</p>
+<h3 id="61">6.1 可信范围与克隆修复</h3>
+<ul>
+<li>只用<code>dispatch_rebind_v2_20261101</code>及<code>branches_v2/intervene_v2/tail_v2</code>；v1因dispatch绑定方法deepcopy仍指向旧wrapper，报“克隆参考成本不等于原轨迹”。旧目录和FAILURE.json只作审计，不进结果。</li>
+<li>修复重新绑定clone的dispatch所有者；每原动作分支须成本一致。随后全部完成。</li>
+<li>本轮分析独立从原ledger积分核对3240/3240窗口，差异0；各候选total=focal+existing+future也成立。归档声明权重未更新、训练0步；不是本次又重跑了88模型。</li>
+<li>1080状态，三个窗口60/120/240；不是3240个独立状态。20个深入模型：strict源12＋PT K3 S/J各4；3顺序×每模型18分层状态＝54。</li>
+</ul>
+<h3 id="62">6.2 正确目标后的实际差距</h3>
+<p>下表均为<strong>五顺序eval123先模型内平均，再跨四训练seed</strong>。与T06只用原CSV两eval的数字不同不是改数据，不能直接拼接。</p>
+<table>
+<thead>
+<tr>
+<th>K3组</th>
+<th>RPT均值±SD</th>
+<th>平均完成率</th>
+<th>全完成episode比例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S_SRC_RAW</td>
+<td>66.18±2.96</td>
+<td>98.53%</td>
+<td>0%</td>
+</tr>
+<tr>
+<td>S_PT_RAW</td>
+<td>61.48±2.05</td>
+<td>98.53%</td>
+<td>5%</td>
+</tr>
+<tr>
+<td>J_SRC_RAW</td>
+<td>150.05±91.19</td>
+<td>70.73%</td>
+<td>5%</td>
+</tr>
+<tr>
+<td>J_PT_RAW</td>
+<td>61.01±2.26</td>
+<td>98.80%</td>
+<td>20%</td>
+</tr>
+<tr>
+<td>J_PT_CHARGE</td>
+<td>66.34±6.21</td>
+<td>97.47%</td>
+<td>10%</td>
+</tr>
+<tr>
+<td>READY固定在线规则＋LQ</td>
+<td>56.97</td>
+<td>98.93%</td>
+<td>20%</td>
+</tr>
+</tbody>
+</table>
+<p>PT Joint比该READY差4.04，Single差4.51；READY回放的相同结果重复出现在各模型名下，不是四个规则训练seed。这里READY在J模型下也使用LQ空气侧；不要误写成此前独立READY_QUEUE_JOINT。</p>
+<p>PT Joint固定乘客checkpoint换LQ，RPT61.01→67.18，四seed更差，反驳“学习飞机侧一定有害”。这是闭环替换，后续乘客响应新状态，不是固定完整乘客动作序列。</p>
+<h3 id="63">6.3 有局部空间，但已知事件近似没有稳定利用它</h3>
+<p>REALIZED让环境按原trace继续揭示请求，用于离线事后标签；COMMITTED清掉当前未揭示请求，保留已经生成和承诺的系统。<strong>后者不是准确真实未来：它改变凑批与竞争，会产生排名偏差。</strong></p>
+<table>
+<thead>
+<tr>
+<th>PT K3模型</th>
+<th style="text-align: right;">窗口</th>
+<th style="text-align: right;">事后最好候选平均局部改进/人分钟</th>
+<th style="text-align: right;">COMMITTED SYSTEM选择的实际收益/人分钟</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Joint</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">10.20</td>
+<td style="text-align: right;">+2.61</td>
+</tr>
+<tr>
+<td>Joint</td>
+<td style="text-align: right;">120</td>
+<td style="text-align: right;">54.30</td>
+<td style="text-align: right;">+0.17</td>
+</tr>
+<tr>
+<td>Joint</td>
+<td style="text-align: right;">240</td>
+<td style="text-align: right;">187.24</td>
+<td style="text-align: right;">−42.52</td>
+</tr>
+<tr>
+<td>Single</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">7.43</td>
+<td style="text-align: right;">+2.57</td>
+</tr>
+<tr>
+<td>Single</td>
+<td style="text-align: right;">120</td>
+<td style="text-align: right;">42.24</td>
+<td style="text-align: right;">−0.96</td>
+</tr>
+<tr>
+<td>Single</td>
+<td style="text-align: right;">240</td>
+<td style="text-align: right;">182.81</td>
+<td style="text-align: right;">−18.44</td>
+</tr>
+</tbody>
+</table>
+<p>Joint120min的216状态有136个可改善，SYSTEM改善41个、伤害43个；63个最佳候选会让焦点乘客更差。存在个人/系统冲突实例，但尚未得到可靠在线系统代价。</p>
+<p>240min Joint事后平均收益187.24中，未来新乘客贡献167.79；Single182.81中未来贡献169.00。这个分解依赖后续冻结策略和轨迹分叉，<strong>不是独立因果百分比，更不证明WM必要</strong>。</p>
+<h3 id="64">6.4 完整闭环干预是关键负结果</h3>
+<p>每15个真实乘客决策一次、固定120min、相同候选和次数、平局留原动作；SELF选焦点成本，SYSTEM选已知系统总成本，只改乘客动作、飞机沿原控制。</p>
+<table>
+<thead>
+<tr>
+<th>PT K3控制</th>
+<th style="text-align: right;">SELF的RPT平均改善</th>
+<th style="text-align: right;">SYSTEM的RPT平均改善</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Joint</td>
+<td style="text-align: right;">+0.57</td>
+<td style="text-align: right;">−1.79</td>
+<td>SELF只有2/4 seed为正；SYSTEM只有1/4为正。</td>
+</tr>
+<tr>
+<td>Single</td>
+<td style="text-align: right;">−2.20</td>
+<td style="text-align: right;">−3.37</td>
+<td>SYSTEM四seed全更差。</td>
+</tr>
+</tbody>
+</table>
+<p>正值为改善。4204单独看，Joint SYSTEM仍变差1.46、Single变差2.67。不能只选一个好seed宣布“系统外部性代价已有效”。</p>
+<h3 id="65">6.5 尾批与时间信息，各自保留到哪一步</h3>
+<p>原/4201/4204三顺序子集中，PT Joint离线尾批修复RPT60.55→57.56，Single60.00→56.43，各12/12回放找到全完成修复。它依据完整动作序列选最后余数乘客，带事后信息，还会影响别人的等待和后续派机。</p>
+<p>不能把该三顺序2.99/3.56改善除以上面五顺序4.04/4.51差距算“解释了百分之多少”。READY未做同样尾批修复，不能说修尾批以后剩余空间已经全部算清。</p>
+<p>同样尾批修复后，PT Joint SELF/SYSTEM相对原策略仅改善0.94/0.31，seed方向仍不一致；Single仍变差1.88/3.18。SYSTEM没有被证明是非尾批强收益机制。</p>
+<p>18,000个已存决策的972,000个原时间槽全0；15,267个决策存在正已承诺空机返航ETA。这是<strong>编码输入接口事实</strong>，不是“STIN已经拿到信息却压没”的证据，更不是这些槽造成多少RPT损失的因果估计。</p>
+<h2 id="7">7．保留、收窄和禁止继续复用的论断</h2>
+<table>
+<thead>
+<tr>
+<th>论断</th>
+<th>当前结论</th>
+<th>后续所需证据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>完整生命周期一定击败UAGMC</td>
+<td>不支持；严格源Single经常稳定且强</td>
+<td>相同物理/目标下对强规则的剩余差距，而非只看绝对变慢。</td>
+</tr>
+<tr>
+<td>Joint会产生整批停摆</td>
+<td>SOURCE若干矩阵中已确认；PT后K3大幅缓解</td>
+<td>不把旧SOURCE失败泛化成PT所有Joint。</td>
+</tr>
+<tr>
+<td>更低Best说明方法更强</td>
+<td>必须撤回</td>
+<td>同点完成率、固定RPT、全体ATT及晚期/seed。</td>
+</tr>
+<tr>
+<td>时序遗漏就是主要瓶颈</td>
+<td>输入遗漏成立，主因未识别</td>
+<td>正确目标、容量匹配信息干预及全程收益。</td>
+</tr>
+<tr>
+<td>S/AC再完整一次一定有效</td>
+<td>多轮未支持；不再维护为必选</td>
+<td>当前没有自动追加资格。</td>
+</tr>
+<tr>
+<td>aux梯度冲突是统一根因</td>
+<td>有冲突/投影窄信号；非统一解释</td>
+<td>不从分类loss或单K胜出推广。</td>
+</tr>
+<tr>
+<td>看未来有价值所以WM必要</td>
+<td>不成立</td>
+<td>合法预测选择能稳定改善，且比精确计算/普通模型有价值。</td>
+</tr>
+<tr>
+<td>冗余补机标记就是交通损失</td>
+<td>不成立</td>
+<td>同状态动作分支成本及完整回放；标记减少可能反而更差。</td>
+</tr>
+<tr>
+<td>普通PPO/Transformer不能补gap</td>
+<td>尚未证明，不能有限试验作原则性断言</td>
+<td>同信息、合理实现、同预算强普通对照。</td>
+</tr>
+<tr>
+<td>当前研究普遍忽略闭环/时序</td>
+<td>尚无文献级证据</td>
+<td>最接近论文的具体假设/任务边界与可复核剩余问题。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="850m">8．当前50M：接手时先看它，不另开模型擂台</h2>
+<p>入口<code>train_uam_gap_factors_50m_ONEFILE.py</code>。GitHub在编写此报告前main=<code>42109a01575aeeb1a5cf62514ef4c77e0d89d2be</code>。本地交付SHA256 <code>f9a8e8b0998cc74a37f6aaa7fae99a21c29e712e9cc32f21507eeba65ef2e077</code>；未现场复核服务器SHA，不能仅靠180K大小认证逐字一致。</p>
+<h3 id="81">8.1 固定组别与优先顺序</h3>
+<table>
+<thead>
+<tr>
+<th>臂</th>
+<th>TIME</th>
+<th>BATCH</th>
+<th>网络</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L00</td>
+<td>无，补零</td>
+<td>无，补零</td>
+<td>源六帧LSTM128</td>
+</tr>
+<tr>
+<td>L10_TIME</td>
+<td>有</td>
+<td>无</td>
+<td>同LSTM</td>
+</tr>
+<tr>
+<td>L01_BATCH</td>
+<td>无</td>
+<td>有</td>
+<td>同LSTM</td>
+</tr>
+<tr>
+<td>L11_BOTH</td>
+<td>有</td>
+<td>有</td>
+<td>同LSTM</td>
+</tr>
+<tr>
+<td>T11_BOTH</td>
+<td>有</td>
+<td>有</td>
+<td>普通128宽/4头/1层Transformer，FF256/dropout0</td>
+</tr>
+</tbody>
+</table>
+<p>LSTM四臂同维数同初始化、同PPO无辅助loss；每站6字段经同一无偏置线性残差加入表示。TIME四值：已承诺最早供给ready离散估计、本站平均充电、最近已承诺乘客到站、最近已承诺空机到站；不另加焦点OD/access捷径。BATCH两值：queue mod4和(queue+committed incoming) mod4。</p>
+<p>不读未揭示CSV请求；601是无当前承诺供给/到达的哨兵，不是真正等待601min。描述符不是完整未来队列仿真，TIME本轮只能识别这个包，不能唯一归因某一时间字段。</p>
+<ul>
+<li>K3：两控制×五臂×四新seed1701–1704＝40run。</li>
+<li>K2/K4：两控制×L00/L11×单seed1705＝8run，仅边界观察。</li>
+<li>顺序P1首两seed四臂16run→P2普通Transformer4→P3另两seed四臂16→P4 Transformer4→P5边界8。块内固定随机顺序，<strong>没有根据结果挑胜者晋级</strong>。</li>
+<li>实际计划48,168,960，上限50,000,000，余1,831,040应对中断；失败工作与未落盘尾段计账。</li>
+<li>没有T00/T10/T01，不能估计完整“网络×时间×批次”交互；T11−L11是同信息普通架构替换，参数量不宣称严格相等。</li>
+</ul>
+<h3 id="82">8.2 预设读数与后续分叉</h3>
+<p>末20%固定checkpoint×4301–4304确认顺序，先模型内平均再按训练seed；RPT必须并列完成率、全完成episode比例、阻塞标签。全体ATT只有组内相关episode全部完成才给值；CO不独立排名，Best只诊断。保留原顺序完整曲线及晚期波动、回退，不能与新bank拼成一条曲线。</p>
+<p>预设比较：TIME、BATCH、BOTH；L11−L10−L01+L00；各自在S/J报告，再看T11−L11。n=4，先看全部seed差/SD/范围，不筛p值；“至少约2min/人且完成不变差”只是项目实际意义参考，不是显著性标准或保证。</p>
+<p>若BATCH有效而TIME无效，优先批服务/尾部组织，不硬写时间错配；若TIME有效，继续细分输入/组织作用；若普通Transformer已经足够，接受基线，不造新架构；若都不稳胜READY，停止网络海选，回到未解决的运行/目标/权限竞争解释。<strong>这些是结束后的判断，不是现在据训练奖励挑组。</strong></p>
+<h3 id="83">8.3 最近已知状态——不是实时状态</h3>
+<p>用户progress：2026-11-01 16:48:26，total48、trained19、evaluated19、failed0，completed/measured19,066,880，interrupted upper bound0。</p>
+<p>RUNNING：16:54:07，第20格<code>P2_GENERIC__E1__K3__LQ__T11_BOTH__s1702</code>，491,520/1,003,520步（约49%），FPS1477，约532万步/小时；加该格进行中步数，约19,558,400/48,168,960＝40.6%。磁盘当时81G。</p>
+<p>只可确认已训练推进与速度，尚无本轮方法优劣。此前预计22:30–23:30只是当时速度外推，不得接手时当完成证据。旧PID1720125/1787902仅快照，不可据旧PID终止进程。</p>
+<p>最初一次在<code>/home/SY</code>相对路径启动失败，随后绝对路径成功；总日志旧<code>can't open file</code>不代表当前失败。progress通常在一格训评后更新，训练中应配合RUNNING/LIVE和train.log，不能因总进度未刷新判死锁。</p>
+<h2 id="9">9．偏离主线的工作：必须提及，但现在暂时不搞</h2>
+<p><strong>按用户最新指示，本节各项只保留证据和位置，不默认继续训练、扩检索或开发。暂存不是删除数据，也不意味着擅自停止已有服务器进程。当前T07是归因主线，不在暂停扩张名单里。</strong></p>
+<table>
+<thead>
+<tr>
+<th>暂存项</th>
+<th>原本做过/留下什么</th>
+<th>为什么偏离当前目标</th>
+<th>接手动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>完整EventGraph/EventQ/TDM/ICM和直接S+AC</td>
+<td>T01/T02负结果、T03保真残差、T04小修</td>
+<td>gap和主要原因未定，继续完整化易变成维护预设结论</td>
+<td>不再铺同类新矩阵，只引用相应对照。</td>
+</tr>
+<tr>
+<td>T05 198M的S/AC结构路线</td>
+<td>同信息四臂、公共背景与显式差分设计；部分结果</td>
+<td>仍SOURCE且最终包缺失，不能把它当新主方法资格</td>
+<td>补包只为相关归因，不续扩、不过度追逐冠军。</td>
+</tr>
+<tr>
+<td>梯度投影/ICM/价值aux稳定化</td>
+<td>M4 K3窄信号、KL/冲突诊断</td>
+<td>旧SOURCE失败可能主要由目标暴露，跨K和确认不足</td>
+<td>暂不做优化器/aux超参海选。</td>
+</tr>
+<tr>
+<td>Full WM/Dreamer/生成策略/扩散/新MARL族</td>
+<td>文献池和旧部分失败/保留能力证据</td>
+<td>目前合法候选代价未稳定改善，不能凭真未来收益推方法必要</td>
+<td>工具箱保留，只有具体剩余问题支持后再选一个。</td>
+</tr>
+<tr>
+<td>G2汇聚—分散临界、座位/机场/机队/资源参数扫描</td>
+<td>满座/配机耦合的重要竞争解释</td>
+<td>切口过大且可能“调场景帮AI”</td>
+<td>已有数据用于解释；不新扫座位、机队、pad、天气。</td>
+</tr>
+<tr>
+<td>把已承诺/时间错配/S/AC写死成论文题眼</td>
+<td>原G1、候选效应时间、工作量—运力叙事</td>
+<td>容易被质疑为一般供需分配，尚无独特交通缺口证据</td>
+<td>题眼未冻结，不直接沿旧提纲写论文。</td>
+</tr>
+<tr>
+<td>为凑创新重新设计飞机后端</td>
+<td>Single＋LQ可以是合理分工，已有冻结替换</td>
+<td>不应只因LQ简单或Sync相似就发明一套额外贡献</td>
+<td>明确规则边界并公平对照，不为新颖性造模块。</td>
+</tr>
+<tr>
+<td>教师检索/清华研究组扩展</td>
+<td>已有覆盖记录和论文入口</td>
+<td>当前应读实验，不反复增加检索工作量</td>
+<td>报告保留，招生/在职等实时问题另有请求再核实。</td>
+</tr>
+<tr>
+<td>旧A/H/CM150、HAPPO、21×7、500M前史</td>
+<td>大量历史数据、不可删的负结果</td>
+<td>合同与当前不同，无法无条件合池</td>
+<td>只留前史索引，本报告不重新做大排行榜。</td>
+</tr>
+<tr>
+<td>收尾机制提前终止、横向救援权限</td>
+<td>可作工程/动作集反事实</td>
+<td>会改变时域或可行策略，不能当同环境新方法提升</td>
+<td>未来另立合同，全基线共享；当前不偷偷上线。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10">10．文献与论文定位：保留入口，不把历史设想当成果</h2>
+<h3 id="101">10.1 三个资料库及阅读边界</h3>
+<ul>
+<li>清华扩展：<code>analysis_reports/thu_rl_expansion_20261028</code>，自动化110条复用记录＋电子系160＋SIGS274＝544条名录记录，<strong>不是544名去重教师，更不是逐人读完所有论文</strong>。保留12条研究路线及66篇再筛材料；院系/招生/时效事实需新请求时刷新。</li>
+<li>交通池：<code>outputs/uam_frontier_review_20261029</code>，83条记录（目标四渠道48＋其他35）。53索引摘要、2出版摘要、20题录、8沿用ITSC不同阅读层级；不是83篇全文精读。</li>
+<li>AI池：同目录93条摘要级筛选，含1技术报告；总176条书目不等于176项已复现证据。UAGMC期刊、RadioUNet、RadioDiff核读过关键章节；UAGMC ICC会议只核题录/摘要，用户接受以期刊为主。</li>
+<li>ITSC年度登记32条含邻接方向，其中7条相关章节原文级阅读；没有穷尽年度分母，也不能据此估录用概率。</li>
+</ul>
+<p>本报告没有重新开展外部文献检索或刷新引文量。教师/交通/AI原报告中的S/AC优先级、G1/G2、WM建议都是历史设计，不自动覆盖最新数据与用户决定。</p>
+<h3 id="102-how">10.2 可留的How工具箱（全部条件性，不开新训练）</h3>
+<table>
+<thead>
+<tr>
+<th>工具线索</th>
+<th>什么时候才重新考虑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EAWM事件预测、时间跨度模型、Jumpy WM</td>
+<td>确认某类未决事件/较远后果影响候选排序，合法预测比短规则/精确仿真多提供价值。</td>
+</tr>
+<tr>
+<td>DIMA/MARIE及清华李秀团队相关WM</td>
+<td>真有多角色条件动态建模需要，且简单条件MLP/小动作Q不够；不照搬扩散全套。</td>
+</tr>
+<tr>
+<td>ACAC等异步MARL/异步信用</td>
+<td>直接诊断到真实决策机会、持续动作经验归属或GAE处理的损失；飞机飞得慢不自动等于宏动作定义正确。</td>
+</tr>
+<tr>
+<td>ARSQ/条件价值、MAPPO/HAPPO</td>
+<td>用作普通条件/多智能体强对照或必要接口，不把J3顺序执行冒称HAPPO顺序更新。</td>
+</tr>
+<tr>
+<td>RadioUNet→RadioDiff研究方式</td>
+<td>学习“问题/输出与新工具契合”的替代路线，不等于UAM需要扩散或轻改AI就保证创新。</td>
+</tr>
+</tbody>
+</table>
+<p>交通文献已研究闭环、服务/再平衡、能源与容量；不能说这些本身无人做。若要投稿，仍需具体交通失败类型、强解析之后的剩余损失、方法针对该损失的必要性、服务兑现与独立需求证据。当前尚未选定可直接交稿的新颖性主张。</p>
+<h2 id="11_1">11．模型、压缩包与公开数据：不要混同可读性和可重放性</h2>
+<p>DATAONLY一般有指标/配置/日志，不含zip权重和pkl归一化，不能仅凭它对另一个动作重放同一策略。重放需要同step模型＋配对norm＋运行代码/源快照＋trace/seed/权限合同；只数zip/pkl数量相等不是逐文件配对认证。</p>
+<ul>
+<li>严格E1 VERIFIED模型包本地943,124,945字节；本轮重新算SHA为<code>f94383c22ce38454fc142992f640498e3c948dbea531b5d0f8cadabc1c1968b0</code>，与服务器公布值一致。</li>
+<li>同名<strong>不带VERIFIED</strong>旧包427,556,864字节，是截断下载遗留，不能用。文件名或scp显示过100%不能替代实际校验。</li>
+<li>用户10/31服务器快照：严格E1无checkpoints目录模型，但resume有200对zip/pkl；120M无checkpoints但resume有240对；说明每cell有末尾两份恢复件的残余，不代表完整曲线权重都在。</li>
+<li>48M当时zip/pkl均0，不能保证能恢复其策略。240M当时5382、198M4278、30M644个zip且pkl同数，只是<strong>旧库存快照</strong>，本报告未登录复查，不保证当前仍在。</li>
+<li>30M的最终模型曾被11/01服务器大诊断成功加载；当前本地清单未见其FINAL_MODELS包，不等于服务器没有。需要再回放优先用已有服务器权重，不因本地缺包重训30M。</li>
+<li>当前50M正常完整结束将自动生成DATAONLY和FINAL_REPLAY_MODELS包，后者含48个最终模型＋配对norm；<strong>现在尚未收到，不说已经生成或下载</strong>。原中间checkpoint保留。</li>
+<li>清理过的是明确归属的部分旧产出，不能按同账号SY就认定文件都是我们的。下一位AI不得按文件名前缀递归删除或猜测清理范围。</li>
+</ul>
+<p>完整实验/诊断原始包的本地路径、服务器候选路径、字节数和公开状态见本报告同目录<code>experiment_inventory.csv</code>。服务器路径是历史位置，不是本轮现场核验。</p>
+<p><strong>对GPT聊天版：</strong> E盘、C盘、SSH路径都不是公网URL。请先用仓库根部本报告和<code>PUBLIC_EVIDENCE_INDEX.md</code>，读取公开CSV/JSON/历史报告摘存；原始tar.gz未公开时由用户上传。公开的<code>UAM_HANDOFF_EVIDENCE_20261101.zip</code>是轻量派生证据包，<strong>不是原始DATAONLY合集或模型包</strong>，不能凭它声称可重放策略。</p>
+<h2 id="12_1">12．工程约束、地址与交接后第一轮动作</h2>
+<h3 id="121">12.1 明确地址</h3>
+<ul>
+<li>GitHub主仓库：<code>https://github.com/Evanwang114514/UAM-RL-JointScheduler</code>，main为后续读取代码的第一来源。固定版本/归档执行代码仍以相应hash为准，不把最新环境替换到旧模型。</li>
+<li>本地本轮真实项目：<code>E:\Study Files\github\UAM-predict\UAGMC-main</code>；归档目录<code>experiment_archives</code>。历史“PUAM-gpt副本”路径不能自动覆盖本轮已确认地址。</li>
+<li>本地Python/环境：<code>D:\Study Software\anaconda2\envs\uam5070\python.exe</code> / <code>conda activate uam5070</code>。RTX5070支持CUDA，不再机械设置CUDA_VISIBLE_DEVICES=-1。</li>
+<li>桌面报告缓存：<code>C:\Users\w\Documents\Codex\2026-08-05\re\workspace\artifacts</code>；文献完整版在同re目录的<code>outputs\uam_frontier_review_20261029</code>。</li>
+<li>服务器：<code>ssh -p 10111 SY@22.tcp.vip.cpolar.cn</code>；本轮项目<code>/home/SY/uam/UAGMC-main</code>，Python<code>/home/SY/wyw/conda/envs/uam_server/bin/python</code>，日志<code>/home/SY/wyw/logs</code>。</li>
+<li>50M目录<code>serial_runs/uam_gap_factors_48run_50m_v1</code>；总日志<code>/home/SY/wyw/logs/uam_gap_factors50m.log</code>。旧接手材料中的<code>/home/SY/wyw/work/UAGMC-main</code>为历史路径，不能混用。</li>
+</ul>
+<h3 id="122">12.2 用户协作方式和安全硬约束</h3>
+<p>AI只提供代码/命令和本地分析；<strong>不代连服务器、不接管终端或打开项目UI</strong>。需要服务器操作时明确标注Linux服务器，与Windows CMD分开，避免用户将cd /d、scp -O或Bash的if/fi贴错终端。</p>
+<p>共享服务器启动前用户查看top与nvidia-smi；限制自己的线程/5环境/显式单卡。不改base、他人环境/项目、系统CUDA/驱动；不sudo/apt、不全局安装、不killall/pkill/GPU reset；密码和凭据不记录。只能结束已核实的自己的具体进程。</p>
+<p>写代码须中文解释性注释；一个矩阵一个自包含文件；能续训、单格失败不妨碍后格；不引入其他矩阵入口依赖。用户要求上传后直接正式跑，不另设手动smoke/晋级流程；必要断言和安全检查嵌入正式入口。重要代码改动commit+push，说明实际同步结果，不把本地commit当已push。</p>
+<p>不要覆盖UAM_FINAL_FREEZE_V2或历史报告原数。若有新合同公开版本差异，不在旧根目录悄悄改reward/物理。不要在运行中替换50M代码触发hash冲突，也不要未经核实重启重复父进程；该入口有父锁。</p>
+<p>本地工作树曾有用户原有删除/未跟踪文件且main分叉；之前同步50M使用独立工作副本推送，不重置用户本地分支。接手AI不要为“对齐GitHub”做reset --hard/clean或覆盖未提交工作。</p>
+<h3 id="123">12.3 接手第一轮建议</h3>
+<ol>
+<li>读本报告与50M固定设计，核对GitHub入口和版本，不重读整个旧AGENTS后恢复S/AC必胜叙事。</li>
+<li>用户若要进度，只提供只读命令让用户执行，读取progress/RUNNING/END/当前train.log；没有新输出就不伪称已查询服务器。</li>
+<li>完成后先核对48训/48评/failed、实际预算/中断、源trace和bank hashes、同LSTM初始化、schema和模型norm配对；保留失败格，不用文件夹数当完成数。</li>
+<li>下载50M DATAONLY到本地项目，按TIME/BATCH预设配对分析；若T11已足够或各因子无稳健作用，接受结果，不再增加方法池。</li>
+<li>198M若完成，只补其最终包用于相关解释。未获得包/权重就列缺项，不以计划数据补数、不重训补档。</li>
+<li>之后仍以无训练解释为先；只有尚未识别的训练效应才考虑新小矩阵。偏离项维持暂存；要恢复需明确新证据和用户授权。</li>
+</ol>
+<h2 id="13">13．本次交接的证据审查与来源导航</h2>
+<p>本报告仅整理已有证据，没有执行训练或新仿真，也没有重新认证所有归档的物理实现。11/11方法学风险检查：</p>
+<table>
+<thead>
+<tr>
+<th>风险</th>
+<th>本报告处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simpson汇总反转</td>
+<td>分E0/E1、K、控制、奖励；不把均值跨合同合池。</td>
+</tr>
+<tr>
+<td>生态谬误</td>
+<td>状态/事件频率不推出每个乘客必受损；训练模型与回放单位分离。</td>
+</tr>
+<tr>
+<td>选择偏差/Berkson</td>
+<td>48M预选Best、风险状态和Oracle自适应提案明确标探索。</td>
+</tr>
+<tr>
+<td>Collider/条件选择</td>
+<td>不只保留全完成者或好seed后宣称算法强；CO和服务兑现绑定。</td>
+</tr>
+<tr>
+<td>基率忽视</td>
+<td>疑似重复补机标记不当错误率/可避免损失；分母和采样时域注明。</td>
+</tr>
+<tr>
+<td>均值回归</td>
+<td>不将坏seed后改善或Best→Final机械称新机制因果。</td>
+</tr>
+<tr>
+<td>幸存者偏差</td>
+<td>未完成全体ATT留空，保留完成率/RPT与所有负结果。</td>
+</tr>
+<tr>
+<td>多重搜索</td>
+<td>不由多模型最低Best或一个K选冠军，不筛显著性。</td>
+</tr>
+<tr>
+<td>分析自由度</td>
+<td>事后窗口/已使用bank/历史设计标注，不冒充预注册。</td>
+</tr>
+<tr>
+<td>相关当因果</td>
+<td>时间槽缺失与物理压力只作事实/关联；主因仍需对照。</td>
+</tr>
+<tr>
+<td>反向因果/访问分布</td>
+<td>低队列、闲置和后续策略响应不能直接当上游错误；分支与整局区分。</td>
+</tr>
+</tbody>
+</table>
+<p>技能仅帮助证据层级、归档和声明边界，不是UAM机制证据。没有将缺少显著性等同无效，也没有新做功效承诺；n=2/3/4的限制始终可见。</p>
+<p>本报告核心来源分组：严格E1/源码核验；10/28的120M/48M补分析；10/29逐方法重审和基线定位；10/30评估效率/10/31无训练；240M系统分析；30M奖励归因；11/01小回放与大诊断；50M固定合同和用户最新日志。精确本地路径与内容hash在<code>sources.json</code>，公开可读报告/数据/代码链接在<code>PUBLIC_EVIDENCE_INDEX.md</code>。</p>
+<p>最后一句交接：<strong>旧SOURCE联合停摆已经被正确目标干预大幅改写；剩余时间/批服务/普通网络能力还没分清。守住当前50M归因合同，先读真实结果，暂存偏离路线，不再通过扩模型、调环境或挑指标维持一个预设故事。</strong></p></main></body></html>
