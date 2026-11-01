@@ -1,8 +1,10 @@
 {
-  "status": "STATIC_ONLY_PASSED",
+  "status": "STATIC_AND_PURE_REGRESSION_PASSED",
   "actual_models_or_replays_run": 0,
   "new_training_transitions": 0,
-  "entry_sha256": "e1e63b64e8705b22aa10b292bb139278cf62fff5acbbc6f07af4e87b4dd186be",
+  "implementation_revision": "single_reference_v2_20261101",
+  "legacy_compatible_script_sha256": "e1e63b64e8705b22aa10b292bb139278cf62fff5acbbc6f07af4e87b4dd186be",
+  "entry_sha256": "01f539f165d5d3fb6c332d0d84ff27ba8489b62e3ac3237b4c28c58a66fd934b",
   "bundle_sha256": "61e277d5600aad723bbf37a4507b66c5e8a99d7f40646a5993c7c16fa93bdea3",
   "frozen_entries": {
     "pt": "1704d488d59658a69a76032c980b3462658b742b68396f7994d630252f993e76",
@@ -17,7 +19,13 @@
     "864分层状态与144嵌套补充状态",
     "24保人数交换",
     "规则优先顺序",
-    "冻结更新防线"
+    "冻结更新防线",
+    "复现并修正单侧0/-1参考匹配",
+    "联合真实动作保留",
+    "重复候选拒绝",
+    "兼容已知旧hash且拒绝合同变化",
+    "保留原清单和旧包合成回归",
+    "已完成单元跳过且不改mtime"
   ],
   "unverified": [
     "服务器端库兼容与实际回放",
