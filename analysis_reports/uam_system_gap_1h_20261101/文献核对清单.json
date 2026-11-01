@@ -1,0 +1,51 @@
+[
+  {
+    "title": "UAGMC",
+    "year": 2026,
+    "url": "https://arxiv.org/html/2601.21316",
+    "scope": "正文3.5及4.1等针对性重读",
+    "use": "不能声称既有研究不讨论乘客时序耦合"
+  },
+  {
+    "title": "VertiSync",
+    "year": 2025,
+    "url": "https://arxiv.org/html/2503.17313",
+    "scope": "正文摘要及模型、吞吐条件",
+    "use": "服务与再平衡不是新问题，吞吐保证不是本任务ATT最优"
+  },
+  {
+    "title": "On-demand ridesharing based on dynamic scheduling in urban air mobility",
+    "year": 2025,
+    "url": "https://doi.org/10.1016/j.trc.2025.105111",
+    "scope": "出版商摘要，全文403",
+    "use": "联合运营调度已有工作"
+  },
+  {
+    "title": "Graph Learning-based Fleet Scheduling for Urban Air Mobility under Operational Constraints, Varying Demand & Uncertainties",
+    "year": 2024,
+    "url": "https://arxiv.org/abs/2401.04851",
+    "scope": "摘要",
+    "use": "普通PPO和Transformer必须保留为强对照"
+  },
+  {
+    "title": "Learning-based Online Optimization for Autonomous Mobility-on-Demand Fleet Control",
+    "year": 2024,
+    "url": "https://arxiv.org/abs/2302.03963",
+    "scope": "2024修订版摘要",
+    "use": "事后可行改善和合法在线可学性不同"
+  },
+  {
+    "title": "Urban Air Mobility Fleet Management Under Uncertainty: A Deep Reinforcement Learning Approach",
+    "year": 2024,
+    "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5072017",
+    "scope": "作者预印本摘要，全文403",
+    "use": "需求不确定性不是全新问题"
+  },
+  {
+    "title": "Learning from Suboptimal Data in Continuous Control via Auto-Regressive Soft Q-Network",
+    "year": 2025,
+    "url": "https://arxiv.org/abs/2502.00288",
+    "scope": "本轮摘要复核，继承清华报告的方法卡片",
+    "use": "只借鉴动作分量条件关系，不直接照搬连续动作离散化"
+  }
+]

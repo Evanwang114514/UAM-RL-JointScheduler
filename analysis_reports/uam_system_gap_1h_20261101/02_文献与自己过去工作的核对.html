@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8"><title>文献与历史工作怎样影响本轮设计</title><style>body{background:#f2f5fa;color:#203448;font:17px system-ui;line-height:1.9}main{max-width:1050px;margin:32px auto;background:white;padding:40px;border-radius:16px}h1{font-size:30px}h2{margin-top:35px;font-size:23px}p{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;font-size:15px}th,td{padding:12px;border:1px solid #dbe2ed;text-align:left;vertical-align:top}th{background:#edf4fb}pre{white-space:pre-wrap;background:#17283a;color:#edf6ff;padding:20px;border-radius:10px;overflow-wrap:anywhere}code{font-family:Consolas,monospace;font-size:.9em}a{color:#1569b8}.wide{overflow:auto}</style><main><h1>文献与历史工作怎样影响本轮设计</h1>
+<p>2026-11-01，针对本轮诊断的定向复核，不是新一轮几十篇全面综述。</p>
+<h2>查到的最重要边界</h2>
+<p>UAGMC自己已经讨论乘客决策之间的时间耦合；VertiSync已经联合调度服务与再平衡。因此“乘客与飞机有时间关系”“要联合调度”不能直接作为我们的新贡献。本轮只尝试识别更窄、可测的剩余损失，不提前宣布文献空白。<a href="https://arxiv.org/html/2601.21316">UAGMC正文</a>，<a href="https://arxiv.org/html/2503.17313">VertiSync正文</a></p>
+<div class="wide"><table><tr><th>原始文献</th><th>本轮阅读边界</th><th>对本轮的具体影响</th></tr><tr><td>Pang等，UAGMC，arXiv:2601.21316，2026</td><td>正文3.5、4.1等针对性重读；不新称全文逐行精读</td><td>区分已有时序耦合动机与我们需要验证的候选选择错误；保留源策略和普通时序网络</td></tr><tr><td>Pooladsanj、Savla、Ioannou，VertiSync，arXiv:2503.17313，2025预印本</td><td>摘要、模型和吞吐条件</td><td>强运营规则必须在场；足够大机队/网络对称条件下的吞吐结果不是我们有限场ATT最优</td></tr><tr><td>Li等，On-demand ridesharing based on dynamic scheduling in urban air mobility，TRC175，105111，2025</td><td>出版商检索摘要；正文403，未取得全文</td><td>服务规划、资源选择、任务与再平衡已有联合研究；不以“首次协调”叙事</td></tr><tr><td>Paul、Witter、Chowdhury，Graph Learning-based Fleet Scheduling for Urban Air Mobility under Operational Constraints, Varying Demand &amp; Uncertainties，arXiv:2401.04851，2024</td><td>原始摘要</td><td>图/时序Transformer/PPO不是我们可以凭名称认领的创新，后续需要同信息普通网络对照</td></tr><tr><td>Jungel等，Learning-based Online Optimization for Autonomous Mobility-on-Demand Fleet Control，arXiv:2302.03963，2024修订</td><td>原始摘要</td><td>完整信息安排可作为诊断或教师来源，但“事后好”与“在线合法可学”要分开</td></tr><tr><td>Onat等，Urban Air Mobility Fleet Management Under Uncertainty: A Deep Reinforcement Learning Approach，2024作者预印本</td><td>SSRN摘要；全文403</td><td>需求不确定性已有人研究；COMMITTED近似失败不能自动变成新颖性结论</td></tr><tr><td>Liu等，Learning from Suboptimal Data in Continuous Control via Auto-Regressive Soft Q-Network，ICML2025</td><td>本轮原始摘要复核；方法理解继承清华报告已有卡片</td><td>只借鉴动作分量的条件依赖，先测Joint是否真有组合损失；不把连续动作分箱直接套过来</td></tr></table></div>
+<p>原始地址：</p>
+<p>- <a href="https://arxiv.org/html/2601.21316">UAGMC</a></p>
+<p>- <a href="https://arxiv.org/html/2503.17313">VertiSync</a></p>
+<p>- <a href="https://doi.org/10.1016/j.trc.2025.105111">TRC动态调度</a></p>
+<p>- <a href="https://arxiv.org/abs/2401.04851">图学习UAM调度</a></p>
+<p>- <a href="https://arxiv.org/abs/2302.03963">在线车队优化</a></p>
+<p>- <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5072017">不确定性UAM车队管理</a></p>
+<p>- <a href="https://arxiv.org/abs/2502.00288">ARSQ</a></p>
+<p>本轮不报告未经核实的被引量，不把版本或前序短稿算作独立证据，不把预印本自动标成期刊录用。只读摘要的记录，不据此声称核实其全部实验、局限或理论条件。</p>
+<h2>对照了我们自己的哪些材料</h2>
+<p>1. <code>analysis_reports/uam_gap_50m_20261101/01_大规模无训练诊断_结果与竞争解释.md</code>：保留奖励/尾批/局部与完整修正的差别，修正READY未同等收尾的缺口。</p>
+<p>2. 同目录<code>02_五千万训练设计_时间与批服务归因.md</code>：50M已负责时间×批服务及普通Transformer，不再复制一个同样方法大全。</p>
+<p>3. <code>workspace/artifacts/uam-gap-replay/20261101/无训练诊断_结论与证据.md</code>：回顾仅局部分支和有限离线搜索的适用边界。</p>
+<p>4. <code>analysis_reports/thu_rl_expansion_20261028/01_扩展教师与文献完整搜索报告.md</code>：定向重读“文献张力”、当前收缩方向和ARSQ卡片；明确不删不可控背景、不把辅助模块堆叠当贡献。</p>
+<p>5. <code>outputs/uam_frontier_review_20261029/01_交通UAM文献与研究缺口_完整版.md</code>与<code>02_AI前沿与四篇研究路线_完整版.md</code>：定向回顾候选代价、执行期搜索、决策导向学习、真实异步控制的条件。它们是工作线索，不把旧报告所有书目重新认证为本轮全文阅读。</p>
+<p>6. 上轮真实数据包<code>uam_large_notrain_20261101_DATAONLY.tar.gz</code>：输入清单、冻结运行时hash、规则记录文件名及原始源码静态检查。</p>
+<p>此交付前核对GitHub主分支为<code>639547271f9a1c71343d4f6c1342d8003db6e550</code>；新入口内嵌运行时与上轮实际执行的模型包匹配。Git检出换行与服务器封存文件可能不同，所以文本一致与原字节hash一致分别检查，不伪称同一hash。</p>
+<h2>检索过程与失败也保留</h2>
+<p>按paper-search流程尝试本地多源检索入口，但在导入时失败：</p>
+<pre><code>ModuleNotFoundError: No module named &#x27;requests&#x27;</code></pre>
+<p>没有安装包或修改用户环境。随后使用联网检索和原始页面定向核对；arXiv正文/摘要、出版商摘要和作者SSRN页是本轮来源。不能把这次称为六个学术API均成功检索，也不构成完整全球新颖性检索。全文访问失败的记录如实标注。</p>
+<p>未纳入设计依据的噪声结果包括飞行控制器、事故风险和学位论文；本轮不据它们作交通调度结论。没有为了凑篇数把非匹配任务列为直接支持。</p>
+<p>实验设计技能只用于配对、分层、统计单位和失败保留等流程，不是UAM科学证据。相关工具方法来源：Kassis等，Scientific Agent Skills，2026，<a href="https://arxiv.org/abs/2609.00065">原始记录</a>。</p>
+<h2>本轮保留什么、不做什么</h2>
+<p>保留：同状态合法分支、原动作复现、共同后续策略、完整回放验证、强规则公平对照、人时分解。</p>
+<p>暂不做：新加充电约束/天气/机队配置，搜索座位数或机场位置，盲加WM/MARL、扩散/Flow或新PPO参数。不否认这些方向存在价值，只是本轮没有相应证据和预算。</p>
+<p>如果结果支持候机协调损失，也只能进入“具体机制与最近邻文献排查”，不能直接写“别人都没解决”。强READY与作者QTTI也不是数学最优，更不代表所有现代滚动优化已经被击败。</p></main>

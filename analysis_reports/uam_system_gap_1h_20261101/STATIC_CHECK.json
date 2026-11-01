@@ -1,0 +1,27 @@
+{
+  "status": "STATIC_ONLY_PASSED",
+  "actual_models_or_replays_run": 0,
+  "new_training_transitions": 0,
+  "entry_sha256": "e1e63b64e8705b22aa10b292bb139278cf62fff5acbbc6f07af4e87b4dd186be",
+  "bundle_sha256": "61e277d5600aad723bbf37a4507b66c5e8a99d7f40646a5993c7c16fa93bdea3",
+  "frozen_entries": {
+    "pt": "1704d488d59658a69a76032c980b3462658b742b68396f7994d630252f993e76",
+    "strict": "194619429e24498f4d0863de8580b8a645d3c1da741980fa931b02c0758d2213"
+  },
+  "checks": [
+    "AST语法",
+    "内嵌源码原字节hash",
+    "与GitHub main检出源码逐文本一致",
+    "16案例12模型4规则14模型文件宿主",
+    "旧清单包含每个所需模型",
+    "864分层状态与144嵌套补充状态",
+    "24保人数交换",
+    "规则优先顺序",
+    "冻结更新防线"
+  ],
+  "unverified": [
+    "服务器端库兼容与实际回放",
+    "实际一小时内完成数量",
+    "新诊断的任何性能结论"
+  ]
+}
