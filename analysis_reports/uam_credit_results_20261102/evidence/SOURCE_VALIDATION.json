@@ -1,0 +1,9 @@
+{
+  "training_models": 32,
+  "training_steps_and_hashes_passed": true,
+  "late_metric_reconstructions": 32,
+  "final_replays_match_original_records": 120,
+  "bank_sha_match": true,
+  "all_branch_references_passed": true,
+  "assertion_scope": "重新汇总与源记录核对；不是重新运行模型认证"
+}

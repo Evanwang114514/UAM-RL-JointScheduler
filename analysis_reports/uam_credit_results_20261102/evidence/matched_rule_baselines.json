@@ -1,0 +1,51 @@
+{
+  "source": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\experiment_archives\\uam_gap_factors_48run_50m_v1_DATAONLY.tar.gz",
+  "sha256": "67862746641e411c38a9237c323955ad469c84361b7ddd0cdff204492facdb1f",
+  "bank_hashes_match": true,
+  "baseline_rows": [
+    {
+      "rule": "AUTHOR_QTTI",
+      "rpt": 67.55,
+      "full_fraction": 0.0,
+      "by_trace": {
+        "order_4301": 69.61666666666666,
+        "order_4302": 65.73666666666666,
+        "order_4303": 65.81666666666666,
+        "order_4304": 69.03
+      }
+    },
+    {
+      "rule": "AUTHOR_SPF",
+      "rpt": 66.66333333333333,
+      "full_fraction": 0.0,
+      "by_trace": {
+        "order_4301": 66.87,
+        "order_4302": 63.88333333333333,
+        "order_4303": 63.07,
+        "order_4304": 72.83
+      }
+    },
+    {
+      "rule": "AUTHOR_STTF",
+      "rpt": 65.49000000000001,
+      "full_fraction": 0.0,
+      "by_trace": {
+        "order_4301": 66.21666666666667,
+        "order_4302": 65.56333333333333,
+        "order_4303": 64.39,
+        "order_4304": 65.79
+      }
+    },
+    {
+      "rule": "READY_QUEUE_SINGLE",
+      "rpt": 56.16333333333333,
+      "full_fraction": 0.25,
+      "by_trace": {
+        "order_4301": 57.47,
+        "order_4302": 52.163333333333334,
+        "order_4303": 58.88333333333333,
+        "order_4304": 56.13666666666666
+      }
+    }
+  ]
+}

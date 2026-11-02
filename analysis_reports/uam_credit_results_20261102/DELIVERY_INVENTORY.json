@@ -1,0 +1,14 @@
+[
+  {
+    "name": "01_诊断分析报告包_20261102.zip",
+    "bytes": 284321,
+    "sha256": "3c70b5db5c043c81ef1e0c23592d77064d57b20bc679652d44fbd3b4b50bbc67",
+    "zip_integrity": "PASS"
+  },
+  {
+    "name": "02_训练分析报告包_20261102.zip",
+    "bytes": 436462,
+    "sha256": "b5e702c9a2444f62b76a56bed466ad82f51c7e4fbff6838c35a87898b3525d16",
+    "zip_integrity": "PASS"
+  }
+]

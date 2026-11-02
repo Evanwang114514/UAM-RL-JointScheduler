@@ -1,0 +1,34 @@
+{
+  "date": "2026-11-02",
+  "status": "ANALYZED",
+  "python": "3.11.16 | packaged by Anaconda, Inc. | (main, Aug 27 2026, 14:36:16) [MSC v.1942 64 bit (AMD64)]",
+  "executable": "D:\\Study Software\\anaconda2\\envs\\uam5070\\python.exe",
+  "numpy": "2.4.6",
+  "scipy": "1.17.1",
+  "matplotlib": "3.11.1",
+  "inputs": [
+    {
+      "path": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\experiment_archives\\uam_credit_horizon_32run_18h_v1_DATAONLY.tar.gz",
+      "sha256": "7ca16a2990b8fa7f6318e1c1af9e34fda12929d3ce7576e30f528c6cf0201888",
+      "members": 3683
+    },
+    {
+      "path": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\experiment_archives\\uam_50m_credit_diag_1h_20261102_v1_IMPORT_FIXED_DATAONLY.tar.gz",
+      "sha256": "ad2644a32d7741e34b021d1e75deb826330959392bcf074f2bbdf7cd3a6b4588",
+      "members": 1299
+    }
+  ],
+  "script_sha256": "b957e852536c8fff5f369c3b99f6cff2a7524e6d09579e609c33c4bac2934980",
+  "no_model_load": true,
+  "new_training_transitions": 0,
+  "analysis_unit": "每臂4个独立训练种子；回放先在模型内汇总；对比均为探索性",
+  "primary_contrasts": "四项gamma配对；其余网络和控制对比为次要；保守地对12项共同Holm校正",
+  "preflight": {
+    "cpu_percent": 5.3,
+    "free_ram_gib": 19.58,
+    "disk_free_gib": 22.46,
+    "gpu_need": "none",
+    "gpu_allocations": 0,
+    "threads": 1
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "path": "E:\\Study Files\\github\\UAM-predict\\UAGMC-main\\experiment_archives\\uam_credit_horizon_32run_18h_v1_FINAL_REPLAY_MODELS.tar.gz",
+  "bytes": 147286685,
+  "sha256": "f857d86cb47055a90d21bf6fc1d871f7ccb3561c4d4c7d5884ab29e2caa751fb",
+  "models": 32,
+  "normalizations": 32,
+  "pairing_passed": true,
+  "model_loading_performed": false
+}
