@@ -38,3 +38,15 @@ GitHub 同步的是本索引与校验表，不是数十 GB 的训练数据。
 - exp07、exp08、exp09 若服务器上有比本机更完整的后续结果，需要单独核对，不可用本机归档代表全部计划格子。
 
 本索引只记录已实查的本机文件。服务器目录尚未成功连接核验。
+
+## 2026-11-02新增：30分钟训练前诊断（尚未运行）
+
+本节独立追加，不更新或覆盖上面2026-09-28的历史覆盖判断。
+
+- 入口：[diagnose_uam_decision_semantics_notrain_ONEFILE.py](diagnose_uam_decision_semantics_notrain_ONEFILE.py)，自足单文件，冻结最新18小时模型，不读取其他矩阵脚本。
+- [实验设计与结果去留](analysis_reports/uam_decision_semantics_20261102/实验设计与结果去留.md)；[上传、启动与下载命令](analysis_reports/uam_decision_semantics_20261102/运行命令.md)。
+- 输入：`serial_runs/uam_credit_horizon_32run_18h_v1`中的最终模型、归一化和逐checkpoint评估；来源包为`uam_credit_horizon_32run_18h_v1_FINAL_REPLAY_MODELS.tar.gz`与`uam_credit_horizon_32run_18h_v1_DATAONLY.tar.gz`，原包不随Git推送。
+- 计划：17控制器基准复核、9控制器深诊断、两条已看过的验证顺序；最多104抽样状态，36状态做合法预测抽样，30分钟会话上限。新增训练0步。
+- 预期服务器产物：`workspace/artifacts/uam_decision_semantics_20261102_v1/`及其同名`_DATAONLY.tar.gz`。这是未来输出位置，不是已完成结果。
+- 下载后本地位置：`E:\Study Files\github\UAM-predict\UAGMC-main\experiment_archives\uam_decision_semantics_20261102_v1_DATAONLY.tar.gz`。
+- 本轮区分决策契约、合法预测和逐选择代价；不再把增加时间信息或“考虑长期影响”当论文主贡献。

@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-02",
+  "entrypoint_sha256": "cd76698ae0d4c74aa5e65b6389ee3f5785cfea0ff548c7013527c101e133857d",
+  "scientific_status": "NOT_RUN",
+  "source_main_verified": "e545a4296f59e663cf00ece563039a12354092d0",
+  "source_training_entrypoint_sha256": "1a5f5031b1eb23d0a99b05bf14a7a89ffe3f4dd63dd3bd8c666fb84bf309718c",
+  "pure_logic_tests_passed": 9,
+  "tests": [
+    "封存运行时与已完成18小时训练脚本逐字节一致",
+    "合法预测只读取已揭示历史、保持OD联合配对",
+    "历史不足不使用删除未来的退化教师",
+    "先跨预测世界求均值再选动作，平局优先原选择",
+    "固定群体和状态占用的人时守恒",
+    "逐选择有符号损失分解与联合额外收益",
+    "状态抽样预先固定且不围绕坏结果选择",
+    "30分钟矩阵按四种子和单侧联合平衡收缩",
+    "尾部吸收标签要求所有声明的物理条件同时成立"
+  ],
+  "local_model_loads": 0,
+  "local_traffic_replays": 0,
+  "new_training_transitions": 0,
+  "server_connected_by_agent": false,
+  "server_runtime_verified": false,
+  "runtime_assertions": ["模型配套复现", "克隆首步与全程后缀一致", "共同物理状态hash一致", "权重和归一化冻结"],
+  "limitation": "静态与纯逻辑检查不能替代真实服务器模型回放；失败单元不输出可供训练的科学结论。"
+}
