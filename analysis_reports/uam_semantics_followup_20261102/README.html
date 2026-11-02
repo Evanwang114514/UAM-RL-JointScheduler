@@ -1,0 +1,19 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>2026-11-03交付：决策语义诊断与六千万训练</title><style>
+body{font-family:system-ui,"Microsoft YaHei",sans-serif;background:#f3f6f8;color:#18303e;margin:0;line-height:1.8}
+main{max-width:1120px;margin:30px auto;background:white;padding:38px 48px;border-radius:14px}
+h1{font-size:30px;line-height:1.45}h2{font-size:23px;margin-top:42px;border-bottom:1px solid #d4dfe7;padding-bottom:8px}h3{margin-top:30px}
+a{color:#126b8e}table{border-collapse:collapse;width:100%;display:block;overflow-x:auto;font-size:14px;margin:22px 0}
+th,td{border:1px solid #d5e0e8;padding:10px 12px;min-width:90px;vertical-align:top}th{background:#e7f0f6}tr:nth-child(even){background:#f7fafc}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#102a38;color:#e4eef5;padding:18px;border-radius:8px;font-size:13px}
+code{font-family:Consolas,monospace;overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}nav{font-size:14px;padding-bottom:18px;border-bottom:1px solid #ddd}
+@media(max-width:760px){main{padding:20px;margin:10px}h1{font-size:24px}}@media print{main{margin:0;padding:0}nav{display:none}table{display:table;font-size:11px}}
+</style><main><nav><a href="index.html">交付目录</a> · 2026-11-03 · 已有结果复算／新训练待运行</nav><h1 id="2026-11-03">2026-11-03交付：决策语义诊断与六千万训练</h1>
+<p>本次只分析已有结果，没有本地加载模型、仿真训练或连接服务器。按用户最后要求，正式训练已压至六千万上限并加入公开源码STIN开关消融。</p>
+<ol>
+<li><a href="01_本轮无训练诊断分析与方向共识.html">本轮无训练分析＋方向共识</a></li>
+<li><a href="02_正式十八小时训练设计_阶段反馈归因.html">58.491M正式训练设计：阶段反馈＋STIN消融</a></li>
+<li><a href="03_上传启动与下载命令.html">完整CMD与服务器操作命令</a></li>
+</ol>
+<p><a href="../../train_uam_stage_credit_18h_ONEFILE.py">训练入口</a>；<a href="../../analyze_uam_semantics_followup_20261102.py">只读复算入口</a>；<a href="../../tests/test_stage_credit_contract.py">纯合同检查</a>。</p>
+<p>优先看分析报告开头五句话。重点不是证明普通PPO学不会，而是控制变量检查：哪些具体选择仍有损失，STIN究竟贡献什么，两阶段反馈有没有可重复增量。18小时是运行上限，不强行凑满时长。</p>
+<p>原始归档都在本地项目<code>experiment_archives</code>，不把模型包提交GitHub。GitHub只同步代码、报告和可复核的派生统计；目录中的evidence不含模型权重和登录凭证。</p></main></html>

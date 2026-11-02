@@ -1,0 +1,63 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>六千万正式训练：上传、启动、续跑、打包、下载</title><style>
+body{font-family:system-ui,"Microsoft YaHei",sans-serif;background:#f3f6f8;color:#18303e;margin:0;line-height:1.8}
+main{max-width:1120px;margin:30px auto;background:white;padding:38px 48px;border-radius:14px}
+h1{font-size:30px;line-height:1.45}h2{font-size:23px;margin-top:42px;border-bottom:1px solid #d4dfe7;padding-bottom:8px}h3{margin-top:30px}
+a{color:#126b8e}table{border-collapse:collapse;width:100%;display:block;overflow-x:auto;font-size:14px;margin:22px 0}
+th,td{border:1px solid #d5e0e8;padding:10px 12px;min-width:90px;vertical-align:top}th{background:#e7f0f6}tr:nth-child(even){background:#f7fafc}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#102a38;color:#e4eef5;padding:18px;border-radius:8px;font-size:13px}
+code{font-family:Consolas,monospace;overflow-wrap:anywhere}p,li{overflow-wrap:anywhere}nav{font-size:14px;padding-bottom:18px;border-bottom:1px solid #ddd}
+@media(max-width:760px){main{padding:20px;margin:10px}h1{font-size:24px}}@media print{main{margin:0;padding:0}nav{display:none}table{display:table;font-size:11px}}
+</style><main><nav><a href="index.html">交付目录</a> · 2026-11-03 · 已有结果复算／新训练待运行</nav><h1 id="_1">六千万正式训练：上传、启动、续跑、打包、下载</h1>
+<p>代码：<code>train_uam_stage_credit_18h_ONEFILE.py</code>。文件名保留18h表示会话上限；实际已改成24格、58,490,880计划步、60,000,000工作硬上限，含STIN开关消融。无需上传其他矩阵入口或模型包，所有模型从头训练。</p>
+<p>以下路径沿用用户本轮持续使用的目录，不代连服务器。Windows和Linux命令分开粘贴，不要把<code>cd /d</code>、<code>%变量%</code>或<code>&gt;nul</code>粘进Linux终端。</p>
+<h2 id="1windows-cmd">1．本地Windows CMD上传</h2>
+<pre><code class="language-cmd">cd /d &quot;E:\Study Files\github\UAM-predict\UAGMC-main&quot;
+scp -O -P 10111 &quot;train_uam_stage_credit_18h_ONEFILE.py&quot; SY@22.tcp.vip.cpolar.cn:/home/SY/uam/UAGMC-main/train_uam_stage_credit_18h_ONEFILE.py
+ssh -p 10111 SY@22.tcp.vip.cpolar.cn
+</code></pre>
+<h2 id="2linux">2．登录后的Linux服务器：查看共享资源，然后直接正式启动</h2>
+<pre><code class="language-bash">cd /home/SY/uam/UAGMC-main
+top -b -n 1 | head -n 20
+nvidia-smi
+</code></pre>
+<p>确认0号GPU及CPU没有被其他人重度占用后，运行下面这段。只有一套训练，不要重复启动多个父进程。</p>
+<pre><code class="language-bash">mkdir -p /home/SY/wyw/logs
+nohup env CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 /home/SY/wyw/conda/envs/uam_server/bin/python -B -u /home/SY/uam/UAGMC-main/train_uam_stage_credit_18h_ONEFILE.py --resume --retry-failed --device cuda --eval-device cpu --wall-hours 18 &gt;&gt; /home/SY/wyw/logs/uam_stage_stin60m.log 2&gt;&amp;1 &lt; /dev/null &amp;
+echo &quot;启动PID：$!&quot;
+</code></pre>
+<p>预计约14–16小时，但共享负载和STIN实际吞吐尚可能改变时长。18小时到期或预算不足则保留PARTIAL及恢复件，不把它当完成。提前完成不凑时间；不另外设smoke阶段。若GPU忙，先不要启动，不关闭别人进程。</p>
+<h3 id="_2">进度</h3>
+<pre><code class="language-bash">cd /home/SY/uam/UAGMC-main
+date
+cat serial_runs/uam_stage_stin_24run_60m_v1/progress.json
+cat serial_runs/uam_stage_stin_24run_60m_v1/RUNNING.json
+pgrep -afu &quot;$(id -u)&quot; '[t]rain_uam_stage_credit_18h_ONEFILE[.]py([[:space:]]|$)'
+tail -n 30 /home/SY/wyw/logs/uam_stage_stin60m.log
+df -h .
+</code></pre>
+<p>父进程尚在时不要再启动。父进程已退出且END为PARTIAL时，重新查看top和nvidia-smi，再用上面同一条nohup命令续跑；科学合同和脚本不能中途更换。完成格会跳过，失败格会保留历史后重试。</p>
+<h2 id="3">3．服务器完成后打包</h2>
+<p>脚本正常完成会自动生成下面两个包。若只需重新打包，确认没有同一矩阵父进程后执行：</p>
+<pre><code class="language-bash">cd /home/SY/uam/UAGMC-main
+/home/SY/wyw/conda/envs/uam_server/bin/python -B -u /home/SY/uam/UAGMC-main/train_uam_stage_credit_18h_ONEFILE.py --resume --phase pack
+ls -lh experiment_archives/uam_stage_stin_24run_60m_v1_DATAONLY.tar.gz experiment_archives/uam_stage_stin_24run_60m_v1_FINAL_REPLAY_MODELS.tar.gz
+sha256sum experiment_archives/uam_stage_stin_24run_60m_v1_DATAONLY.tar.gz experiment_archives/uam_stage_stin_24run_60m_v1_FINAL_REPLAY_MODELS.tar.gz
+</code></pre>
+<p>DATAONLY包含合同、配置、逐模型结果、曲线、反馈误差、逐选择分支和错误日志，不含模型。FINAL_REPLAY_MODELS包含最终模型及配套归一化，只有全部模型评估完成才生成；不能把PARTIAL包当完整模型包。</p>
+<h2 id="4windows-cmd">4．另开本地Windows CMD下载到项目</h2>
+<pre><code class="language-cmd">cd /d &quot;E:\Study Files\github\UAM-predict\UAGMC-main&quot;
+if not exist &quot;experiment_archives&quot; mkdir &quot;experiment_archives&quot;
+scp -O -P 10111 SY@22.tcp.vip.cpolar.cn:/home/SY/uam/UAGMC-main/experiment_archives/uam_stage_stin_24run_60m_v1_DATAONLY.tar.gz &quot;experiment_archives\uam_stage_stin_24run_60m_v1_DATAONLY.tar.gz&quot;
+scp -O -P 10111 SY@22.tcp.vip.cpolar.cn:/home/SY/uam/UAGMC-main/experiment_archives/uam_stage_stin_24run_60m_v1_FINAL_REPLAY_MODELS.tar.gz &quot;experiment_archives\uam_stage_stin_24run_60m_v1_FINAL_REPLAY_MODELS.tar.gz&quot;
+tar -tzf &quot;experiment_archives\uam_stage_stin_24run_60m_v1_DATAONLY.tar.gz&quot; &gt;nul &amp;&amp; echo 数据包可读取
+tar -tzf &quot;experiment_archives\uam_stage_stin_24run_60m_v1_FINAL_REPLAY_MODELS.tar.gz&quot; &gt;nul &amp;&amp; echo 模型包可读取
+certutil -hashfile &quot;experiment_archives\uam_stage_stin_24run_60m_v1_DATAONLY.tar.gz&quot; SHA256
+certutil -hashfile &quot;experiment_archives\uam_stage_stin_24run_60m_v1_FINAL_REPLAY_MODELS.tar.gz&quot; SHA256
+</code></pre>
+<p>核对本地与服务器SHA一致后，再把包发来分析。不要在Linux上执行本节Windows命令。</p>
+<h2 id="5">5．本地确切保存位置</h2>
+<ul>
+<li><code>E:\Study Files\github\UAM-predict\UAGMC-main\experiment_archives\uam_stage_stin_24run_60m_v1_DATAONLY.tar.gz</code></li>
+<li><code>E:\Study Files\github\UAM-predict\UAGMC-main\experiment_archives\uam_stage_stin_24run_60m_v1_FINAL_REPLAY_MODELS.tar.gz</code></li>
+</ul>
+<p>两个包均为未来完成后生成的目标文件，<strong>不是当前已经存在的结果</strong>。下载断线时可用sftp的<code>reget</code>续传，并在完成后再核对hash；不要重复覆盖正在下载的文件。</p></main></html>

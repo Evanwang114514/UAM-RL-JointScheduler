@@ -1,0 +1,179 @@
+{
+  "date": "2026-11-03",
+  "status": "ANALYZED_AND_CODE_READY_NOT_TRAINED",
+  "training_plan": {
+    "cells": 24,
+    "transitions_per_cell": 2437120,
+    "rollouts_per_cell": 119,
+    "planned_actual_transitions": 58490880,
+    "measured_work_cap": 60000000,
+    "wall_hour_cap": 18,
+    "expected_hours": "14–16，尚未实测新逻辑"
+  },
+  "implementation_validation": {
+    "pure_contract_tests": 10,
+    "passed": 10,
+    "local_torch_imports": 0,
+    "local_model_loads": 0,
+    "local_replays": 0,
+    "new_training_transitions": 0,
+    "warning": "纯检查不等于已验证GPU训练；正式服务端循环有内置断言"
+  },
+  "raw_archives": [
+    "uam_decision_semantics_20261102_v1_DATAONLY.tar.gz",
+    "uam_credit_horizon_32run_18h_v1_DATAONLY.tar.gz",
+    "uam_credit_horizon_32run_18h_v1_FINAL_REPLAY_MODELS.tar.gz"
+  ],
+  "files": [
+    {
+      "path": "train_uam_stage_credit_18h_ONEFILE.py",
+      "bytes": 253461,
+      "sha256": "dc439a685c27afb394c6dcba8f8c4bd9afb6aa7904374e489a379ccad55f8eff"
+    },
+    {
+      "path": "analyze_uam_semantics_followup_20261102.py",
+      "bytes": 19459,
+      "sha256": "a33cc984189f715e3760e716ec9cc6cb79df6761cd12dc08e7d1271d89ae1137"
+    },
+    {
+      "path": "tests/test_stage_credit_contract.py",
+      "bytes": 5588,
+      "sha256": "07efd7dc4dd08c1ef9e4c87ce87a4df5513edf70203aca369f7f15b9eccf762e"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/01_本轮无训练诊断分析与方向共识.html",
+      "bytes": 21434,
+      "sha256": "f49ff5d094d7fe94ce382c5c512f72866e5cd1c6a0e35ddbb5cb2daf37b3e06e"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/01_本轮无训练诊断分析与方向共识.md",
+      "bytes": 15660,
+      "sha256": "729fdfe60af22b0df632c21cf69ccaf5683afe3107805459bc56f71cd3447c10"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/02_正式十八小时训练设计_阶段反馈归因.html",
+      "bytes": 21435,
+      "sha256": "5fd3c88a0d71a018b03696bdcd6e030883caac7532f7cfed51efda44fb4468bb"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/02_正式十八小时训练设计_阶段反馈归因.md",
+      "bytes": 17342,
+      "sha256": "f9ceaae31fa453983371dd3139b2cc0851191bcf526144cbe8d30d62050213fe"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/03_上传启动与下载命令.html",
+      "bytes": 6920,
+      "sha256": "a62cd8c32c5d10fd57d14d3cd6923a03c19cdbc5194a70ff3bdc3eec6ebe215c"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/03_上传启动与下载命令.md",
+      "bytes": 4794,
+      "sha256": "3c59f0cbe295e64effb18ec4a0befa0bf5b248697dbf23d97858287d30a0814f"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/index.html",
+      "bytes": 2760,
+      "sha256": "97e65df2105bbf8f013e4398e73caee2e2d1d0722d735aff8e8c9eb0ef82b8e6"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/README.html",
+      "bytes": 2760,
+      "sha256": "97e65df2105bbf8f013e4398e73caee2e2d1d0722d735aff8e8c9eb0ef82b8e6"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/README.md",
+      "bytes": 1192,
+      "sha256": "dd4f4281eebdd277ef6666c20041b92642e229b8c5778ab1e1da86d8a1070ba3"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/READY案例.json",
+      "bytes": 21482,
+      "sha256": "71e99d5c8a2297bff3e8a9f5cf848a641b2aef94207969e058f4aab9484762fe"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/决策机会.csv",
+      "bytes": 2176,
+      "sha256": "66c9b6298ac7495d6f954d3dae179bc741587e63ab9b2647a231f13ee707932b"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/分组结果.json",
+      "bytes": 11084,
+      "sha256": "9cd5a19c888db26eb76618bed4d3838223812700c31f7a550a2dd11f3fb6e31e"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/基准结果.json",
+      "bytes": 1943,
+      "sha256": "5c03fb201f48061b9c08278b88723197487779ee6db6b722f02b3e0159f8d073"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/完整性核查.json",
+      "bytes": 746,
+      "sha256": "3a1cd48f66be1a3223019ec70df21e9d762d1a2d849c7188bf9cf6edbcf67321"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/时序与覆盖.json",
+      "bytes": 3640,
+      "sha256": "5e5ac3cc3e3b568171ab909c3ba3dd2f8ba8dddf15d521bbd5618d54f431ac0a"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/模型表完整性检查.json",
+      "bytes": 24109,
+      "sha256": "e2a9494796caab33536eaaa5d2e4cc656683f62b239b2e9317521052eac13524"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/耗时核算.json",
+      "bytes": 1428,
+      "sha256": "a03966e1535925f107c3299682046ceebc7c2ea709bd96e2db3ac3f9b02a2ef7"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/表格完整性检查.json",
+      "bytes": 28608,
+      "sha256": "1814d924f702499a7dd08ed60964b0f7d973d364f6a544d4d6b6d4275a635e6b"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/逐模型复算.csv",
+      "bytes": 3072,
+      "sha256": "f25c65694ac0f8ceea8eee651dc7c01aa556bc146525a6cd2f454de5cfef32b7"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/逐模型复算.json",
+      "bytes": 11999,
+      "sha256": "99c577d496354aac741f300bbbb416cd86a60c5fba70cb10fba5bffe8aec5be2"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/逐状态复算.csv",
+      "bytes": 20737,
+      "sha256": "792ec12c89b44711873da5a297d96fdd6330d2bbfc3b77ff709f2e68a2186910"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/逐状态复算.json",
+      "bytes": 99827,
+      "sha256": "af55831755f1e407424a79edc9ec7e91ac0b863f7369582ec19c5d75ed0b5e2c"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/预测不确定性.json",
+      "bytes": 1292,
+      "sha256": "2716945eb2826057781321e0da95c1292a087b770079d9a95dc88412f77aef03"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/预测逐模型.csv",
+      "bytes": 587,
+      "sha256": "b181fa392a783c5f76eafa1038df3e163b7990a2305d995eada7a39f8463fa18"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/预测逐模型.json",
+      "bytes": 2085,
+      "sha256": "591fcc68022865a958f9b8f4181d79fde69787719a3a448ee81e40a6036bcf25"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/预测逐状态.json",
+      "bytes": 11665,
+      "sha256": "81a5d30929f92f5a25585afaf5b6d89da308bb8cc684ebc348e950229e205e6b"
+    },
+    {
+      "path": "analysis_reports/uam_semantics_followup_20261102/evidence/飞机事件链.csv",
+      "bytes": 300473,
+      "sha256": "21c9263a041adf66e0e643da191b6bcca88795f435177fb6fe6b133640edf413"
+    }
+  ]
+}

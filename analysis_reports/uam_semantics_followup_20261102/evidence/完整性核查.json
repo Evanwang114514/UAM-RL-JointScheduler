@@ -1,0 +1,17 @@
+{
+  "status": "ANALYZED",
+  "archive_sha256": "40abb54205c69678c2f667f535224c6acbcfd78ba2a35fa4c0e5b7b25817a89a",
+  "source_training_sha256": "7ca16a2990b8fa7f6318e1c1af9e34fda12929d3ce7576e30f528c6cf0201888",
+  "source_models_sha256": "f857d86cb47055a90d21bf6fc1d871f7ccb3561c4d4c7d5884ab29e2caa751fb",
+  "model_pair_hash_matches": 34,
+  "states": 104,
+  "state_comparisons": 168,
+  "forecast_states": 36,
+  "common_states": 32,
+  "all_reference_clones_passed": true,
+  "common_physical_hash_passed": true,
+  "original_records_unchanged": true,
+  "new_training_transitions": 0,
+  "local_model_loads": 0,
+  "scientific_scope": "冻结仿真中的条件干预；不是现实因果普适结论，也不证明PPO理论学不来。"
+}

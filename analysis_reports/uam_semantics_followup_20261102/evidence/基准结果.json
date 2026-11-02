@@ -1,0 +1,94 @@
+[
+  {
+    "kind": "J",
+    "network": "L",
+    "rpt": {
+      "n": 4,
+      "mean": 58.01833333333333,
+      "sd": 1.585381131883855,
+      "median": 57.67,
+      "minimum": 56.52333333333333,
+      "maximum": 60.21,
+      "leave_one_mean_range": [
+        57.28777777777778,
+        58.516666666666666
+      ]
+    },
+    "full": 1,
+    "episodes": 8,
+    "completion": 0.9866666666666667
+  },
+  {
+    "kind": "J",
+    "network": "T",
+    "rpt": {
+      "n": 4,
+      "mean": 57.975,
+      "sd": 2.62399398712048,
+      "median": 57.60666666666667,
+      "minimum": 55.17666666666667,
+      "maximum": 61.51,
+      "leave_one_mean_range": [
+        56.79666666666667,
+        58.90777777777778
+      ]
+    },
+    "full": 1,
+    "episodes": 8,
+    "completion": 0.985
+  },
+  {
+    "kind": "S",
+    "network": "L",
+    "rpt": {
+      "n": 4,
+      "mean": 57.125,
+      "sd": 3.3613153289658415,
+      "median": 55.95666666666666,
+      "minimum": 54.61,
+      "maximum": 61.97666666666667,
+      "leave_one_mean_range": [
+        55.507777777777775,
+        57.96333333333333
+      ]
+    },
+    "full": 1,
+    "episodes": 8,
+    "completion": 0.985
+  },
+  {
+    "kind": "S",
+    "network": "T",
+    "rpt": {
+      "n": 4,
+      "mean": 57.43,
+      "sd": 1.8467268341582088,
+      "median": 57.61333333333333,
+      "minimum": 55.336666666666666,
+      "maximum": 59.156666666666666,
+      "leave_one_mean_range": [
+        56.85444444444445,
+        58.12777777777778
+      ]
+    },
+    "full": 0,
+    "episodes": 8,
+    "completion": 0.985
+  },
+  {
+    "kind": "READY",
+    "network": "READY",
+    "rpt": {
+      "n": 1,
+      "mean": 57.51,
+      "sd": null,
+      "median": 57.51,
+      "minimum": 57.51,
+      "maximum": 57.51,
+      "leave_one_mean_range": null
+    },
+    "full": 0,
+    "episodes": 2,
+    "completion": 0.9866666666666667
+  }
+]

@@ -1,0 +1,837 @@
+{
+  "analysis": {
+    "column_count": 19,
+    "columns": [
+      {
+        "column_id": "column_ad3d964b48cb364e",
+        "column_index": 0,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 9,
+        "inferred_kind": "text",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 3,
+            "value_token": "value_31060f7b51d3d492"
+          },
+          {
+            "count": 3,
+            "value_token": "value_5a814b43c7c67228"
+          },
+          {
+            "count": 3,
+            "value_token": "value_5effd00c9984e10e"
+          },
+          {
+            "count": 3,
+            "value_token": "value_7193b3527590a93d"
+          },
+          {
+            "count": 3,
+            "value_token": "value_b6209869d5ff696a"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_parse_count": 0,
+        "text_aggregates": {
+          "count": 25,
+          "maximum_character_count": 31,
+          "mean_character_count": 30.08
+        },
+        "text_parse_count": 25
+      },
+      {
+        "column_id": "column_64e589e404581152",
+        "column_index": 1,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 3,
+        "inferred_kind": "text",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 12,
+            "value_token": "value_31c91ced6f19d432"
+          },
+          {
+            "count": 12,
+            "value_token": "value_6f0ca213092697f1"
+          },
+          {
+            "count": 1,
+            "value_token": "value_d06becd92dfbe458"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_parse_count": 0,
+        "text_aggregates": {
+          "count": 25,
+          "maximum_character_count": 5,
+          "mean_character_count": 1.16
+        },
+        "text_parse_count": 25
+      },
+      {
+        "column_id": "column_285eb0cb7a1a8df3",
+        "column_index": 2,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 4,
+        "inferred_kind": "integer",
+        "missing_count": 1,
+        "missing_fraction": 0.04,
+        "most_frequent_value_tokens": [
+          {
+            "count": 6,
+            "value_token": "value_6cbb88ee2c4b70e6"
+          },
+          {
+            "count": 6,
+            "value_token": "value_e86428a13d5d7df7"
+          },
+          {
+            "count": 6,
+            "value_token": "value_fc8dd75afc053b25"
+          },
+          {
+            "count": 6,
+            "value_token": "value_fccec32103f88be5"
+          }
+        ],
+        "non_missing_count": 24,
+        "numeric_aggregates": {
+          "count": 24,
+          "maximum": 1804.0,
+          "mean": 1802.4999999999998,
+          "median": 1802.5,
+          "minimum": 1801.0,
+          "q1": 1801.75,
+          "q3": 1803.25,
+          "quantile_sample_count": 24,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 1.1420804814403396
+        },
+        "numeric_parse_count": 24,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_421ad621372d33d8",
+        "column_index": 3,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 2,
+        "inferred_kind": "text",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 17,
+            "value_token": "value_e268a383457f84cb"
+          },
+          {
+            "count": 8,
+            "value_token": "value_3c6c50bbdd33c0d4"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_parse_count": 0,
+        "text_aggregates": {
+          "count": 25,
+          "maximum_character_count": 12,
+          "mean_character_count": 5.88
+        },
+        "text_parse_count": 25
+      },
+      {
+        "column_id": "column_7beb49c0ae645cba",
+        "column_index": 4,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 2,
+        "inferred_kind": "text",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 17,
+            "value_token": "value_d06becd92dfbe458"
+          },
+          {
+            "count": 8,
+            "value_token": "value_33bfa316be3cefb9"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_parse_count": 0,
+        "text_aggregates": {
+          "count": 25,
+          "maximum_character_count": 5,
+          "mean_character_count": 5.0
+        },
+        "text_parse_count": 25
+      },
+      {
+        "column_id": "column_c794595546849cfb",
+        "column_index": 5,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 2,
+        "inferred_kind": "integer",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 17,
+            "value_token": "value_b743a8b0b457b64a"
+          },
+          {
+            "count": 8,
+            "value_token": "value_a0e95fe33f7fbd67"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 8.0,
+          "mean": 6.719999999999999,
+          "median": 8.0,
+          "minimum": 4.0,
+          "q1": 4.0,
+          "q3": 8.0,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 1.9043809142780934
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_19e087c3f7f9b844",
+        "column_index": 6,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 22,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 4,
+            "value_token": "value_b6f502a657f7af83"
+          },
+          {
+            "count": 1,
+            "value_token": "value_01d366099e312e2b"
+          },
+          {
+            "count": 1,
+            "value_token": "value_2bd7e423691d35e0"
+          },
+          {
+            "count": 1,
+            "value_token": "value_2fad9ca98b74ec23"
+          },
+          {
+            "count": 1,
+            "value_token": "value_328ecde6af08e3f4"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 963.5,
+          "mean": 295.53999999999996,
+          "median": 277.5,
+          "minimum": 0.0,
+          "q1": 119.5,
+          "q3": 395.0,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 234.82763714406926
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_c987a8278ee6da81",
+        "column_index": 7,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 19,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 4,
+            "value_token": "value_bc6cb9c539c0c5fd"
+          },
+          {
+            "count": 2,
+            "value_token": "value_419e6151a9626ab5"
+          },
+          {
+            "count": 2,
+            "value_token": "value_911b3052d74a8f20"
+          },
+          {
+            "count": 2,
+            "value_token": "value_db52dffbaffbaf49"
+          },
+          {
+            "count": 1,
+            "value_token": "value_00d90ea229796f71"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 467.0,
+          "mean": 138.04,
+          "median": 140.5,
+          "minimum": -78.5,
+          "q1": 44.0,
+          "q3": 210.5,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 141.72655008854198
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_62747d4bd5634e64",
+        "column_index": 8,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 22,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 4,
+            "value_token": "value_96f2745480c89cbe"
+          },
+          {
+            "count": 1,
+            "value_token": "value_01d366099e312e2b"
+          },
+          {
+            "count": 1,
+            "value_token": "value_048364f14b861273"
+          },
+          {
+            "count": 1,
+            "value_token": "value_158665c1a96b6154"
+          },
+          {
+            "count": 1,
+            "value_token": "value_3658a25b90625a9b"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 620.0,
+          "mean": 157.5,
+          "median": 79.0,
+          "minimum": -36.0,
+          "q1": 0.0,
+          "q3": 246.0,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 191.08304259317902
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_ff2c1d42bab5832f",
+        "column_index": 9,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 22,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 3,
+            "value_token": "value_af685b773c9af952"
+          },
+          {
+            "count": 2,
+            "value_token": "value_db52dffbaffbaf49"
+          },
+          {
+            "count": 1,
+            "value_token": "value_02054db522e5f00a"
+          },
+          {
+            "count": 1,
+            "value_token": "value_0d0828c6e984f72d"
+          },
+          {
+            "count": 1,
+            "value_token": "value_175f78a0603988e6"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 11.25,
+          "mean": -7.1499999999999995,
+          "median": -0.25,
+          "minimum": -72.75,
+          "q1": -9.0,
+          "q3": 3.5,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 19.655430229328484
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_26abb02cdebe00c6",
+        "column_index": 10,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 20,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 5,
+            "value_token": "value_872369dbe9a920f2"
+          },
+          {
+            "count": 2,
+            "value_token": "value_db52dffbaffbaf49"
+          },
+          {
+            "count": 1,
+            "value_token": "value_055ce4b6852a1b30"
+          },
+          {
+            "count": 1,
+            "value_token": "value_07eb96192e626e8e"
+          },
+          {
+            "count": 1,
+            "value_token": "value_1e71995e47694e31"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 232.875,
+          "mean": 11.615000000000002,
+          "median": -5.5,
+          "minimum": -84.5,
+          "q1": -16.25,
+          "q3": 7.0,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 69.70921672084211
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_d17edd20821c1529",
+        "column_index": 11,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 23,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 3,
+            "value_token": "value_989c7d90f914f1b3"
+          },
+          {
+            "count": 1,
+            "value_token": "value_0d5b8e48f5dc1df5"
+          },
+          {
+            "count": 1,
+            "value_token": "value_0de334194b01f465"
+          },
+          {
+            "count": 1,
+            "value_token": "value_159741ff7280e7e0"
+          },
+          {
+            "count": 1,
+            "value_token": "value_1d6a4b4ccc18e0ff"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 1007.5,
+          "mean": 291.0750000000001,
+          "median": 233.5,
+          "minimum": 0.0,
+          "q1": 117.75,
+          "q3": 369.5,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 242.5297608456194
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_39c0143d20f5af74",
+        "column_index": 12,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 23,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 3,
+            "value_token": "value_ed8ea260b33e6236"
+          },
+          {
+            "count": 1,
+            "value_token": "value_0ffcf19db939c847"
+          },
+          {
+            "count": 1,
+            "value_token": "value_186e087e3f8f03e6"
+          },
+          {
+            "count": 1,
+            "value_token": "value_255abc289907b07f"
+          },
+          {
+            "count": 1,
+            "value_token": "value_3d9d9b0ee2b30f06"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 987.375,
+          "mean": 309.64,
+          "median": 298.125,
+          "minimum": 0.0,
+          "q1": 111.625,
+          "q3": 453.625,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 244.1289850758542
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_475e4aae411dbb85",
+        "column_index": 13,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 7,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 7,
+            "value_token": "value_7463954a28e4dada"
+          },
+          {
+            "count": 4,
+            "value_token": "value_07eb96192e626e8e"
+          },
+          {
+            "count": 4,
+            "value_token": "value_682c68131f38c74f"
+          },
+          {
+            "count": 4,
+            "value_token": "value_9e88c39083a0bb42"
+          },
+          {
+            "count": 3,
+            "value_token": "value_eae9c9f01f7ad786"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 1.0,
+          "mean": 0.49500000000000005,
+          "median": 0.5,
+          "minimum": 0.125,
+          "q1": 0.25,
+          "q3": 0.75,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 0.25637700104858596
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_9c8b5587d51945e1",
+        "column_index": 14,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 21,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 4,
+            "value_token": "value_b6f502a657f7af83"
+          },
+          {
+            "count": 2,
+            "value_token": "value_db52dffbaffbaf49"
+          },
+          {
+            "count": 1,
+            "value_token": "value_01d366099e312e2b"
+          },
+          {
+            "count": 1,
+            "value_token": "value_2bd7e423691d35e0"
+          },
+          {
+            "count": 1,
+            "value_token": "value_328ecde6af08e3f4"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 764.5,
+          "mean": 270.72,
+          "median": 220.0,
+          "minimum": 0.0,
+          "q1": 77.0,
+          "q3": 395.0,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 207.96810051864526
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_efc98862b42d876c",
+        "column_index": 15,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 6,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 20,
+            "value_token": "value_db52dffbaffbaf49"
+          },
+          {
+            "count": 1,
+            "value_token": "value_14afcccb2a12a43a"
+          },
+          {
+            "count": 1,
+            "value_token": "value_220001e502a418dc"
+          },
+          {
+            "count": 1,
+            "value_token": "value_3fde935def8f9531"
+          },
+          {
+            "count": 1,
+            "value_token": "value_c17c7659a95b624c"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 331.5,
+          "mean": 32.14000000000001,
+          "median": 0.0,
+          "minimum": 0.0,
+          "q1": 0.0,
+          "q3": 0.0,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 81.62828860144012
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_b029981e0681271d",
+        "column_index": 16,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 5,
+        "inferred_kind": "integer",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 21,
+            "value_token": "value_db52dffbaffbaf49"
+          },
+          {
+            "count": 1,
+            "value_token": "value_29a199e2b94dc669"
+          },
+          {
+            "count": 1,
+            "value_token": "value_4690e53f19787000"
+          },
+          {
+            "count": 1,
+            "value_token": "value_702227e8cbccb42e"
+          },
+          {
+            "count": 1,
+            "value_token": "value_dc6141eae3a22337"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 199.0,
+          "mean": 12.519999999999996,
+          "median": 0.0,
+          "minimum": 0.0,
+          "q1": 0.0,
+          "q3": 0.0,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 40.897351177470334
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_3b117fc540170516",
+        "column_index": 17,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 6,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 7,
+            "value_token": "value_07eb96192e626e8e"
+          },
+          {
+            "count": 6,
+            "value_token": "value_9e88c39083a0bb42"
+          },
+          {
+            "count": 5,
+            "value_token": "value_b9b6e0ba1ec243f3"
+          },
+          {
+            "count": 3,
+            "value_token": "value_682c68131f38c74f"
+          },
+          {
+            "count": 3,
+            "value_token": "value_eae9c9f01f7ad786"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 0.875,
+          "mean": 0.39,
+          "median": 0.375,
+          "minimum": 0.125,
+          "q1": 0.25,
+          "q3": 0.5,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 0.18512383242935884
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      },
+      {
+        "column_id": "column_f3693134984ca035",
+        "column_index": 18,
+        "distinct_count_is_lower_bound": false,
+        "distinct_value_count_or_lower_bound": 6,
+        "inferred_kind": "numeric",
+        "missing_count": 0,
+        "missing_fraction": 0.0,
+        "most_frequent_value_tokens": [
+          {
+            "count": 7,
+            "value_token": "value_9e88c39083a0bb42"
+          },
+          {
+            "count": 6,
+            "value_token": "value_07eb96192e626e8e"
+          },
+          {
+            "count": 5,
+            "value_token": "value_eae9c9f01f7ad786"
+          },
+          {
+            "count": 4,
+            "value_token": "value_b9b6e0ba1ec243f3"
+          },
+          {
+            "count": 2,
+            "value_token": "value_682c68131f38c74f"
+          }
+        ],
+        "non_missing_count": 25,
+        "numeric_aggregates": {
+          "count": 25,
+          "maximum": 1.0,
+          "mean": 0.43500000000000005,
+          "median": 0.5,
+          "minimum": 0.125,
+          "q1": 0.25,
+          "q3": 0.5,
+          "quantile_sample_count": 25,
+          "quantiles_from_bounded_sample": false,
+          "sample_standard_deviation": 0.19803724397193578
+        },
+        "numeric_parse_count": 25,
+        "text_parse_count": 0
+      }
+    ],
+    "duplicate_row_count_in_scanned_rows": 0,
+    "duplicate_tracking_truncated": false,
+    "identifier_redaction": "tokenized",
+    "limitations": [
+      "Dtypes are inferred from scanned text and are not a data dictionary.",
+      "Quantiles use a deterministic bounded sample when numeric counts exceed the sample limit.",
+      "Duplicate counts use exact hashes only until the documented tracking cap."
+    ],
+    "missing_code_policy": {
+      "additional_token_count": 0,
+      "empty_or_whitespace_is_missing": true,
+      "tokens_are_not_emitted": true
+    },
+    "profile_type": "tabular_schema_and_aggregate_profile",
+    "raw_values_emitted": false,
+    "row_limit_reached": false,
+    "rows_scanned": 25
+  },
+  "capability": {
+    "dependency": "Python standard library",
+    "depth": "bounded schema, aggregate profile, missingness, and sensitivity audit",
+    "format": "CSV",
+    "reference": "references/general_scientific_formats.md",
+    "suffix": ".csv",
+    "tier": "automated_core"
+  },
+  "schema_version": "1.1",
+  "security": {
+    "embedded_instructions_followed": false,
+    "file_text_is_untrusted_data": true,
+    "local_only": true,
+    "raw_values_and_full_paths_emitted": false
+  }
+}

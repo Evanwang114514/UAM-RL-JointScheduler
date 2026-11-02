@@ -1,5 +1,11 @@
 # UAGMC: Urban Air-Ground Mobility Coordination
 
+## 2026-11-03研究更新
+
+[本轮诊断分析与方向共识](analysis_reports/uam_semantics_followup_20261102/01_本轮无训练诊断分析与方向共识.md) · [六千万步训练设计：阶段反馈＋STIN消融](analysis_reports/uam_semantics_followup_20261102/02_正式十八小时训练设计_阶段反馈归因.md) · [上传与运行命令](analysis_reports/uam_semantics_followup_20261102/03_上传启动与下载命令.md)。
+
+[独立训练入口](train_uam_stage_credit_18h_ONEFILE.py)：24个新模型，58,490,880计划步，60,000,000训练工作硬上限；18小时会话上限，预计14–16小时。含公开源码STIN开关消融；未宣称完成新训练或证明新交通机制。原始结果包位于本地项目`experiment_archives`，不含在GitHub代码库内；[复核证据索引](analysis_reports/uam_semantics_followup_20261102/README.md)。
+
 Heterogeneous Vertiport Selection Optimization for On-Demand Air Taxi Services: A Deep Reinforcement Learning Approach
 
 ## 📌 Overview

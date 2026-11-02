@@ -1,0 +1,124 @@
+{
+  "groups": [
+    {
+      "kind": "J",
+      "episodes": 16,
+      "ticks": 9616,
+      "pre_effective": 0,
+      "effective": 1104,
+      "no_passenger_effective": 257,
+      "effective_per_episode": 69
+    },
+    {
+      "kind": "S",
+      "episodes": 16,
+      "ticks": 9616,
+      "pre_effective": 0,
+      "effective": 0,
+      "no_passenger_effective": 0,
+      "effective_per_episode": 0
+    },
+    {
+      "kind": "READY",
+      "episodes": 2,
+      "ticks": 1202,
+      "pre_effective": 0,
+      "effective": 136,
+      "no_passenger_effective": 34,
+      "effective_per_episode": 68
+    }
+  ],
+  "diagnostics": {
+    "chain_count": 2498,
+    "completed_services": 2105,
+    "command_to_arrival": {
+      "n": 2498,
+      "mean": 21.604483586869495,
+      "sd": 1.722571512788607,
+      "median": 22.0,
+      "minimum": 20,
+      "maximum": 24,
+      "leave_one_mean_range": [
+        21.60352422907489,
+        21.605126151381658
+      ]
+    },
+    "command_to_ready": {
+      "n": 2498,
+      "mean": 27.949559647718175,
+      "sd": 1.1682017979672539,
+      "median": 28.0,
+      "minimum": 27,
+      "maximum": 30,
+      "leave_one_mean_range": [
+        27.94873848618342,
+        27.949939927913498
+      ]
+    },
+    "command_to_service": {
+      "n": 2105,
+      "mean": 29.590498812351544,
+      "sd": 3.604958692554237,
+      "median": 29,
+      "minimum": 28,
+      "maximum": 93,
+      "leave_one_mean_range": [
+        29.560361216730037,
+        29.59125475285171
+      ]
+    },
+    "forecast_half_agree": 10,
+    "holds": [
+      {
+        "case": "CORE__E1__K3__J3__T_G099__s1801",
+        "seed": 1801,
+        "bank": "order_4303",
+        "index": 231,
+        "reference_cost": 9282,
+        "held3_cost": 9282,
+        "held3_gain": 0,
+        "actually_held": 2,
+        "changed_contract": true,
+        "note": "保持本次返航优先级最多3分钟，后续只在合法时执行；不是同合同方法排名，也不是新AI收益。"
+      },
+      {
+        "case": "CORE__E1__K3__J3__T_G099__s1801",
+        "seed": 1801,
+        "bank": "order_4304",
+        "index": 235,
+        "reference_cost": 8008,
+        "held3_cost": 8008,
+        "held3_gain": 0,
+        "actually_held": 1,
+        "changed_contract": true,
+        "note": "保持本次返航优先级最多3分钟，后续只在合法时执行；不是同合同方法排名，也不是新AI收益。"
+      },
+      {
+        "case": "CORE__E1__K3__J3__T_G099__s1803",
+        "seed": 1803,
+        "bank": "order_4303",
+        "index": 194,
+        "reference_cost": 10875,
+        "held3_cost": 9839,
+        "held3_gain": 1036,
+        "actually_held": 1,
+        "changed_contract": true,
+        "note": "保持本次返航优先级最多3分钟，后续只在合法时执行；不是同合同方法排名，也不是新AI收益。"
+      },
+      {
+        "case": "CORE__E1__K3__J3__T_G099__s1804",
+        "seed": 1804,
+        "bank": "order_4304",
+        "index": 220,
+        "reference_cost": 8568,
+        "held3_cost": 8568,
+        "held3_gain": 0,
+        "actually_held": 2,
+        "changed_contract": true,
+        "note": "保持本次返航优先级最多3分钟，后续只在合法时执行；不是同合同方法排名，也不是新AI收益。"
+      }
+    ],
+    "all_branch_samples_at_passenger_events": true,
+    "air_only_sampling_gap": "本轮深分支只在乘客索引采样，遗漏无新乘客但有飞机选择的机会；不能据此宣布飞机侧作用很小。"
+  }
+}

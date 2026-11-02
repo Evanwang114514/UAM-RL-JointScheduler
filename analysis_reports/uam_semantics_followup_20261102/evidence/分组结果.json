@@ -1,0 +1,551 @@
+[
+  {
+    "kind": "J",
+    "origin": "common_ready",
+    "follow": "READY",
+    "states": 16,
+    "models": 4,
+    "loss": {
+      "n": 4,
+      "mean": 153.25,
+      "sd": 125.38839659234822,
+      "median": 125.5,
+      "minimum": 52,
+      "maximum": 310,
+      "leave_one_mean_range": [
+        101,
+        187
+      ]
+    },
+    "normal_gain": {
+      "n": 4,
+      "mean": 82,
+      "sd": 61.55214591439251,
+      "median": 55.0,
+      "minimum": 44,
+      "maximum": 174,
+      "leave_one_mean_range": [
+        51.333333333333336,
+        94.66666666666667
+      ]
+    },
+    "tail_gain": {
+      "n": 4,
+      "mean": 71.25,
+      "sd": 86.08668112238192,
+      "median": 66.5,
+      "minimum": -3,
+      "maximum": 155,
+      "leave_one_mean_range": [
+        43.333333333333336,
+        96
+      ]
+    },
+    "passenger_only": {
+      "n": 4,
+      "mean": 103.5,
+      "sd": 139.83204210766573,
+      "median": 52.0,
+      "minimum": 0,
+      "maximum": 310,
+      "leave_one_mean_range": [
+        34.666666666666664,
+        138
+      ]
+    },
+    "aircraft_only": {
+      "n": 4,
+      "mean": 27.75,
+      "sd": 55.5,
+      "median": 0.0,
+      "minimum": 0,
+      "maximum": 111,
+      "leave_one_mean_range": [
+        0,
+        37
+      ]
+    },
+    "joint_extra": {
+      "n": 4,
+      "mean": 49.75,
+      "sd": 99.5,
+      "median": 0.0,
+      "minimum": 0,
+      "maximum": 199,
+      "leave_one_mean_range": [
+        0,
+        66.33333333333333
+      ]
+    },
+    "flip60": 8,
+    "flip120": 8
+  },
+  {
+    "kind": "J",
+    "origin": "own",
+    "follow": "MODEL",
+    "states": 32,
+    "models": 4,
+    "loss": {
+      "n": 4,
+      "mean": 678.625,
+      "sd": 263.38197071933376,
+      "median": 678.0,
+      "minimum": 395,
+      "maximum": 963.5,
+      "leave_one_mean_range": [
+        583.6666666666666,
+        773.1666666666666
+      ]
+    },
+    "normal_gain": {
+      "n": 4,
+      "mean": 278.75,
+      "sd": 190.67620896867723,
+      "median": 302.5,
+      "minimum": 43,
+      "maximum": 467,
+      "leave_one_mean_range": [
+        216.0,
+        357.3333333333333
+      ]
+    },
+    "tail_gain": {
+      "n": 4,
+      "mean": 399.875,
+      "sd": 255.53029011580344,
+      "median": 460.5,
+      "minimum": 58.5,
+      "maximum": 620,
+      "leave_one_mean_range": [
+        326.5,
+        513.6666666666666
+      ]
+    },
+    "passenger_only": {
+      "n": 4,
+      "mean": 594.75,
+      "sd": 166.69458099570403,
+      "median": 609.75,
+      "minimum": 395,
+      "maximum": 764.5,
+      "leave_one_mean_range": [
+        538.1666666666666,
+        661.3333333333334
+      ]
+    },
+    "aircraft_only": {
+      "n": 4,
+      "mean": 160.75,
+      "sd": 150.11911936858675,
+      "median": 155.75,
+      "minimum": 0,
+      "maximum": 331.5,
+      "leave_one_mean_range": [
+        103.83333333333333,
+        214.33333333333334
+      ]
+    },
+    "joint_extra": {
+      "n": 4,
+      "mean": 17,
+      "sd": 19.8997487421324,
+      "median": 15.0,
+      "minimum": 0,
+      "maximum": 38,
+      "leave_one_mean_range": [
+        10,
+        22.666666666666668
+      ]
+    },
+    "flip60": 19,
+    "flip120": 20
+  },
+  {
+    "kind": "J",
+    "origin": "own",
+    "follow": "READY",
+    "states": 32,
+    "models": 4,
+    "loss": {
+      "n": 4,
+      "mean": 257.625,
+      "sd": 94.3330756769155,
+      "median": 291.75,
+      "minimum": 119.5,
+      "maximum": 327.5,
+      "leave_one_mean_range": [
+        234.33333333333334,
+        303.6666666666667
+      ]
+    },
+    "normal_gain": {
+      "n": 4,
+      "mean": 154.625,
+      "sd": 82.04305272233597,
+      "median": 159.25,
+      "minimum": 51.5,
+      "maximum": 248.5,
+      "leave_one_mean_range": [
+        123.33333333333333,
+        189.0
+      ]
+    },
+    "tail_gain": {
+      "n": 4,
+      "mean": 103,
+      "sd": 34.55430508634199,
+      "median": 103.5,
+      "minimum": 68,
+      "maximum": 137,
+      "leave_one_mean_range": [
+        91.66666666666667,
+        114.66666666666667
+      ]
+    },
+    "passenger_only": {
+      "n": 4,
+      "mean": 236.125,
+      "sd": 89.29853955506029,
+      "median": 248.75,
+      "minimum": 119.5,
+      "maximum": 327.5,
+      "leave_one_mean_range": [
+        205.66666666666666,
+        275.0
+      ]
+    },
+    "aircraft_only": {
+      "n": 4,
+      "mean": 12.375,
+      "sd": 24.75,
+      "median": 0.0,
+      "minimum": 0,
+      "maximum": 49.5,
+      "leave_one_mean_range": [
+        0,
+        16.5
+      ]
+    },
+    "joint_extra": {
+      "n": 4,
+      "mean": 11.5,
+      "sd": 23.0,
+      "median": 0.0,
+      "minimum": 0,
+      "maximum": 46,
+      "leave_one_mean_range": [
+        0,
+        15.333333333333334
+      ]
+    },
+    "flip60": 8,
+    "flip120": 11
+  },
+  {
+    "kind": "S",
+    "origin": "common_ready",
+    "follow": "READY",
+    "states": 16,
+    "models": 4,
+    "loss": {
+      "n": 4,
+      "mean": 80.25,
+      "sd": 94.40471386535738,
+      "median": 52.0,
+      "minimum": 0,
+      "maximum": 217,
+      "leave_one_mean_range": [
+        34.666666666666664,
+        107
+      ]
+    },
+    "normal_gain": {
+      "n": 4,
+      "mean": 90.75,
+      "sd": 111.23061628886177,
+      "median": 55.0,
+      "minimum": 0,
+      "maximum": 253,
+      "leave_one_mean_range": [
+        36.666666666666664,
+        121
+      ]
+    },
+    "tail_gain": {
+      "n": 4,
+      "mean": -10.5,
+      "sd": 17.05872210923198,
+      "median": -3.0,
+      "minimum": -36,
+      "maximum": 0,
+      "leave_one_mean_range": [
+        -14,
+        -2
+      ]
+    },
+    "passenger_only": {
+      "n": 4,
+      "mean": 80.25,
+      "sd": 94.40471386535738,
+      "median": 52.0,
+      "minimum": 0,
+      "maximum": 217,
+      "leave_one_mean_range": [
+        34.666666666666664,
+        107
+      ]
+    },
+    "aircraft_only": {
+      "n": 4,
+      "mean": 0,
+      "sd": 0.0,
+      "median": 0.0,
+      "minimum": 0,
+      "maximum": 0,
+      "leave_one_mean_range": [
+        0,
+        0
+      ]
+    },
+    "joint_extra": {
+      "n": 4,
+      "mean": 0,
+      "sd": 0.0,
+      "median": 0.0,
+      "minimum": 0,
+      "maximum": 0,
+      "leave_one_mean_range": [
+        0,
+        0
+      ]
+    },
+    "flip60": 4,
+    "flip120": 4
+  },
+  {
+    "kind": "S",
+    "origin": "own",
+    "follow": "MODEL",
+    "states": 32,
+    "models": 4,
+    "loss": {
+      "n": 4,
+      "mean": 393.875,
+      "sd": 72.21192768511307,
+      "median": 396.25,
+      "minimum": 316.5,
+      "maximum": 466.5,
+      "leave_one_mean_range": [
+        369.6666666666667,
+        419.6666666666667
+      ]
+    },
+    "normal_gain": {
+      "n": 4,
+      "mean": 137.875,
+      "sd": 207.40836329971523,
+      "median": 149.75,
+      "minimum": -78.5,
+      "maximum": 330.5,
+      "leave_one_mean_range": [
+        73.66666666666667,
+        210.0
+      ]
+    },
+    "tail_gain": {
+      "n": 4,
+      "mean": 256.0,
+      "sd": 228.03983570127977,
+      "median": 230.0,
+      "minimum": 19,
+      "maximum": 545,
+      "leave_one_mean_range": [
+        159.66666666666666,
+        335.0
+      ]
+    },
+    "passenger_only": {
+      "n": 4,
+      "mean": 393.875,
+      "sd": 72.21192768511307,
+      "median": 396.25,
+      "minimum": 316.5,
+      "maximum": 466.5,
+      "leave_one_mean_range": [
+        369.6666666666667,
+        419.6666666666667
+      ]
+    },
+    "aircraft_only": {
+      "n": 4,
+      "mean": 0,
+      "sd": 0.0,
+      "median": 0.0,
+      "minimum": 0,
+      "maximum": 0,
+      "leave_one_mean_range": [
+        0,
+        0
+      ]
+    },
+    "joint_extra": {
+      "n": 4,
+      "mean": 0,
+      "sd": 0.0,
+      "median": 0.0,
+      "minimum": 0,
+      "maximum": 0,
+      "leave_one_mean_range": [
+        0,
+        0
+      ]
+    },
+    "flip60": 15,
+    "flip120": 19
+  },
+  {
+    "kind": "S",
+    "origin": "own",
+    "follow": "READY",
+    "states": 32,
+    "models": 4,
+    "loss": {
+      "n": 4,
+      "mean": 235.75,
+      "sd": 159.21081412182193,
+      "median": 204.75,
+      "minimum": 77,
+      "maximum": 456.5,
+      "leave_one_mean_range": [
+        162.16666666666666,
+        288.6666666666667
+      ]
+    },
+    "normal_gain": {
+      "n": 4,
+      "mean": 68.875,
+      "sd": 129.81228434422786,
+      "median": 69.5,
+      "minimum": -74,
+      "maximum": 210.5,
+      "leave_one_mean_range": [
+        21.666666666666668,
+        116.5
+      ]
+    },
+    "tail_gain": {
+      "n": 4,
+      "mean": 166.875,
+      "sd": 117.60341194030043,
+      "median": 162.25,
+      "minimum": 54.5,
+      "maximum": 288.5,
+      "leave_one_mean_range": [
+        126.33333333333333,
+        204.33333333333334
+      ]
+    },
+    "passenger_only": {
+      "n": 4,
+      "mean": 235.75,
+      "sd": 159.21081412182193,
+      "median": 204.75,
+      "minimum": 77,
+      "maximum": 456.5,
+      "leave_one_mean_range": [
+        162.16666666666666,
+        288.6666666666667
+      ]
+    },
+    "aircraft_only": {
+      "n": 4,
+      "mean": 0,
+      "sd": 0.0,
+      "median": 0.0,
+      "minimum": 0,
+      "maximum": 0,
+      "leave_one_mean_range": [
+        0,
+        0
+      ]
+    },
+    "joint_extra": {
+      "n": 4,
+      "mean": 0,
+      "sd": 0.0,
+      "median": 0.0,
+      "minimum": 0,
+      "maximum": 0,
+      "leave_one_mean_range": [
+        0,
+        0
+      ]
+    },
+    "flip60": 11,
+    "flip120": 12
+  },
+  {
+    "kind": "READY",
+    "origin": "own",
+    "follow": "READY",
+    "states": 8,
+    "models": 1,
+    "loss": {
+      "n": 1,
+      "mean": 191,
+      "sd": null,
+      "median": 191,
+      "minimum": 191,
+      "maximum": 191,
+      "leave_one_mean_range": null
+    },
+    "normal_gain": {
+      "n": 1,
+      "mean": 199.5,
+      "sd": null,
+      "median": 199.5,
+      "minimum": 199.5,
+      "maximum": 199.5,
+      "leave_one_mean_range": null
+    },
+    "tail_gain": {
+      "n": 1,
+      "mean": -8.5,
+      "sd": null,
+      "median": -8.5,
+      "minimum": -8.5,
+      "maximum": -8.5,
+      "leave_one_mean_range": null
+    },
+    "passenger_only": {
+      "n": 1,
+      "mean": 191,
+      "sd": null,
+      "median": 191,
+      "minimum": 191,
+      "maximum": 191,
+      "leave_one_mean_range": null
+    },
+    "aircraft_only": {
+      "n": 1,
+      "mean": 0,
+      "sd": null,
+      "median": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "leave_one_mean_range": null
+    },
+    "joint_extra": {
+      "n": 1,
+      "mean": 0,
+      "sd": null,
+      "median": 0,
+      "minimum": 0,
+      "maximum": 0,
+      "leave_one_mean_range": null
+    },
+    "flip60": 1,
+    "flip120": 1
+  }
+]

@@ -1,0 +1,51 @@
+{
+  "diag_wall_seconds": 300.064332613023,
+  "full_episodes": 68,
+  "branch_calls": 1060,
+  "simulated_minutes": 355419,
+  "sum_worker_seconds": 533.8255917007336,
+  "training_steps": 76677120,
+  "training_seconds": 55282.551881313324,
+  "pure_training_fps": 1387.0039893349874,
+  "previous_total_wall_seconds": 58193.49700448598,
+  "previous_whole_fps": 1317.6235137422514,
+  "fps_groups": [
+    {
+      "control": "J3",
+      "network": "LSTM",
+      "steps": 9584640,
+      "wall_seconds": 7189.077306509018,
+      "fps": 1333.2225529585041
+    },
+    {
+      "control": "J3",
+      "network": "TRANSFORMER",
+      "steps": 9584640,
+      "wall_seconds": 7341.1281208992,
+      "fps": 1305.6085988628674
+    },
+    {
+      "control": "LQ",
+      "network": "LSTM",
+      "steps": 9584640,
+      "wall_seconds": 6514.2576816082,
+      "fps": 1471.3326473191958
+    },
+    {
+      "control": "LQ",
+      "network": "TRANSFORMER",
+      "steps": 9584640,
+      "wall_seconds": 6561.774794578552,
+      "fps": 1460.6779872907234
+    }
+  ],
+  "planned_new_steps": 58490880,
+  "new_work_cap": 60000000,
+  "planned_matrix": "信用三臂＋STIN开关＋单侧，共六条件×四种子；用户最终要求六千万上限",
+  "training_hours_at_fps": {
+    "900": 18.05274074074074,
+    "1200": 13.539555555555555,
+    "1300": 12.498051282051282,
+    "1387": 11.71410718577265
+  }
+}

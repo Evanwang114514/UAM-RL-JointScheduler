@@ -1,0 +1,826 @@
+[
+  {
+    "bank": "order_4303",
+    "index": 26,
+    "reference": [
+      2,
+      -1
+    ],
+    "winner": [
+      0,
+      -1
+    ],
+    "reference_cost": 17314,
+    "winner_cost": 16426,
+    "avoidable_person_minutes": 888,
+    "near_best": false,
+    "candidate_span": 940,
+    "distinct_first_step_outcomes": 3,
+    "focal_gain": -2,
+    "existing_gain": -8,
+    "future_gain": 898,
+    "phase_gains": {
+      "ground": -35,
+      "wait": 915,
+      "flight": 8,
+      "other": 0
+    },
+    "temporal": [
+      {
+        "window": 1,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 5,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 15,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 30,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 60,
+        "chosen_loss": 28,
+        "full_winner_short_gain": 28,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 120,
+        "chosen_loss": 100,
+        "full_winner_short_gain": 100,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 240,
+        "chosen_loss": 204,
+        "full_winner_short_gain": 204,
+        "short_full_optima_disjoint": false
+      }
+    ],
+    "remaining_reference": 4,
+    "remaining_winner": 4,
+    "tail_absorbing_gain": -160,
+    "before_absorbing_gain": 1048,
+    "passenger_only_gain": 888,
+    "aircraft_only_gain": 0,
+    "joint_extra_beyond_best_single": 0,
+    "note": "本次可行替换、指定后续策略和截止下的差；不是全局最优regret，不可跨状态相加。",
+    "continuation": "READY",
+    "forecast": {
+      "status": "COMPLETE",
+      "picked": [
+        0,
+        -1
+      ],
+      "world_costs": [
+        [
+          4524,
+          4492,
+          4536,
+          4524
+        ],
+        [
+          4500,
+          4488,
+          4548,
+          4500
+        ],
+        [
+          4500,
+          4560,
+          4508,
+          4536
+        ]
+      ],
+      "mean_costs": [
+        4519,
+        4509,
+        4526
+      ],
+      "split_draws_agree": false,
+      "realized_full_gain": 888,
+      "realized_120_gain": 100,
+      "realized_120_oracle_gain": 100,
+      "public_history_sha": "6b1e51f31ebfe3995a0fde277abad07e206692a43c8be6abfc5711f1ba8e2b34",
+      "worlds_sha": [
+        "36d4e1178001a1738fa6baf5476b34191281f18ade0512239d1edffad8fedd6e",
+        "924e017c0d111093cf0f05234132361faf39396336f44f111f0237d4076cf6b9",
+        "aa97e23d6a1d74aa72d50a894b94be0ff2015586b7748421229a79e6167feb33",
+        "dc382e004ae16a01dc504489fe8d60612f63b10d1ce7b71acdc0d1485d78a5ae"
+      ],
+      "information": "只读已揭示OD联合样本、过去60分钟到达数和公开生成截止；不读未来文件，不用删未来近似。",
+      "limitation": "经验需求模型的一次初筛；失败不等于所有预测方法无效，事后Oracle收益也不代表在线可实现。"
+    }
+  },
+  {
+    "bank": "order_4303",
+    "index": 135,
+    "reference": [
+      1,
+      -1
+    ],
+    "winner": [
+      0,
+      -1
+    ],
+    "reference_cost": 13257,
+    "winner_cost": 13049,
+    "avoidable_person_minutes": 208,
+    "near_best": false,
+    "candidate_span": 208,
+    "distinct_first_step_outcomes": 3,
+    "focal_gain": 14,
+    "existing_gain": -65,
+    "future_gain": 259,
+    "phase_gains": {
+      "ground": -5,
+      "wait": 221,
+      "flight": -8,
+      "other": 0
+    },
+    "temporal": [
+      {
+        "window": 1,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 5,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 15,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 30,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 60,
+        "chosen_loss": 0,
+        "full_winner_short_gain": -28,
+        "short_full_optima_disjoint": true
+      },
+      {
+        "window": 120,
+        "chosen_loss": 0,
+        "full_winner_short_gain": -64,
+        "short_full_optima_disjoint": true
+      },
+      {
+        "window": 240,
+        "chosen_loss": 68,
+        "full_winner_short_gain": 68,
+        "short_full_optima_disjoint": false
+      }
+    ],
+    "remaining_reference": 4,
+    "remaining_winner": 4,
+    "tail_absorbing_gain": -12,
+    "before_absorbing_gain": 220,
+    "passenger_only_gain": 208,
+    "aircraft_only_gain": 0,
+    "joint_extra_beyond_best_single": 0,
+    "note": "本次可行替换、指定后续策略和截止下的差；不是全局最优regret，不可跨状态相加。",
+    "continuation": "READY",
+    "forecast": null
+  },
+  {
+    "bank": "order_4303",
+    "index": 194,
+    "reference": [
+      1,
+      -1
+    ],
+    "winner": [
+      1,
+      -1
+    ],
+    "reference_cost": 10383,
+    "winner_cost": 10383,
+    "avoidable_person_minutes": 0,
+    "near_best": true,
+    "candidate_span": 0,
+    "distinct_first_step_outcomes": 3,
+    "focal_gain": 0,
+    "existing_gain": 0,
+    "future_gain": 0,
+    "phase_gains": {
+      "ground": 0,
+      "wait": 0,
+      "flight": 0,
+      "other": 0
+    },
+    "temporal": [
+      {
+        "window": 1,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 5,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 15,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 30,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 60,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 120,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 240,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      }
+    ],
+    "remaining_reference": 4,
+    "remaining_winner": 4,
+    "tail_absorbing_gain": 0,
+    "before_absorbing_gain": 0,
+    "passenger_only_gain": 0,
+    "aircraft_only_gain": 0,
+    "joint_extra_beyond_best_single": 0,
+    "note": "本次可行替换、指定后续策略和截止下的差；不是全局最优regret，不可跨状态相加。",
+    "continuation": "READY",
+    "forecast": {
+      "status": "COMPLETE",
+      "picked": [
+        1,
+        -1
+      ],
+      "world_costs": [
+        [
+          6815,
+          6840,
+          6878,
+          6897
+        ],
+        [
+          6815,
+          6840,
+          6878,
+          6897
+        ],
+        [
+          6859,
+          6884,
+          6878,
+          6833
+        ]
+      ],
+      "mean_costs": [
+        6857.5,
+        6857.5,
+        6863.5
+      ],
+      "split_draws_agree": false,
+      "realized_full_gain": 0,
+      "realized_120_gain": 0,
+      "realized_120_oracle_gain": 0,
+      "public_history_sha": "23ba9a513eac07758fe66aedfb042857cdc091a5427cce4801284cb2cf9c0a4a",
+      "worlds_sha": [
+        "b3221375cde2045449838ea64ed8f98ce561202765ea697c5020bec3ecce71b6",
+        "7f118e30388b825bf67f6e7e52431646dc93689007ac488ae66831a596101a8d",
+        "6696cf7b6d9162e0fed2d483c2f1ea00d352ecc901ed391fe2ef266c98ac2ba4",
+        "795bffcb1585ce39ee471d424a8b0ef10b84ecb60829108ab1c25630d4611bf7"
+      ],
+      "information": "只读已揭示OD联合样本、过去60分钟到达数和公开生成截止；不读未来文件，不用删未来近似。",
+      "limitation": "经验需求模型的一次初筛；失败不等于所有预测方法无效，事后Oracle收益也不代表在线可实现。"
+    }
+  },
+  {
+    "bank": "order_4303",
+    "index": 231,
+    "reference": [
+      1,
+      -1
+    ],
+    "winner": [
+      1,
+      -1
+    ],
+    "reference_cost": 8474,
+    "winner_cost": 8474,
+    "avoidable_person_minutes": 0,
+    "near_best": true,
+    "candidate_span": 24,
+    "distinct_first_step_outcomes": 3,
+    "focal_gain": 0,
+    "existing_gain": 0,
+    "future_gain": 0,
+    "phase_gains": {
+      "ground": 0,
+      "wait": 0,
+      "flight": 0,
+      "other": 0
+    },
+    "temporal": [
+      {
+        "window": 1,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 5,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 15,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 30,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 60,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 120,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 240,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      }
+    ],
+    "remaining_reference": 4,
+    "remaining_winner": 4,
+    "tail_absorbing_gain": 0,
+    "before_absorbing_gain": 0,
+    "passenger_only_gain": 0,
+    "aircraft_only_gain": 0,
+    "joint_extra_beyond_best_single": 0,
+    "note": "本次可行替换、指定后续策略和截止下的差；不是全局最优regret，不可跨状态相加。",
+    "continuation": "READY",
+    "forecast": null
+  },
+  {
+    "bank": "order_4304",
+    "index": 46,
+    "reference": [
+      0,
+      -1
+    ],
+    "winner": [
+      0,
+      -1
+    ],
+    "reference_cost": 15852,
+    "winner_cost": 15852,
+    "avoidable_person_minutes": 0,
+    "near_best": true,
+    "candidate_span": 0,
+    "distinct_first_step_outcomes": 3,
+    "focal_gain": 0,
+    "existing_gain": 0,
+    "future_gain": 0,
+    "phase_gains": {
+      "ground": 0,
+      "wait": 0,
+      "flight": 0,
+      "other": 0
+    },
+    "temporal": [
+      {
+        "window": 1,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 5,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 15,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 30,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 60,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 120,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 240,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      }
+    ],
+    "remaining_reference": 4,
+    "remaining_winner": 4,
+    "tail_absorbing_gain": 0,
+    "before_absorbing_gain": 0,
+    "passenger_only_gain": 0,
+    "aircraft_only_gain": 0,
+    "joint_extra_beyond_best_single": 0,
+    "note": "本次可行替换、指定后续策略和截止下的差；不是全局最优regret，不可跨状态相加。",
+    "continuation": "READY",
+    "forecast": {
+      "status": "COMPLETE",
+      "picked": [
+        0,
+        -1
+      ],
+      "world_costs": [
+        [
+          4748,
+          4680,
+          4740,
+          4756
+        ],
+        [
+          4768,
+          4688,
+          4708,
+          4764
+        ],
+        [
+          4768,
+          4816,
+          4748,
+          4756
+        ]
+      ],
+      "mean_costs": [
+        4731,
+        4732,
+        4772
+      ],
+      "split_draws_agree": false,
+      "realized_full_gain": 0,
+      "realized_120_gain": 0,
+      "realized_120_oracle_gain": 0,
+      "public_history_sha": "56b875b1580f3c4454ab414de51015ee0d50eaa8bd17e87d893d9e6f91dba733",
+      "worlds_sha": [
+        "b149f781277194aa11c0f6dcfd301427ad1a297952e378216d573979c8412ae9",
+        "1adb8ef9aac8a83b05e9565fa8af2be6ee43a5054d6617d6cc9a2bf32ec685fd",
+        "97399895229416145e91a7edee6b521b491e5c1e76a2dd1422465d872b289010",
+        "07f90297d6e7d120388962dfa8db4f942111bcc267523d6daf24b3c3922643e2"
+      ],
+      "information": "只读已揭示OD联合样本、过去60分钟到达数和公开生成截止；不读未来文件，不用删未来近似。",
+      "limitation": "经验需求模型的一次初筛；失败不等于所有预测方法无效，事后Oracle收益也不代表在线可实现。"
+    }
+  },
+  {
+    "bank": "order_4304",
+    "index": 108,
+    "reference": [
+      0,
+      -1
+    ],
+    "winner": [
+      1,
+      -1
+    ],
+    "reference_cost": 13623,
+    "winner_cost": 13191,
+    "avoidable_person_minutes": 432,
+    "near_best": false,
+    "candidate_span": 660,
+    "distinct_first_step_outcomes": 3,
+    "focal_gain": 5,
+    "existing_gain": 0,
+    "future_gain": 427,
+    "phase_gains": {
+      "ground": 7,
+      "wait": 321,
+      "flight": 104,
+      "other": 0
+    },
+    "temporal": [
+      {
+        "window": 1,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 5,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 15,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 30,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 60,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 120,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 240,
+        "chosen_loss": 428,
+        "full_winner_short_gain": 428,
+        "short_full_optima_disjoint": false
+      }
+    ],
+    "remaining_reference": 4,
+    "remaining_winner": 4,
+    "tail_absorbing_gain": 104,
+    "before_absorbing_gain": 328,
+    "passenger_only_gain": 432,
+    "aircraft_only_gain": 0,
+    "joint_extra_beyond_best_single": 0,
+    "note": "本次可行替换、指定后续策略和截止下的差；不是全局最优regret，不可跨状态相加。",
+    "continuation": "READY",
+    "forecast": null
+  },
+  {
+    "bank": "order_4304",
+    "index": 220,
+    "reference": [
+      1,
+      -1
+    ],
+    "winner": [
+      1,
+      -1
+    ],
+    "reference_cost": 8336,
+    "winner_cost": 8336,
+    "avoidable_person_minutes": 0,
+    "near_best": true,
+    "candidate_span": 0,
+    "distinct_first_step_outcomes": 3,
+    "focal_gain": 0,
+    "existing_gain": 0,
+    "future_gain": 0,
+    "phase_gains": {
+      "ground": 0,
+      "wait": 0,
+      "flight": 0,
+      "other": 0
+    },
+    "temporal": [
+      {
+        "window": 1,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 5,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 15,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 30,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 60,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 120,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 240,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      }
+    ],
+    "remaining_reference": 4,
+    "remaining_winner": 4,
+    "tail_absorbing_gain": 0,
+    "before_absorbing_gain": 0,
+    "passenger_only_gain": 0,
+    "aircraft_only_gain": 0,
+    "joint_extra_beyond_best_single": 0,
+    "note": "本次可行替换、指定后续策略和截止下的差；不是全局最优regret，不可跨状态相加。",
+    "continuation": "READY",
+    "forecast": {
+      "status": "COMPLETE",
+      "picked": [
+        0,
+        -1
+      ],
+      "world_costs": [
+        [
+          6813,
+          6711,
+          6791,
+          6817
+        ],
+        [
+          6833,
+          6711,
+          6731,
+          6677
+        ],
+        [
+          6717,
+          6711,
+          6731,
+          6805
+        ]
+      ],
+      "mean_costs": [
+        6783,
+        6738,
+        6741
+      ],
+      "split_draws_agree": false,
+      "realized_full_gain": 0,
+      "realized_120_gain": 0,
+      "realized_120_oracle_gain": 0,
+      "public_history_sha": "7e29002988bdf93373bb2d68fcc341952e531b67c752fa57b3d803a493daa4fb",
+      "worlds_sha": [
+        "6fcaeb105615b20627134c4e659b6d9a45740195f1d4543d75fc2b4ca4816b67",
+        "b139dfdfb49bcb087ca1f48a4c347f29f5c0c67a618c3fb6f4731ebd6bda07e4",
+        "5014dbb336ede9cf166104312edb42a3ff18634c4da3ee1cb466f555d2648f3b",
+        "bc480e822da6114e02c77c4b496acb222de86c4df57a681c846bbea2a401100c"
+      ],
+      "information": "只读已揭示OD联合样本、过去60分钟到达数和公开生成截止；不读未来文件，不用删未来近似。",
+      "limitation": "经验需求模型的一次初筛；失败不等于所有预测方法无效，事后Oracle收益也不代表在线可实现。"
+    }
+  },
+  {
+    "bank": "order_4304",
+    "index": 235,
+    "reference": [
+      0,
+      -1
+    ],
+    "winner": [
+      0,
+      -1
+    ],
+    "reference_cost": 7624,
+    "winner_cost": 7624,
+    "avoidable_person_minutes": 0,
+    "near_best": true,
+    "candidate_span": 380,
+    "distinct_first_step_outcomes": 3,
+    "focal_gain": 0,
+    "existing_gain": 0,
+    "future_gain": 0,
+    "phase_gains": {
+      "ground": 0,
+      "wait": 0,
+      "flight": 0,
+      "other": 0
+    },
+    "temporal": [
+      {
+        "window": 1,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 5,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 15,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 30,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 60,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 120,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      },
+      {
+        "window": 240,
+        "chosen_loss": 0,
+        "full_winner_short_gain": 0,
+        "short_full_optima_disjoint": false
+      }
+    ],
+    "remaining_reference": 4,
+    "remaining_winner": 4,
+    "tail_absorbing_gain": 0,
+    "before_absorbing_gain": 0,
+    "passenger_only_gain": 0,
+    "aircraft_only_gain": 0,
+    "joint_extra_beyond_best_single": 0,
+    "note": "本次可行替换、指定后续策略和截止下的差；不是全局最优regret，不可跨状态相加。",
+    "continuation": "READY",
+    "forecast": null
+  }
+]

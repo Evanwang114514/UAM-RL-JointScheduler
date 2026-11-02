@@ -1,0 +1,110 @@
+[
+  {
+    "case": "CORE__E1__K3__J3__T_G099__s1801",
+    "kind": "J",
+    "seed": 1801,
+    "states": 4,
+    "gain": 97,
+    "normal_gain": 52,
+    "gain120": 77,
+    "positive": 2,
+    "negative": 1,
+    "agree": 1
+  },
+  {
+    "case": "CORE__E1__K3__J3__T_G099__s1802",
+    "kind": "J",
+    "seed": 1802,
+    "states": 4,
+    "gain": 398,
+    "normal_gain": 463,
+    "gain120": 8,
+    "positive": 2,
+    "negative": 1,
+    "agree": 2
+  },
+  {
+    "case": "CORE__E1__K3__J3__T_G099__s1803",
+    "kind": "J",
+    "seed": 1803,
+    "states": 4,
+    "gain": 183,
+    "normal_gain": 196,
+    "gain120": 68,
+    "positive": 2,
+    "negative": 1,
+    "agree": 2
+  },
+  {
+    "case": "CORE__E1__K3__J3__T_G099__s1804",
+    "kind": "J",
+    "seed": 1804,
+    "states": 4,
+    "gain": -153,
+    "normal_gain": -201,
+    "gain120": 24,
+    "positive": 1,
+    "negative": 2,
+    "agree": 0
+  },
+  {
+    "case": "CORE__E1__K3__LQ__T_G099__s1801",
+    "kind": "S",
+    "seed": 1801,
+    "states": 4,
+    "gain": 34,
+    "normal_gain": 64,
+    "gain120": -34,
+    "positive": 1,
+    "negative": 0,
+    "agree": 1
+  },
+  {
+    "case": "CORE__E1__K3__LQ__T_G099__s1802",
+    "kind": "S",
+    "seed": 1802,
+    "states": 4,
+    "gain": 415,
+    "normal_gain": 276,
+    "gain120": 18,
+    "positive": 2,
+    "negative": 0,
+    "agree": 1
+  },
+  {
+    "case": "CORE__E1__K3__LQ__T_G099__s1803",
+    "kind": "S",
+    "seed": 1803,
+    "states": 4,
+    "gain": -467,
+    "normal_gain": -839,
+    "gain120": -43,
+    "positive": 1,
+    "negative": 2,
+    "agree": 2
+  },
+  {
+    "case": "CORE__E1__K3__LQ__T_G099__s1804",
+    "kind": "S",
+    "seed": 1804,
+    "states": 4,
+    "gain": -340,
+    "normal_gain": -320,
+    "gain120": -23,
+    "positive": 0,
+    "negative": 2,
+    "agree": 1
+  },
+  {
+    "case": "READY_K3",
+    "kind": "READY",
+    "seed": null,
+    "states": 4,
+    "gain": 222,
+    "normal_gain": 262,
+    "gain120": 25,
+    "positive": 1,
+    "negative": 0,
+    "agree": 0
+  }
+]

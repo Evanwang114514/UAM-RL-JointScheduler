@@ -1,0 +1,56 @@
+{
+  "J": {
+    "n": 4,
+    "mean": 131.25,
+    "sd": 227.89233569092812,
+    "median": 140.0,
+    "minimum": -153,
+    "maximum": 398,
+    "leave_one_mean_range": [
+      42.333333333333336,
+      226
+    ],
+    "t_reference_ci95": [
+      -231.37756086103434,
+      493.87756086103434
+    ],
+    "exact_sign_flip_p": 0.375,
+    "positive_replicates": 3,
+    "raw_values": [
+      97,
+      398,
+      183,
+      -153
+    ],
+    "shapiro_reference_p": 0.9637119363927946,
+    "independence_limit": "只有四个独立训练种子；验证顺序和抽样状态不扩充独立样本量。",
+    "holm_p": 0.75
+  },
+  "S": {
+    "n": 4,
+    "mean": -89.5,
+    "sd": 397.92335945505886,
+    "median": -153.0,
+    "minimum": -467,
+    "maximum": 415,
+    "leave_one_mean_range": [
+      -257.6666666666667,
+      36.333333333333336
+    ],
+    "t_reference_ci95": [
+      -722.6848625419165,
+      543.6848625419165
+    ],
+    "exact_sign_flip_p": 0.75,
+    "positive_replicates": 2,
+    "raw_values": [
+      34,
+      415,
+      -467,
+      -340
+    ],
+    "shapiro_reference_p": 0.6569013258382836,
+    "independence_limit": "只有四个独立训练种子；验证顺序和抽样状态不扩充独立样本量。",
+    "holm_p": 0.75
+  }
+}
