@@ -1,0 +1,51 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>诊断导入修复：继续原目录，不动训练</title><style>body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;margin:auto;max-width:1100px;padding:28px 24px 70px;color:#20303b;line-height:1.8;background:#fff}h1{font-size:29px;line-height:1.4}h2{font-size:23px;margin-top:36px;border-bottom:1px solid #dbe2e7;padding-bottom:8px}h3{font-size:19px;margin-top:28px}a{color:#005a8d}table{border-collapse:collapse;width:100%;font-size:14px;display:block;overflow:auto;margin:20px 0}th,td{padding:10px 12px;border:1px solid #dbe2e7;vertical-align:top}th{background:#edf3f7;text-align:left}tr:nth-child(even){background:#f8fafb}pre{white-space:pre;overflow:auto;padding:16px;background:#f0f3f5;border:1px solid #dbe2e7;font-size:13px}code{font-family:Consolas,monospace}img{max-width:100%;height:auto;border:1px solid #e0e5e8}nav{font-size:14px;padding:12px 0;border-bottom:1px solid #dbe2e7}nav a{margin-right:18px}blockquote{border-left:3px solid #8297a5;margin-left:0;padding-left:18px}strong{color:#152633}footer{margin-top:40px;font-size:13px;color:#556874}</style></head><body><nav><a href="README.html">报告索引</a> <a href="06_诊断导入修复与续跑.html">最新诊断续跑命令</a></nav><h1>诊断导入修复：继续原目录，不动训练</h1>
+<p>2026-11-02｜实现版本：<code>author_source_materialize_v2_20261102</code>。本轮修复诊断启动，不改实验设计，不启动服务器任务。</p>
+<h2>改了什么</h2>
+<p>旧代码在每个诊断worker的私有目录中直接调用<code>gap_setup</code>，却没有先生成该目录的<code>_author_source/&lt;commit&gt;</code>。导入搜索因此回退到项目旧<code>at_obj</code>；原有保真检查正确地阻止了继续运行。</p>
+<p>修复后先按封存hash生成作者源码，把它置于这个新worker的导入路径首位，再初始化环境类，并验证<code>at_obj.scenario</code>、<code>utilss.encoding</code>、<code>utilss.uam_rl_wrapper</code>的真实来源。<strong>没有删掉或放宽原来的环境保真检查，也不清除其他进程的模块。</strong></p>
+<p>原封存50M运行时、物理、模型权重、归一化、请求顺序、采样种子、候选动作、窗口、搜索提案数和一小时预算均未改变。18小时训练脚本未修改，正在运行的训练无需停止或重启。</p>
+<h2>怎么续跑</h2>
+<p>代码只兼容上一版已知hash<code>6633504190c15b16b7c1c296fb8ee287c0cfe0ebc5125001cdcf9ff90a551af6</code>，并要求除入口hash外的科学合同逐字段完全相同。</p>
+<ul>
+<li>原<code>MANIFEST.json</code>不覆盖；新增<code>IMPLEMENTATION_REPAIRS.json</code>说明修复。</li>
+<li>修复前的<code>SESSION_END.json</code>备份为<code>SESSION_END_before_import_fix.json</code>。</li>
+<li>修复前的数据包复制到<code>archive_history</code>，不删除旧失败日志。</li>
+<li><code>--resume --retry-failed</code>跳过已经成功的单元，重做失败/未完成单元。上次失败在导入阶段，不能把那个失败包算作有效诊断成果。</li>
+<li>再次恢复必须是同一修复版hash，不能借兼容规则静默改第二次代码。</li>
+<li>进度分别列尝试、成功和失败；全失败不再仅标为时间预算不足。</li>
+</ul>
+<p>新启动仍有最多3600秒的会话预算；这是对失败诊断的重跑，不是训练续训，不会增加训练步数。</p>
+<h2>本地验证边界</h2>
+<ol>
+<li>在独立进程中，不提前生成作者源码，复现同一条“导入了项目旧环境”错误。</li>
+<li>在另一个全新进程中运行修复后的导入顺序，三个关键模块均来自封存提交<code>83317ea21f13526c15e951545af9bf1b500b9a13</code>，CUDA未初始化。</li>
+<li>已知旧版修复可恢复；科学合同变化、未知旧版、已经修复后又换hash均拒绝；原清单字节保持不变，备份保留，第二次恢复幂等。</li>
+</ol>
+<p>检查未加载checkpoint、未创建仿真场景、未做训练或真实回放。它验证了本次报错的根因和导入修复，不冒充服务器全流程已经执行成功。Gym的维护提示可能仍出现，它不是这次退出原因。</p>
+<p>详见<a href="IMPORT_REPAIR_VALIDATION.json">修复验证记录</a>。原<code>CODE_VALIDATION.json</code>保留交付首版信息，不把历史验证hash改写成修复后的hash。</p>
+<h2>Windows CMD：只上传诊断脚本</h2>
+<p>如果当前在SSH里，先<code>exit</code>回到Windows CMD：</p>
+<pre><code class="language-cmd">cd /d &quot;E:\Study Files\github\UAM-predict\UAGMC-main&quot;
+scp -O -P 10111 &quot;diagnose_uam_50m_credit_1h_ONEFILE.py&quot; SY@22.tcp.vip.cpolar.cn:/home/SY/uam/UAGMC-main/
+ssh -p 10111 SY@22.tcp.vip.cpolar.cn
+</code></pre>
+<h2>服务器Linux：原目录继续，日志另存v2</h2>
+<p>先看资源。GPU上的现有自有训练不要停止；诊断只使用CPU，若CPU被别人重度占用则稍后启动。</p>
+<pre><code class="language-bash">cd /home/SY/uam/UAGMC-main
+top -b -n 1
+nvidia-smi
+mkdir -p /home/SY/wyw/logs
+nohup env OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 /home/SY/wyw/conda/envs/uam_server/bin/python -B -u /home/SY/uam/UAGMC-main/diagnose_uam_50m_credit_1h_ONEFILE.py --workers 2 --wall-seconds 3600 --resume --retry-failed &gt;&gt; /home/SY/wyw/logs/uam_50m_credit_diag_1h_v2.log 2&gt;&amp;1 &lt; /dev/null &amp;
+echo &quot;诊断续跑PID：$!&quot;
+</code></pre>
+<pre><code class="language-bash">tail -n 20 /home/SY/wyw/logs/uam_50m_credit_diag_1h_v2.log
+cat /home/SY/uam/UAGMC-main/workspace/artifacts/uam_50m_credit_diag_1h_20261102_v1/progress.json
+</code></pre>
+<p>新父日志应出现<code>[兼容续跑]</code>、<code>[实现版本] author_source_materialize_v2_20261102</code>和<code>[诊断阶段]</code>。一个案例完成后才出现成功单元；不是每秒都更新。旧worker日志追加保留，上方旧Traceback不代表新尝试失败，应看新版本行之后的内容和新父日志。</p>
+<h2>自动打包与Windows下载</h2>
+<p>正常完成或预算截止后自动更新同一目录的DATAONLY包，包含修复审计。Windows CMD下载时另取修复版文件名，避免覆盖本地旧失败包：</p>
+<pre><code class="language-cmd">cd /d &quot;E:\Study Files\github\UAM-predict\UAGMC-main&quot;
+if not exist &quot;experiment_archives&quot; mkdir &quot;experiment_archives&quot;
+scp -O -P 10111 SY@22.tcp.vip.cpolar.cn:/home/SY/uam/UAGMC-main/workspace/artifacts/uam_50m_credit_diag_1h_20261102_v1/uam_50m_credit_diag_1h_20261102_v1_DATAONLY.tar.gz &quot;experiment_archives\uam_50m_credit_diag_1h_20261102_v1_IMPORT_FIXED_DATAONLY.tar.gz&quot;
+</code></pre>
+<p>本次没有执行上述服务器命令。最终包将下载到本地项目的<code>experiment_archives</code>，完成后再发回分析。</p></body></html>

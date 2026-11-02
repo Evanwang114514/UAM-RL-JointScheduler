@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-02",
+  "implementation_revision": "author_source_materialize_v2_20261102",
+  "diagnostic_sha256": "db2a83f822b9b29652021e10fe2da3b572f9ecf5ab9154efdf9f487596dc0b08",
+  "original_diagnostic_sha256": "6633504190c15b16b7c1c296fb8ee287c0cfe0ebc5125001cdcf9ff90a551af6",
+  "training_script_sha256": "1a5f5031b1eb23d0a99b05bf14a7a89ffe3f4dd63dd3bd8c666fb84bf309718c",
+  "tests": {
+    "old_failure": {
+      "mode": "old",
+      "passed": true,
+      "original_failure_reproduced": true,
+      "error": "导入了项目旧环境，而不是内嵌作者环境",
+      "wall_seconds": 2.9689999999827705,
+      "checkpoint_loaded": false,
+      "simulation_created": false,
+      "training_run": false
+    },
+    "fixed_import": {
+      "mode": "new",
+      "passed": true,
+      "native_author_imports": true,
+      "cuda_initialized": false,
+      "modules": {
+        "at_obj.scenario": {
+          "path": "C:\\Users\\w\\Documents\\Codex\\2026-08-05\\re\\workspace\\artifacts\\uam-diag-import-repair\\20261102_v1\\final_import\\environment\\_author_source\\83317ea21f13526c15e951545af9bf1b500b9a13\\at_obj\\scenario.py",
+          "sha256": "77963edd04746d2be4ac7a3ae5cdcb5eedbd4d55d131474d0d389d2b9fe1b7fa"
+        },
+        "utilss.encoding": {
+          "path": "C:\\Users\\w\\Documents\\Codex\\2026-08-05\\re\\workspace\\artifacts\\uam-diag-import-repair\\20261102_v1\\final_import\\environment\\_author_source\\83317ea21f13526c15e951545af9bf1b500b9a13\\utilss\\encoding.py",
+          "sha256": "1aee4c93310a9a002d3961a99981177a0038b61ae04b2d7e7c0df5cdfff65599"
+        },
+        "utilss.uam_rl_wrapper": {
+          "path": "C:\\Users\\w\\Documents\\Codex\\2026-08-05\\re\\workspace\\artifacts\\uam-diag-import-repair\\20261102_v1\\final_import\\environment\\_author_source\\83317ea21f13526c15e951545af9bf1b500b9a13\\utilss\\uam_rl_wrapper.py",
+          "sha256": "ccd0e8c7e2d4623fd4caf72702f824d18cb7048aae44b5392d7f39d8da18417d"
+        }
+      },
+      "wall_seconds": 1.6410000000032596,
+      "checkpoint_loaded": false,
+      "simulation_created": false,
+      "training_run": false
+    },
+    "strict_resume": {
+      "mode": "resume",
+      "passed": true,
+      "checks": [
+        "known repair accepted",
+        "scientific change rejected",
+        "unknown code rejected",
+        "manifest immutable",
+        "failed records copied",
+        "second resume idempotent"
+      ],
+      "wall_seconds": 0.014999999984866008,
+      "checkpoint_loaded": false,
+      "simulation_created": false,
+      "training_run": false
+    }
+  },
+  "physics_changed": false,
+  "policy_weights_changed": false,
+  "server_connected": false,
+  "boundary": "已复现原导入错误并核对封存模块来源；未加载模型、未创建场景、未运行回放或训练"
+}

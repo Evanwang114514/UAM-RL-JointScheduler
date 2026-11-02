@@ -1,4 +1,4 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>两组结果与下一步：先读这一页</title><style>body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;margin:auto;max-width:1100px;padding:28px 24px 70px;color:#20303b;line-height:1.8;background:#fff}h1{font-size:29px;line-height:1.4}h2{font-size:23px;margin-top:36px;border-bottom:1px solid #dbe2e7;padding-bottom:8px}h3{font-size:19px;margin-top:28px}a{color:#005a8d}table{border-collapse:collapse;width:100%;font-size:14px;display:block;overflow:auto;margin:20px 0}th,td{padding:10px 12px;border:1px solid #dbe2e7;vertical-align:top}th{background:#edf3f7;text-align:left}tr:nth-child(even){background:#f8fafb}pre{white-space:pre;overflow:auto;padding:16px;background:#f0f3f5;border:1px solid #dbe2e7;font-size:13px}code{font-family:Consolas,monospace}img{max-width:100%;height:auto;border:1px solid #e0e5e8}nav{font-size:14px;padding:12px 0;border-bottom:1px solid #dbe2e7}nav a{margin-right:18px}blockquote{border-left:3px solid #8297a5;margin-left:0;padding-left:18px}strong{color:#152633}footer{margin-top:40px;font-size:13px;color:#556874}</style></head><body><nav><a href="README.html">先看总结</a><a href="01_无训练诊断结果_哪些问题已经站住.html">诊断分析</a><a href="02_五千万训练结果_逐方法与稳定性.html">训练分析</a><a href="03_下一轮一小时诊断_简单设计.html">后续诊断</a><a href="04_下一轮十八小时训练_简单设计.html">18小时训练</a></nav><h1>两组结果与下一步：先读这一页</h1>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>两组结果与下一步：先读这一页</title><style>body{font-family:"Microsoft YaHei","PingFang SC",sans-serif;margin:auto;max-width:1100px;padding:28px 24px 70px;color:#20303b;line-height:1.8;background:#fff}h1{font-size:29px;line-height:1.4}h2{font-size:23px;margin-top:36px;border-bottom:1px solid #dbe2e7;padding-bottom:8px}h3{font-size:19px;margin-top:28px}a{color:#005a8d}table{border-collapse:collapse;width:100%;font-size:14px;display:block;overflow:auto;margin:20px 0}th,td{padding:10px 12px;border:1px solid #dbe2e7;vertical-align:top}th{background:#edf3f7;text-align:left}tr:nth-child(even){background:#f8fafb}pre{white-space:pre;overflow:auto;padding:16px;background:#f0f3f5;border:1px solid #dbe2e7;font-size:13px}code{font-family:Consolas,monospace}img{max-width:100%;height:auto;border:1px solid #e0e5e8}nav{font-size:14px;padding:12px 0;border-bottom:1px solid #dbe2e7}nav a{margin-right:18px}blockquote{border-left:3px solid #8297a5;margin-left:0;padding-left:18px}strong{color:#152633}footer{margin-top:40px;font-size:13px;color:#556874}</style></head><body><nav><a href="README.html">报告索引</a> <a href="06_诊断导入修复与续跑.html">最新诊断续跑命令</a></nav><h1>两组结果与下一步：先读这一页</h1>
 <p>2026-11-02。四份正式报告＋两份单文件实验入口。报告状态：已分析；新实验状态：已设计、未运行。</p>
 <h2>最重要的结论</h2>
 <ol>
@@ -16,6 +16,7 @@
 <li><a href="04_下一轮十八小时训练_简单设计.html">4．下一轮18小时训练</a>：32格、76,677,120实际步；普通网络×折扣范围的配对验证。</li>
 </ul>
 <p>HTML版同名可直接打开。<a href="05_运行命令.html">上传/运行/打包/下载命令</a>单列，不算第五份研究报告。</p>
+<p>诊断启动后发现私有作者源码未先生成的导入问题，已单独修复；原实验合同和18小时训练代码不变。现在诊断续跑请使用<a href="06_诊断导入修复与续跑.html">导入修复与续跑命令</a>，旧失败包不作为有效诊断成果。</p>
 <h2>两份实验代码</h2>
 <ul>
 <li><a href="../../diagnose_uam_50m_credit_1h_ONEFILE.py">一小时冻结策略诊断</a>：CPU最多2 worker，不训练、不改物理。</li>
@@ -133,4 +134,4 @@
 <li>时间顺序与反事实通过克隆核验，但分组相关性不写成唯一机制。</li>
 </ol>
 <p>流程软件来源（不是UAM科学证据）：Kassis, T., Agarwal, V., He, Y., Patel, D., &amp; Brueckner, A. M. (2026), <a href="https://arxiv.org/abs/2609.00065">Scientific Agent Skills: A Library of Procedural Knowledge for Research Agents</a>。本轮核对原始元数据，当前记录为2026-09-02修订；不把技能流程当作实验结论的外部验证。</p>
-<p>新实验的论文意义仍需后续结果与最近邻文献核对；本轮不宣称已经形成可稳定中ITSC的新颖性。</p><footer>2026-11-02｜已分析与未执行设计严格区分；原始归档未改。</footer></body></html>
+<p>新实验的论文意义仍需后续结果与最近邻文献核对；本轮不宣称已经形成可稳定中ITSC的新颖性。</p></body></html>
