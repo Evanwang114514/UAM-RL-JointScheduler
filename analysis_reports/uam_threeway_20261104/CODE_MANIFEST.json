@@ -1,0 +1,27 @@
+{
+  "files": [
+    {
+      "file": "train_uam_space_time_14h_ONEFILE.py",
+      "bytes": 205022,
+      "sha256": "cae1489a33ebe2ac757d2b8e661c440d6834f1c3bb666648da0980c81959848b"
+    },
+    {
+      "file": "train_uam_hot_transfer_40h_ONEFILE.py",
+      "bytes": 348015,
+      "sha256": "7a0274447ddda893c73636a9bd0376a117cde3f09c0607474a7ca2d18118eba3"
+    },
+    {
+      "file": "diagnose_uam_threeway_comprehensive_ONEFILE.py",
+      "bytes": 684095,
+      "sha256": "435d600a92a35289bcd72ccee0e1e1654500fb9b23471f5d10b26ded6e76d17c"
+    }
+  ],
+  "upstream_commit": "e01491fad6434b2245a3b8ca201dd7faedcc458c",
+  "upstream_bundle_sha256": "650573ed30ff9030a3800acaaa9a833a2de6d4c8680517b7794d8168740232dc",
+  "upstream_files": 63,
+  "runtime_sha256": "f9a8e8b0998cc74a37f6aaa7fae99a21c29e712e9cc32f21507eeba65ef2e077",
+  "harl_commit": "b1af98b0dbab72a2eee9d160751cd09aedbb8ce2",
+  "harl_redistributed": false,
+  "generated_only": true,
+  "no_training_or_simulation_executed": true
+}
