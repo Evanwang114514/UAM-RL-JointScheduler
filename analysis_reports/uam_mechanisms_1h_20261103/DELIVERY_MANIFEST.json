@@ -1,0 +1,37 @@
+{
+  "version": "UAM_MECHANISMS_NOTRAIN_1H_20261103_V1",
+  "status": "CODE_AND_DESIGN_ONLY_NOT_EXECUTED",
+  "syntax_and_pure_logic_tests": 8,
+  "traffic_replays_run_by_assistant": 0,
+  "new_training_transitions": 0,
+  "target_own_state_slots": 1080,
+  "target_common_state_slots": 64,
+  "session_wall_seconds": 3600,
+  "files": [
+    {
+      "name": "diagnose_uam_mechanisms_1h_ONEFILE.py",
+      "bytes": 304897,
+      "sha256": "9f3cc36acd4bf0d3293f00beb294f9c0f6f8a8b9c238304e9503ae94b452f59b"
+    },
+    {
+      "name": "01_一小时无训练诊断设计_本科生版.html",
+      "bytes": 17775,
+      "sha256": "5757753cc48fd4e795bc0dac0201d3d0f0bc7241733a6c9d5de1f6eba41335d3"
+    },
+    {
+      "name": "01_一小时无训练诊断设计_本科生版.md",
+      "bytes": 15174,
+      "sha256": "3508752286996915309bd8b1e07154038d48cb0e32e295aac3f300a5e24f2cb4"
+    },
+    {
+      "name": "02_上传启动与下载命令.html",
+      "bytes": 5150,
+      "sha256": "78717d641c0871e4ae29e7b3161be7678d70bdd4b1d69be263576fafd2b03a7f"
+    },
+    {
+      "name": "02_上传启动与下载命令.md",
+      "bytes": 3973,
+      "sha256": "f3bbba5863d934907930349857a09e78e40e69fc15e1211bb82c5e5cb77acfa4"
+    }
+  ]
+}

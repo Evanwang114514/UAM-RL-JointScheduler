@@ -1,0 +1,44 @@
+<!doctype html><html lang=zh-CN><meta charset=utf-8><title>02_上传启动与下载命令</title><style>body{max-width:1080px;margin:36px auto;padding:0 24px;font:17px/1.85 Microsoft YaHei,sans-serif;color:#172033}h1{font-size:30px}h2{margin-top:34px;border-bottom:1px solid #d8e1ed}h3{color:#1d4ed8}table{border-collapse:collapse;width:100%;font-size:15px}th,td{border:1px solid #cbd5e1;padding:9px;text-align:left}th{background:#f1f5f9}pre{overflow:auto;background:#f1f5f9;padding:14px;font:14px/1.65 Consolas,monospace}code{overflow-wrap:anywhere}a{color:#1453a6}</style><body><h1>上传、直接启动、续跑和下载</h1>
+<p>只上传一个诊断入口。以下路径沿用本轮已经确认使用的本地UAGMC-main和服务器<code>/home/SY/uam/UAGMC-main</code>，不要把Windows命令粘到Linux提示符里。</p>
+<h2>1．本地Windows CMD上传</h2>
+<p>提示符应该类似<code>C:\Users\w&gt;</code>或<code>E:\Study Files\...&gt;</code>，不能是<code>SY@...$</code>。</p>
+<pre><code class="language-cmd">cd /d &quot;E:\Study Files\github\UAM-predict\UAGMC-main&quot;
+scp -O -P 10111 &quot;diagnose_uam_mechanisms_1h_ONEFILE.py&quot; SY@22.tcp.vip.cpolar.cn:/home/SY/uam/UAGMC-main/
+ssh uam-server
+</code></pre>
+<h2>2．进入服务器后直接正式跑一小时</h2>
+<p>下面是Linux命令，只能在<code>SY@...$</code>后执行。先按共享服务器约定看资源；这是用户观察，不是额外smoke实验。CPU很忙时先不要启动，不终止他人进程。</p>
+<pre><code class="language-bash">top -b -n 1 | head -n 20
+nvidia-smi
+cd /home/SY/uam/UAGMC-main
+mkdir -p /home/SY/uam/UAGMC-main/workspace/artifacts
+nohup env OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 /home/SY/wyw/conda/envs/uam_server/bin/python -B -u /home/SY/uam/UAGMC-main/diagnose_uam_mechanisms_1h_ONEFILE.py --out workspace/artifacts/uam_mechanisms_1h_20261103_v1 --wall-seconds 3600 --workers 2 --resume --retry-failed &gt; /home/SY/uam/UAGMC-main/workspace/artifacts/uam_mechanisms_1h_20261103_launcher.log 2&gt;&amp;1 &lt; /dev/null &amp;
+echo &quot;本轮PID：$!&quot;
+</code></pre>
+<p>上面的外层日志所在<code>workspace/artifacts</code>已是本项目既有目录；诊断自身会创建独立结果目录。模型推理显式CPU，未设置<code>CUDA_VISIBLE_DEVICES=-1</code>，不是5070兼容性限制。不会因为别人的GPU利用率偶然高就把这个CPU诊断卡掉。</p>
+<p>若要降低与训练同时运行的CPU负担，把<code>--workers 2</code>改为<code>--workers 1</code>；一小时内可能完成更少槽，结果会如实标为部分完成。</p>
+<h2>3．检查进度；需要时原命令续跑</h2>
+<pre><code class="language-bash">cd /home/SY/uam/UAGMC-main
+cat workspace/artifacts/uam_mechanisms_1h_20261103_v1/progress.json
+tail -n 25 workspace/artifacts/uam_mechanisms_1h_20261103_launcher.log
+pgrep -afu &quot;$(id -u)&quot; '[d]iagnose_uam_mechanisms_1h_ONEFILE[.]py([[:space:]]|$)'
+</code></pre>
+<p>若因时间到而停在<code>BUDGET_PARTIAL</code>，确认上面的进程查询已空，再原样执行第2段启动命令；每次续跑新增一小时上限，完成的状态跳过。不能重复启动两个相同输出目录的父进程，脚本有目录锁。</p>
+<h2>4．结束后打包</h2>
+<p>正常结束或预算到时都会自动打包。如果只需要重新汇总打包、不要回放，在没有本轮进程运行时执行：</p>
+<pre><code class="language-bash">cd /home/SY/uam/UAGMC-main
+/home/SY/wyw/conda/envs/uam_server/bin/python -B -u diagnose_uam_mechanisms_1h_ONEFILE.py --out workspace/artifacts/uam_mechanisms_1h_20261103_v1 --pack-only
+cat workspace/artifacts/uam_mechanisms_1h_20261103_v1/SESSION_END.json
+ls -lh workspace/artifacts/uam_mechanisms_1h_20261103_v1/uam_mechanisms_1h_20261103_v1_DATAONLY.tar.gz
+</code></pre>
+<p><code>--pack-only</code>不把部分完成改成完成；会话状态以SESSION_END为准。若原会话被外部硬杀，可能还没有SESSION_END，需要先正常续跑收尾。</p>
+<h2>5．回到本地Windows CMD下载到项目</h2>
+<p>在服务器窗口输入<code>exit</code>退出SSH，或者新开一个本地CMD。以下不是Linux命令。</p>
+<pre><code class="language-cmd">cd /d &quot;E:\Study Files\github\UAM-predict\UAGMC-main&quot;
+if not exist &quot;experiment_archives&quot; mkdir &quot;experiment_archives&quot;
+scp -O -P 10111 SY@22.tcp.vip.cpolar.cn:/home/SY/uam/UAGMC-main/workspace/artifacts/uam_mechanisms_1h_20261103_v1/uam_mechanisms_1h_20261103_v1_DATAONLY.tar.gz &quot;experiment_archives\uam_mechanisms_1h_20261103_v1_DATAONLY.tar.gz&quot;
+tar -tzf &quot;experiment_archives\uam_mechanisms_1h_20261103_v1_DATAONLY.tar.gz&quot; &gt;nul &amp;&amp; echo 诊断包可读取
+</code></pre>
+<p>下载后发这个确切文件：</p>
+<p><code>E:\Study Files\github\UAM-predict\UAGMC-main\experiment_archives\uam_mechanisms_1h_20261103_v1_DATAONLY.tar.gz</code></p>
+<p>不需要再传整套模型包。新包包含本轮实际结果、进度、失败记录、规模耗时和入口源码；没有结果之前不能当作已生成文件下载。</p></body></html>
