@@ -1,0 +1,22 @@
+{
+  "说明": "只读旧包后选取同表示K3对照，不改原表。LWATT为该旧合同后期验证均值，不与新12架绝对值混排。",
+  "source_archive": "E:/Study Files/github/UAM-predict/UAGMC-main/uam_E123_K23_HAPPO_132_v1_DATAONLY.tar.gz",
+  "member": "uam_E123_K23_HAPPO_132_v1/MATRIX_RESULTS.csv",
+  "source_entrypoint_sha256": "c542643b08af386b625df15baca6dcfd22eb746381e718d50310b3a93a2732b8",
+  "source_entrypoint": "train_uam_E123_K23_HAPPO_180_ONEFILE.py",
+  "verified_mechanism": ["独立actor与critic", "逐agent多epoch", "重要性factor累乘", "随机更新顺序"],
+  "old_contract": {"fleet":40,"seed":601,"steps":696320,"n_envs":10,"n_steps":2048,"gamma":1.0,"guard":2500,"turn":1.0},
+  "rows": [
+    {"cell":"E1__K3__HAPPO__UAGMC_OD_BASE","LWATT":117.05927083333333,"Final":108.35541666666666,"bank_incomplete":0},
+    {"cell":"E1__K3__J3__UAGMC_OD_BASE","LWATT":87.51343750000001,"Final":90.97,"bank_incomplete":0},
+    {"cell":"E1__K3__LQ__UAGMC_OD_BASE","LWATT":98.77166666666668,"Final":103.44041666666666,"bank_incomplete":0},
+    {"cell":"E2__K3__HAPPO__UAGMC_OD_BASE","LWATT":117.9871875,"Final":124.47583333333333,"bank_incomplete":0},
+    {"cell":"E2__K3__J3__UAGMC_OD_BASE","LWATT":91.05239583333334,"Final":81.935,"bank_incomplete":0},
+    {"cell":"E2__K3__LQ__UAGMC_OD_BASE","LWATT":117.08333333333333,"Final":118.72916666666667,"bank_incomplete":0},
+    {"cell":"E3__K3__HAPPO__UAGMC_OD_BASE","LWATT":95.58364583333335,"Final":87.42291666666668,"bank_incomplete":0},
+    {"cell":"E3__K3__J3__UAGMC_OD_BASE","LWATT":102.9153125,"Final":104.55458333333334,"bank_incomplete":0},
+    {"cell":"E3__K3__LQ__UAGMC_OD_BASE","LWATT":88.46802083333333,"Final":87.54124999999999,"bank_incomplete":0}
+  ],
+  "独立性": "每cell仅一个训练seed，不将bank重复评估伪增为训练seed",
+  "new_training_transitions": 0
+}
