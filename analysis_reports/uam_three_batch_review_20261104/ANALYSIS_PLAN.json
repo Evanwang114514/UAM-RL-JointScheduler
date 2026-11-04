@@ -1,0 +1,16 @@
+{
+  "primary": "每组沿用原固定后期窗口的全体生成乘客截止人时；先模型内平均，再训练种子配对",
+  "secondary": "最终验证、固定新增顺序确认、完成率、个体收益损失、真实运行时间",
+  "contrasts_stage": [
+    "STIN_ON-STIN_OFF",
+    "CONDITIONAL-SPLIT",
+    "SPLIT-JOINT",
+    "CONDITIONAL-JOINT",
+    "Joint-Single"
+  ],
+  "contrasts_space": "空间控制与等待控制2x2配对效应及交互",
+  "interpretation": "探索性分析；四训练种子，保留逐种子结果；不使用大样本显著性，不挑Best",
+  "missing": "未完成者ATT为空；不删除坏种子；诊断状态不作为独立训练复制",
+  "boundaries": "不同控制权限、训练步数及确定/随机评估协议不合并成同一排行榜",
+  "execution": "纯标准库只读归档复算，不运行任何策略或仿真，不加载pickle或模型权重"
+}

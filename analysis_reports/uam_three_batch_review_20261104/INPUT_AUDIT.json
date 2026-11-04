@@ -1,0 +1,88 @@
+{
+  "python": "3.12.14",
+  "inputs": {
+    "stage": {
+      "name": "uam_stage_stin_24run_60m_v1_DATAONLY.tar.gz",
+      "bytes": 15206391,
+      "sha256": "c50142158c75854a9500f2e19ac36777030ffa4eea38b8d7f691315237d145c6",
+      "uncompressed_bytes": 245952613,
+      "files": 2957,
+      "types": {
+        ".json": 2748,
+        ".csv": 84,
+        ".md": 1,
+        ".py": 50,
+        ".log": 74
+      },
+      "read_seconds": 1.8767435550689697,
+      "tar_scan_finished": true,
+      "unsafe_members": 0,
+      "duplicate_members": 0
+    },
+    "space": {
+      "name": "uam_space_time_16run_48m_v1_DATAONLY.tar.gz",
+      "bytes": 3009784,
+      "sha256": "a702dd981bd3d96b5ed6e1b7fbf444c117d6cb2bc983bbc3fbcd3eaabc95e1f7",
+      "uncompressed_bytes": 75823652,
+      "files": 272,
+      "types": {
+        ".py": 1,
+        ".json": 214,
+        ".lock": 1,
+        ".csv": 8,
+        ".log": 48
+      },
+      "read_seconds": 0.46732640266418457,
+      "tar_scan_finished": true,
+      "unsafe_members": 0,
+      "duplicate_members": 0
+    },
+    "diag": {
+      "name": "uam_threeway_diagnostics_20261104_v1_FROZEN_DATAONLY.tar.gz",
+      "bytes": 132191272,
+      "sha256": "20fb25f9c37a5b34c7240eac940a6fd8e8311aeaf15cf214d0d6c56438bc8629",
+      "uncompressed_bytes": 2521808453,
+      "files": 794,
+      "types": {
+        ".py": 1,
+        ".json": 620,
+        ".csv": 8,
+        ".log": 165
+      },
+      "read_seconds": 15.063476085662842,
+      "tar_scan_finished": true,
+      "unsafe_members": 0,
+      "duplicate_members": 0
+    }
+  },
+  "source_entries": {
+    "stage": [
+      {
+        "member": "uam_stage_stin_24run_60m_v1/ENTRYPOINT.py",
+        "sha256": "dc439a685c27afb394c6dcba8f8c4bd9afb6aa7904374e489a379ccad55f8eff"
+      }
+    ],
+    "space": [
+      {
+        "member": "uam_space_time_16run_48m_v1/ENTRYPOINT.py",
+        "sha256": "cae1489a33ebe2ac757d2b8e661c440d6834f1c3bb666648da0980c81959848b"
+      }
+    ],
+    "diag": [
+      {
+        "member": "diagnose_uam_threeway_comprehensive_ONEFILE.py",
+        "sha256": "435d600a92a35289bcd72ccee0e1e1654500fb9b23471f5d10b26ded6e76d17c"
+      }
+    ]
+  },
+  "raw_packages_unchanged": true,
+  "new_training_transitions": 0,
+  "verification": "ANALYZED；数值复算不是策略重跑复现",
+  "integrity_checks": [
+    "tar逐成员扫描完成",
+    "归档成员无重名或重定向",
+    "逐人人时守恒",
+    "三组主要口径及种子层级隔离",
+    "60M官方44次后期回放汇总复算一致"
+  ]
+}

@@ -1,0 +1,3 @@
+# 完整逐人轨迹中间件可由原归档重新计算，不重复推送到代码仓库。
+analysis_details.json
+__pycache__/
