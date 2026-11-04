@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-05",
+  "scope": "STIN原环境与完整周期环境的缺格补齐；未执行新训练、仿真或模型推理",
+  "source_archive": "E:/Study Files/github/UAM-predict/UAGMC-main/experiment_archives/uam_stage_stin_24run_60m_v1_DATAONLY.tar.gz",
+  "source_archive_sha256": "c50142158c75854a9500f2e19ac36777030ffa4eea38b8d7f691315237d145c6",
+  "sealed_stage_entrypoint_sha256": "dc439a685c27afb394c6dcba8f8c4bd9afb6aa7904374e489a379ccad55f8eff",
+  "sealed_author_stin_sha256": "3fe35261488c307a3a52f7a216d0ae50d51aaccec94ccfa72a42ddf8b1b13904",
+  "verified_legacy": {
+    "environment": "E1",
+    "control": "J3",
+    "k": 3,
+    "fleet": 12,
+    "training_seeds": [1901, 1902, 1903, 1904],
+    "modes": ["ON", "OFF"],
+    "expected_cells": 8,
+    "complete_records": 8,
+    "steps_per_model": 2437120,
+    "checked_files": ["SUITE_PLAN.json", "TRAIN_END.json", "STAGE_EVAL_END.json", "MODEL_MANIFEST.json", "RESULT.json", "NEW_ORDER_CONFIRMATION.json"],
+    "local_replay_models": "仅用DATAONLY核验，没有据此推断服务器模型已被删除；运行时另核查原目录",
+    "retraining": false
+  },
+  "new_design": {
+    "environments": ["E0", "E1"],
+    "control": "LQ",
+    "k": 3,
+    "training_seeds": [1901, 1902, 1903, 1904],
+    "modes": ["ON", "OFF"],
+    "new_cells": 16,
+    "steps_per_model": 2437120,
+    "planned_training_transitions": 38993920,
+    "budget_cap": 40000000,
+    "new_training_executed": 0,
+    "new_deep_diagnostic_branches": 0,
+    "scope_boundary": "不生成不存在真实调机控制的E0-J3；不扩K2/K4；不是原论文数值表的忠实复刻"
+  },
+  "workflow": "中文注释单文件、封存运行时、自带合同校验和恢复；只给用户上传/启动/打包/下载命令，不代连服务器"
+}
