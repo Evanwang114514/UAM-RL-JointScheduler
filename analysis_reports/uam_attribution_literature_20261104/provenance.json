@@ -1,0 +1,58 @@
+{
+  "task": "强化学习归因文献核验与UAM诊断改进建议",
+  "date": "2026-11-04",
+  "status": "针对性文献核验完成；UAM改进设计待实施，不是新增实验证据",
+  "new_training_transitions": 0,
+  "external_model_upload": false,
+  "search_method": "公开会议论文页、作者全文、作者代码交叉核验；非穷尽系统综述",
+  "search_script_status": "未执行：检索脚本自动搜寻读取.env，与本轮凭据最小访问边界不符；改用公开网页检索",
+  "queries": [
+    "Counterfactual Effect Decomposition in Multi-Agent Sequential Decision Making",
+    "reinforcement learning diagnosing failure causal interventions state visitation optimization",
+    "Diagnosing Bottlenecks in Deep Q-learning Algorithms",
+    "Implementation Matters in Deep RL PPO TRPO",
+    "Counterfactual Off-Policy Evaluation Gumbel-Max",
+    "COCOA counterfactual contribution analysis dynamic programming",
+    "AXIS AAMAS 2026 counterfactual simulations",
+    "PressLight policy offset green wave",
+    "What Matters for On-Policy Deep Actor-Critic Methods"
+  ],
+  "claim_intent_manifest": {
+    "scope": "本次综述的预先结论边界，不冒称原实验采集前注册或外部审稿",
+    "claims": [
+      {"id": "C1", "text": "反事实路径分解需要明确SCM及干预定义，不等同于换后续规则相减", "refs": ["R1", "R4"]},
+      {"id": "C2", "text": "强化学习瓶颈可通过已知真值的小测试及交叉控制逐项排查", "refs": ["R2", "R3", "R5", "R10"]},
+      {"id": "C3", "text": "解释文本和预测误差不自动证明交通性能的原因", "refs": ["R6", "R8", "R9"]},
+      {"id": "C4", "text": "UAM共同状态、后续策略交叉及离线更新探针是本文建议，不是所引论文已验证的UAM结论", "refs": []}
+    ],
+    "negative_constraints": [
+      "不宣布PPO或Transformer在理论上无法学习延迟或协作",
+      "不把4个训练种子扩充成状态数个独立复制",
+      "不把局部收益相加或强行分摊成原因百分比",
+      "不将冻结权重后的临时关闭当作重新训练的核心消融",
+      "不改变正式物理环境、需求或奖励以迎合归因",
+      "不将预测真未来用于在线动作选择",
+      "不把本次文献查核冒称全部全文精读或系统综述"
+    ]
+  },
+  "sources": [
+    {"key":"R1","title":"Counterfactual Effect Decomposition in Multi-Agent Sequential Decision Making","year":2025,"venue":"ICML","url":"https://proceedings.mlr.press/v267/triantafyllou25a.html","text_url":"https://arxiv.org/html/2410.12539","code_url":"https://github.com/stelios30/cf-effect-decomposition","read_scope":"正式书目、正文2至6节、附录L/M及代码说明的相关段落；非逐行源码复现","boundary":"分类MMDP-SCM、噪声及跨世界干预假设；确定性情形ICC状态细分可退化","use":"核心理论参考"},
+    {"key":"R2","title":"Diagnosing Bottlenecks in Deep Q-learning Algorithms","year":2019,"venue":"ICML","url":"https://proceedings.mlr.press/v97/fu19a.html","text_url":"https://proceedings.mlr.press/v97/fu19a/fu19a.pdf","read_scope":"摘要及正文实验设计、Exact/Sampled-FQI、采样与近似、分布变化相关段落","boundary":"Q-learning的结论不能直接当PPO的既有结论","use":"核心诊断范式"},
+    {"key":"R3","title":"Implementation Matters in Deep Policy Gradients: A Case Study on PPO and TRPO","year":2020,"venue":"ICLR","url":"https://arxiv.org/abs/2005.12729","text_url":"https://arxiv.org/html/2005.12729","read_scope":"论文3至5节、算法/实现交叉比较表；作者PDF首页确认ICLR2020","boundary":"其MuJoCo结果不证明UAM的任何具体组件无效","use":"核心训练归因范式"},
+    {"key":"R4","title":"Counterfactual Off-Policy Evaluation with Gumbel-Max Structural Causal Models","year":2019,"venue":"ICML","url":"https://proceedings.mlr.press/v97/oberst19a.html","text_url":"https://proceedings.mlr.press/v97/oberst19a/oberst19a.pdf","read_scope":"反事实调试、非识别性与SCM假设相关正文","boundary":"我们有仿真器时可记录外生输入，不应默认拟合一个Gumbel-Max模型","use":"反事实可信性边界"},
+    {"key":"R5","title":"Would I have gotten that reward? Long-term credit assignment by counterfactual contribution analysis","year":2023,"venue":"NeurIPS","url":"https://papers.nips.cc/paper/2023/hash/d8bd445c2abe1343cce0e14b361b2fb3-Abstract-Conference.html","text_url":"https://papers.nips.cc/paper/2023/file/d8bd445c2abe1343cce0e14b361b2fb3-Paper-Conference.pdf","read_scope":"摘要、4节实验、附录E.2/E.3和部分偏差方差分析","boundary":"信用估计器，不是现成UAM物理归因器；不据此修改正式奖励","use":"延迟信用与已知梯度验证"},
+    {"key":"R6","title":"Integrating Counterfactual Simulations with Language Models for Explaining Multi-Agent Behaviour","year":2026,"venue":"AAMAS","url":"https://doi.org/10.65109/MCSD1905","text_url":"https://arxiv.org/html/2505.17801v2","read_scope":"正式出版记录、方法与评价指标、LLM-as-a-Judge相关段落","boundary":"主要评价解释与行为预测，不能证明已识别训练失败根因；不引入LLM评判UAM因果真值","use":"反事实询问工作流"},
+    {"key":"R7","title":"Counterfactual Multi-Agent Policy Gradients","year":2018,"venue":"AAAI","url":"https://ojs.aaai.org/index.php/AAAI/article/view/11794","doi":"10.1609/aaai.v32i1.11794","read_scope":"正式元数据、摘要、集中critic及反事实基线定义","boundary":"学习Q的信用信号不是实际交通机制贡献真值","use":"主体信用定义辅助"},
+    {"key":"R8","title":"When to Trust Your Model: Model-Based Policy Optimization","year":2019,"venue":"NeurIPS","url":"https://papers.nips.cc/paper_files/paper/2019/hash/5faf461eff3099671ad63c6f3f094f7f-Abstract.html","text_url":"https://papers.nips.cc/paper_files/paper/2019/file/5faf461eff3099671ad63c6f3f094f7f-Paper.pdf","read_scope":"摘要、模型使用与误差、短分支推演的相关正文","boundary":"不推出Dreamer在UAM应使用某个固定最优想象长度","use":"世界模型误差与策略效果分开核验"},
+    {"key":"R9","title":"PressLight: Learning Max Pressure Control to Coordinate Traffic Signals in Arterial Network","year":2019,"venue":"KDD","url":"https://doi.org/10.1145/3292500.3330949","text_url":"https://faculty.ist.psu.edu/jessieli/Publications/2019-KDD-presslight.pdf","read_scope":"作者全文摘要与6.6节绿波/相位偏移验证","boundary":"交通运行证据样例，不是严格因果分解；不搬运pressure奖励到UAM","use":"交通机制验证样例"},
+    {"key":"R10","title":"What Matters for On-Policy Deep Actor-Critic Methods? A Large-Scale Study","year":2021,"venue":"ICLR","url":"https://openreview.net/forum?id=nIAxjsniDzg","text_url":"https://openreview.net/pdf?id=nIAxjsniDzg","alternate":"https://arxiv.org/abs/2006.05990","read_scope":"正式论文可索引首页摘要与study design、作者预印本记录；OpenReview直接访问遇浏览器验证","boundary":"正式标题与早期预印本标题不同；不照搬大规模超参搜索","use":"统一实现和训练合同辅助"}
+  ],
+  "cross_paper_tensions": [
+    {"paper_a":"R1","paper_b":"R7","topic":"反事实效果与学习信用","assessment":"no_material_conflict","note":"对象不同，不能以COMA的Q替代SCM反事实效应","scholar_confirmation":"pending"},
+    {"paper_a":"R1","paper_b":"R4","topic":"反事实识别假设","assessment":"no_material_conflict","note":"两者均需明确随机机制，不能只凭观测转移给唯一因果分解","scholar_confirmation":"pending"},
+    {"paper_a":"R2","paper_b":"R5","topic":"小任务已知真值诊断","assessment":"no_material_conflict","note":"前者Q学习瓶颈、后者策略梯度信用；共享测试范式而非共享任务结论","scholar_confirmation":"pending"},
+    {"paper_a":"R6","paper_b":"R9","topic":"解释质量与运行机制证据","assessment":"insufficient_overlap","note":"AXIS主要解释评价，PressLight检验交通协调行为，不能互相替代","scholar_confirmation":"pending"}
+  ],
+  "limitations": ["仅针对问题的十篇代表作核验，不穷尽所有强化学习归因研究","未运行任何论文源码或UAM新实验","不提供未核验被引量、API返回数或新方法胜出结论","作者利益冲突与独立复现实验不在本轮核验范围"],
+  "ai_assistance": "由AI辅助公开检索、来源核验及方案综合；没有调用外部大模型上传项目资料"
+}
