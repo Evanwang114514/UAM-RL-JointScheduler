@@ -17,7 +17,10 @@ RUNS=(
  'uam_UAGMC_minfix_240m_v1','uam_E01_S_AC_198m_v1',
  'uam_E1_reward_charge_28run_30m_v1','uam_gap_factors_48run_50m_v1',
  'uam_credit_horizon_32run_18h_v1','uam_stage_stin_24run_60m_v1',
- 'uam_stin_E01_completion_16run_v1')
+ 'uam_stin_E01_completion_16run_v1',
+ 'uam_source_K234_5methods_4seeds_60m_v1',
+ 'uam_strictE1_LQ_fleet40m_methods60m_v1','uam_E01_full5_4seeds_120m_v1')
+FINAL_ONLY=set(RUNS[:2]+RUNS[-3:])
 STEP=re.compile(r'step_(\d+)\.(zip|pkl)$')
 RNG=re.compile(r'rng_(\d+)\.pt$')
 ENTRYPOINTS=('train_uam_UAGMC_minfix_240m_ONEFILE.py','train_uam_E01_S_AC_198m_ONEFILE.py',
@@ -84,8 +87,11 @@ def audit():
             if not cell.is_dir() or cell.is_symlink(): continue
             if not (cell/'checkpoints').is_dir(): continue
             try:
-                task=read(cell/'TASK.json')
+                record=read(cell/'TASK.json')
+                # 旧矩阵把任务放在task字段内；STIN补齐则直接保存任务本身。均须严格匹配实际格名。
+                task=record.get('task',record)
                 if task.get('id')!=cell.name: raise RuntimeError('任务归属说明不匹配')
+                if record.get('id') is not None and record['id']!=cell.name: raise RuntimeError('两层任务归属相互冲突')
                 if not read(cell/'TRAIN_END.json'): raise RuntimeError('缺少训练结束记录')
                 if not (read(cell/'EVAL_END.json') or read(cell/'STAGE_EVAL_END.json')):
                     raise RuntimeError('缺少评估结束记录')
@@ -103,12 +109,13 @@ def audit():
                 latest=max(complete)
                 if latest!=max(groups): raise RuntimeError('最大步数模型配套不完整')
                 middle=min(complete,key=lambda s:(abs(s-latest*.5),s))
-                keep_steps={latest,middle}
-                for name in ('CELL_SUMMARY.json','RESULT.json'):
-                    record=read(cell/name)
-                    for key in ('best_step','best_checkpoint'):
-                        value=record.get(key)
-                        if type(value) is int and value in complete: keep_steps.add(value)
+                keep_steps={latest} if run in FINAL_ONLY else {latest,middle}
+                if run not in FINAL_ONLY:
+                    for name in ('CELL_SUMMARY.json','RESULT.json'):
+                        record=read(cell/name)
+                        for key in ('best_step','best_checkpoint'):
+                            value=record.get(key)
+                            if type(value) is int and value in complete: keep_steps.add(value)
                 # 不加载pickle或神经网络；保留模型必须通过ZIP完整性及内部步数核验。
                 preserve=[]
                 for step in keep_steps:
@@ -130,7 +137,8 @@ def audit():
     out.mkdir(parents=True,exist_ok=False)
     plan=dict(root=str(ROOT),script_sha256=sha(Path(__file__).resolve()),targets=targets,retained=retained,skipped=skipped,
         candidate_count=len(targets),candidate_logical_GiB=sum(x['meta']['size'] for x in targets)/1024**3,run_counts=counts,
-        rule='每格保留最终、约中期、元数据明确记录的最佳；其他路径和不完整模型组不删')
+        final_only_runs=sorted(FINAL_ONLY),
+        rule='30M以前指定五轮只保留每格最终配套；30M及以后保留最终、中期、有记录的最佳；其他路径与不完整组不删')
     dump(out/'PLAN.json',plan)
     for filename,rows in (('拟删除逐文件清单.csv',targets),('保留逐文件清单.csv',retained)):
         with (out/filename).open('w',encoding='utf-8-sig',newline='') as f:
