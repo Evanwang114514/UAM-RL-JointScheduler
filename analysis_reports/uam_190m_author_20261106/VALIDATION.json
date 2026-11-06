@@ -1,0 +1,44 @@
+{
+  "scope": "标准库静态与合同检查；没有导入深度学习库，没有服务器运行，没有GPU训练或性能验证",
+  "results": [
+    {
+      "check": "入口语法、封存哈希、预算、任务去重",
+      "file": "train_uam_happo_mappo_dreamer_140m_ONEFILE.py",
+      "status": "PASS",
+      "cells": 88,
+      "steps": 135987200
+    },
+    {
+      "check": "入口语法、封存哈希、预算、任务去重",
+      "file": "train_uam_marie_25m_ONEFILE.py",
+      "status": "PASS",
+      "cells": 24,
+      "steps": 24084480
+    },
+    {
+      "check": "入口语法、封存哈希、预算、任务去重",
+      "file": "train_uam_dima_25m_ONEFILE.py",
+      "status": "PASS",
+      "cells": 24,
+      "steps": 24084480
+    },
+    {
+      "check": "作者沙盒补丁全部定位、所有作者Python语法、重复适配幂等、作者原件不变",
+      "suite": "marie",
+      "status": "PASS"
+    },
+    {
+      "check": "作者沙盒补丁全部定位、所有作者Python语法、重复适配幂等、作者原件不变",
+      "suite": "dima",
+      "status": "PASS"
+    },
+    {
+      "check": "Dreamer封存训练循环固定评估插入点可解析编译",
+      "status": "PASS"
+    },
+    {
+      "check": "中断步数保守计费、模型/数据分包、不分发作者适配源码",
+      "status": "PASS"
+    }
+  ]
+}
