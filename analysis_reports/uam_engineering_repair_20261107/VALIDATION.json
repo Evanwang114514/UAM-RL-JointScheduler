@@ -1,0 +1,19 @@
+{
+  "revision": "UAM_ENGINEERING_REPAIR_20261107_V1",
+  "date": "2026-11-07",
+  "tests_passed": 8,
+  "tests_failed": 0,
+  "scope": "标准库回归检查；使用真实DIMA源码副本核验补丁与哈希，使用深度学习接口替身核验PPO只评估路径。没有导入真实torch，没有运行训练或真实模型回放，没有连接服务器。",
+  "checks": [
+    "原入口SHA与PLAN一致，预算与科学合同不变",
+    "越界路径拒绝",
+    "动作掩码dtype转换保留0/1值",
+    "真实作者副本补丁定位、原作者不变、适配哈希检查、重复执行幂等",
+    "满训恢复点不被旧LIVE低估，最终评估使用更新后的RESUME",
+    "被改动模型拒绝，绝不自动重训填补",
+    "未满训恢复点拒绝补评估冒充完成",
+    "独立PPO评估仅加载一次环境，CPU执行，保留旧错误，模型和归一化文件不变"
+  ],
+  "server_training_executed": false,
+  "real_checkpoint_evaluation_executed": false
+}
