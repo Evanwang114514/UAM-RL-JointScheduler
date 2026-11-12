@@ -14,6 +14,8 @@ import base64
 import copy
 import csv
 import hashlib
+from importlib import import_module
+from importlib.machinery import ModuleSpec
 import io
 import json
 import math
@@ -35,8 +37,9 @@ from pathlib import Path
 
 sys.dont_write_bytecode = True
 PROJECT = Path(__file__).resolve().parent
-RUN_NAME = 'uam_a2po_k3_20run_40m_v2'
-REVISION = 'UAM_A2PO_AUTHOR_K3_UNIFORM_20261112_V2'
+RUN_NAME = 'uam_a2po_k3_20run_40m_v3'
+REVISION = 'UAM_A2PO_AUTHOR_K3_UNIFORM_20261112_V3_IMPORT_ONLY'
+AUTHOR_IMPORT_MODE = '跳过onpolicy及exp_utils两个包初始化；训练子模块按固定作者文件正常导入'
 STEPS = 1_996_800
 LANES, ROLLOUT_MINUTES = 5, 320
 ROLLOUT = LANES * ROLLOUT_MINUTES
@@ -327,6 +330,87 @@ def author_config(parser, arm):
     return args
 
 
+def author_modules(source):
+    """只跳过两个无关的包入口；不替换作者的任何训练模块或第三方依赖。"""
+    source = Path(source).resolve()
+    checked_vendor(source, A2PO_PIN)
+    package_paths = {'onpolicy':source/'onpolicy', 'onpolicy.exp_utils':source/'onpolicy'/'exp_utils'}
+    for name, path in package_paths.items():
+        if not path.is_dir() or not (path/'__init__.py').is_file() or path.resolve() != path:
+            raise RuntimeError(f'作者包路径缺失或被重定向：{path}')
+        loaded = sys.modules.get(name)
+        if loaded is not None:
+            if getattr(loaded, '_uam_author_package', None) != (A2PO_PIN,str(path)):
+                raise RuntimeError(f'{name} 已被其他实现加载，不覆盖')
+            continue
+        # 声明真实子模块搜索路径，不执行会载入日志/原任务runner的 __init__.py。
+        spec = ModuleSpec(name,loader=None,is_package=True)
+        spec.submodule_search_locations = [str(path)]
+        shell = types.ModuleType(name)
+        shell.__spec__, shell.__package__, shell.__path__ = spec,name,spec.submodule_search_locations
+        shell._uam_author_package = (A2PO_PIN,str(path))
+        sys.modules[name] = shell
+        if '.' in name:
+            parent, leaf = name.rsplit('.',1)
+            setattr(sys.modules[parent],leaf,shell)
+    names = ('onpolicy.config','onpolicy.algorithms.r_mappo.r_mappo',
+             'onpolicy.algorithms.r_mappo.algorithm.rMultiMAPPOPolicy','onpolicy.utils.shared_buffer')
+    modules = tuple(import_module(name) for name in names)
+    for name,module in tuple(sys.modules.items()):
+        if name in package_paths or not name.startswith('onpolicy.'):
+            continue
+        origin = getattr(module,'__file__',None)
+        paths = [Path(origin)] if origin else [Path(p) for p in getattr(module,'__path__',())]
+        if not paths or any(not p.resolve().is_relative_to(package_paths['onpolicy']) for p in paths):
+            raise RuntimeError(f'作者子模块解析到其他目录：{name}')
+    if 'onpolicy.exp_utils.experiment' in sys.modules:
+        raise RuntimeError('不应加载作者的实验日志入口')
+    return modules
+
+
+def startup_import_probe(source):
+    """只解析依赖，不创建环境、网络、GPU上下文或训练记录。"""
+    import gymnasium
+    import numpy
+    import torch
+    import cloudpickle
+    from stable_baselines3.common.vec_env import SubprocVecEnv, VecNormalize
+    config, trainer, policy, buffer = author_modules(source)
+    for arm in A2_ARMS:
+        author_config(config.get_config(),arm)
+    for cls, attr in ((trainer.R_MAPPO,'sequential_train'),(policy.R_Multi_MAPPOPolicy,'get_values'),
+                      (buffer.SharedReplayBuffer,'compute_returns_from_current_policy')):
+        if not callable(getattr(cls,attr,None)):
+            raise RuntimeError(f'作者训练接口不存在：{cls.__name__}.{attr}')
+    return dict(status='IMPORTS_OK',author_commit=A2PO_PIN,mode=AUTHOR_IMPORT_MODE,
+                modules={m.__name__:sha(m.__file__) for m in (config,trainer,policy,buffer)},
+                real_training_steps=0)
+
+
+def require_startup_imports(root, vendor):
+    """在父进程排格之前只执行一次；公共依赖失败不记为cell失败。"""
+    command = [sys.executable,'-B','-X','utf8','-u',str(Path(__file__).resolve()),
+               '--_probe-imports','--a2po-dir',str(vendor)]
+    try:
+        process = subprocess.run(command,cwd=PROJECT,capture_output=True,text=True,
+                                 encoding='utf-8',errors='replace',timeout=90)
+        if process.returncode != 0:
+            detail = process.stderr.strip() or process.stdout.strip()
+            raise RuntimeError(detail or f'依赖检查子进程退出码 {process.returncode}')
+        result = json.loads(process.stdout.strip().splitlines()[-1])
+        if result.get('status') != 'IMPORTS_OK' or result.get('author_commit') != A2PO_PIN:
+            raise RuntimeError('依赖检查没有返回固定作者提交的成功记录')
+    except Exception as exc:
+        detail = str(exc).strip() or type(exc).__name__
+        save(root/'STARTUP_ERROR.json',dict(status='STARTUP_FAILED',error=detail,
+                                           queued_cells=0,real_training_steps=0,time=time.time()))
+        print('[启动失败] '+detail.splitlines()[-1]+'；本次未排入训练格。',flush=True)
+        return False
+    save(root/'STARTUP_IMPORTS.json',dict(result,time=time.time()))
+    print('[启动依赖通过] 已加载作者训练模块；不加载作者日志入口。',flush=True)
+    return True
+
+
 def a2po_train(base, job):
     """仅接管交通采样；策略、回报缓存、损失和优化循环来自固定作者提交。"""
     import gymnasium as gym
@@ -336,17 +420,8 @@ def a2po_train(base, job):
 
     root, item = Path(job['root']), job['task']
     folder, started = root/'cells'/item['id'], time.time()
-    source = Path(job['a2po_dir']).resolve()
-    checked_vendor(source, A2PO_PIN)
-    sys.path.insert(0, str(source))
-    from onpolicy import config as source_config
-    from onpolicy.algorithms.r_mappo import r_mappo as source_trainer
-    from onpolicy.algorithms.r_mappo.algorithm import rMultiMAPPOPolicy as source_policy
-    from onpolicy.utils import shared_buffer as source_buffer
-    modules = (source_config, source_trainer, source_policy, source_buffer)
-    for module in modules:
-        if not Path(module.__file__).resolve().is_relative_to(source):
-            raise RuntimeError('作者模块解析到其他环境，停止该格')
+    modules = author_modules(job['a2po_dir'])
+    source_config, source_trainer, source_policy, source_buffer = modules
     settings = a2po_settings(item['arm'])
     args = author_config(source_config.get_config(), item['arm'])
 
@@ -434,6 +509,7 @@ def a2po_train(base, job):
             rng_restore(record['rng'])
         initial = real
         save(folder/'CONFIG.json', dict(author_commit=A2PO_PIN, arm=item['arm'], mechanisms=settings,
+             author_import_mode=AUTHOR_IMPORT_MODE,
              author_args=vars(args), source_sha256={mod.__name__:sha(mod.__file__) for mod in modules},
              adapter='双角色独立actor/critic；critic读同一分钟pre，actor各读pre/dispatch；每分钟结算一次',
              clip_contract='A4仅切作者clip_before_prod：保留前序比率裁剪和自适应，移动当前角色比率的裁剪位置',
@@ -629,7 +705,7 @@ def plan_make():
     assert len(tasks) == 20 and sum(t['steps'] for t in tasks) == 39_936_000 and STEPS % ROLLOUT == 0
     return dict(revision=REVISION, tasks=tasks, planned_real_steps=39_936_000, budget_cap=CAP,
                 author_pin=A2PO_PIN, frozen_base_sha256=BASE_SHA, frozen_demand_sha256=DEMAND_SHA,
-                frozen_weekend_entry_sha256=WEEKEND_SHA,
+                frozen_weekend_entry_sha256=WEEKEND_SHA, author_import_mode=AUTHOR_IMPORT_MODE,
                 uam='周末E1/K3/12架、原始需求、PT_POST、gamma=.99；不改机场和到达时钟',
                 uam_budget=f'每组4种子×{STEPS}；每rollout {LANES}×{ROLLOUT_MINUTES}真实分钟；同环境动作权、评估库和预算',
                 a2po='直接调用作者R_MAPPO、共享轨迹缓存与独立角色网络。采用MMM2.sh注释中的A2PO配置，保留其顺序循环和比率自适应',
@@ -886,7 +962,11 @@ def main():
     parser.add_argument('--gpu-reserve-gib', type=float, default=3.0)
     parser.add_argument('--device', choices=('cuda',), default='cuda')
     parser.add_argument('--worker', type=Path, help=argparse.SUPPRESS)
+    parser.add_argument('--_probe-imports', action='store_true', help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args._probe_imports:
+        print(json.dumps(startup_import_probe(args.a2po_dir),ensure_ascii=False),flush=True)
+        return
     plan = plan_make()
     if args.plan:
         print(json.dumps(plan, ensure_ascii=False, indent=2))
@@ -936,6 +1016,8 @@ def main():
             summary(root, tasks)
             pack(root)
             return
+        if not require_startup_imports(root,vendor):
+            raise SystemExit(2)
         banks = demand_make(root)
         print(f'[合同] K3均匀；A2PO完整版与四项消融，各4种子；计划39,936,000步；硬上限{CAP:,}', flush=True)
         for item in tasks:
