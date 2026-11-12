@@ -36,8 +36,8 @@ from pathlib import Path
 
 sys.dont_write_bytecode = True
 PROJECT = Path(__file__).resolve().parent
-RUN_NAME = 'uam_ace_k3_16run_32m_v1'
-REVISION = 'UAM_ACE_AUTHOR_K3_UNIFORM_20261112_V1'
+RUN_NAME = 'uam_ace_k3_16run_32m_v2'
+REVISION = 'UAM_ACE_AUTHOR_K3_UNIFORM_20261112_V2_GAP_SCHEMA'
 STEPS = 1_996_800
 LANES, ROLLOUT_MINUTES = 5, 320
 ROLLOUT = LANES * ROLLOUT_MINUTES
@@ -449,6 +449,26 @@ class AceClock:
                 g.setstate(s)
 
 
+class AceLayoutError(RuntimeError):
+    """共享观察合同不符；不让后续各格重复尝试相同错误。"""
+
+
+def ace_station_layout(schema, k, width):
+    # 封存周末环境实用GapSchema：六帧历史 + 每站六个extra字段 + 乘客可用位。
+    # 不使用更早FullSchema的独立OD和每站十个资源字段，也不额外读取仿真真值。
+    extra = getattr(schema,'extra',None)
+    manifest = schema.manifest() if callable(getattr(schema,'manifest',None)) else {}
+    fields = manifest.get('fields_per_station',[])
+    if (not isinstance(extra,slice) or type(extra.start) is not int or type(extra.stop) is not int
+            or extra.step not in (None,1) or getattr(schema,'k',None)!=k or len(fields)!=6
+            or extra.start!=getattr(schema,'history',None) or extra.stop-extra.start!=k*len(fields)
+            or extra.stop!=getattr(schema,'passenger_active',None) or extra.stop+1!=getattr(schema,'pack',None)
+            or width!=schema.pack+2*k+2):
+        raise AceLayoutError(f'ACE冻结观测合同不符：{type(schema).__name__}，宽度={width}，extra={extra}')
+    return dict(start=extra.start,stop=extra.stop,fields=list(fields),
+                fields_per_station=len(fields),observation_width=width)
+
+
 def ace_phase_class(base, m):
     import gymnasium as gym
     import numpy as np
@@ -461,6 +481,13 @@ def ace_phase_class(base, m):
                     (self.observation_space.shape[0]+self.k+3,),np.float32)
             # 最后一项只是适配器的规则信号，不是策略可采样的新动作。
             self.action_space = gym.spaces.Discrete(self.k+1)
+
+        def ace_schema_signature(self):
+            # 返回工人真正构造的schema；把错误回传给训练进程而不是在RPC子进程内断连。
+            try:
+                return ace_station_layout(self.env.schema,self.k,self.observation_space.shape[0]-(self.k+3))
+            except AceLayoutError as exc:
+                return dict(error=str(exc))
 
         def vector(self):
             s = self.env.scenario
@@ -560,20 +587,18 @@ class PackedDecisions:
                self.logp,advantages,self.legal)
 
 
-def make_role_policy(torch, args, width, k, device, relation):
+def make_role_policy(torch, args, layout, k, device, relation):
     """保留MCP的自身query、队友侧上下文key/value与残差；地图CNN改为合法UAM站点塔。"""
     nn = torch.nn
-    start = 6*(4+8*k)+4
-    stop = start+10*k
-    if width <= stop:
-        raise RuntimeError('UAM站点特征边界超出冻结观测')
+    start,stop,width = layout['start'],layout['stop'],layout['observation_width']
+    per_station = layout['fields_per_station']
     hidden, inner = args.hidden_size, 32
 
     class Actor(nn.Module):
         def __init__(self):
             super().__init__()
-            self.local = nn.Sequential(nn.Linear(width-10*k,hidden),nn.Tanh(),nn.Linear(hidden,inner))
-            self.station = nn.Sequential(nn.Linear(10,inner),nn.Tanh())
+            self.local = nn.Sequential(nn.Linear(width-(stop-start),hidden),nn.Tanh(),nn.Linear(hidden,inner))
+            self.station = nn.Sequential(nn.Linear(per_station,inner),nn.Tanh())
             self.local_norm, self.station_norm = nn.LayerNorm(inner),nn.LayerNorm(inner)
             # 只有一个队友角色；保留三个机场token，避免注意力只有一个key时恒为1。
             self.relation = (nn.MultiheadAttention(inner,4,bias=False,batch_first=True) if relation
@@ -585,7 +610,7 @@ def make_role_policy(torch, args, width, k, device, relation):
 
         def forward(self, x):
             own = self.local_norm(self.local(torch.cat((x[:,:start],x[:,stop:]),dim=-1)))
-            tokens = self.station_norm(self.station(x[:,start:stop].reshape(-1,k,10)))
+            tokens = self.station_norm(self.station(x[:,start:stop].reshape(-1,k,per_station)))
             if relation:
                 delta = self.relation(own[:,None,:],tokens,tokens,need_weights=False)[0][:,0,:]
             else:
@@ -674,9 +699,15 @@ def ace_train(base, job):
     try:
         raw = vector.reset()
         width = raw.shape[-1]-(k+3)
+        layout = ace_station_layout(m.GapSchema(k),k,width)
+        actual = vector.env_method('ace_schema_signature')
+        if len(actual)!=LANES or any(found!=layout for found in actual):
+            raise AceLayoutError(f'各采样进程与父进程的冻结字段不一致：父={layout}，子={actual}')
         if norm is None:
             norm = RunningMeanStd(shape=(width,))
-        policies = [make_role_policy(torch,args,width,k,device,settings['relation']) for _ in ROLE_NAMES]
+        elif norm.mean.shape!=(width,) or norm.var.shape!=(width,):
+            raise AceLayoutError('恢复的归一化文件与冻结观察宽度不符')
+        policies = [make_role_policy(torch,args,layout,k,device,settings['relation']) for _ in ROLE_NAMES]
         trainers = [trainer_mod.R_MAPPO(args,p,device=device) for p in policies]
         if not all(t.value_normalizer is not None for t in trainers):
             raise RuntimeError('作者默认ValueNorm未启用')
@@ -691,6 +722,7 @@ def ace_train(base, job):
         save(folder/'CONFIG.json',dict(author_commit=ACE_PIN,arm=item['arm'],mechanisms=settings,
              source_sha256={name:sha(Path(job['ace_dir'])/name) for name in ACE_SOURCE_FILES},
              author_args=vars(args),gamma_per_physical_minute=GAMMA,lambda_per_decision=LAMBDA,
+             observation_layout=layout,
              adr_train_query_interval_minutes=ADR_RANGE,adr_eval=False,
              control='前置乘客合法选站，dispatch阶段飞机多目标才调策略；未查询则READY/LQ，不延长物理时间',
              sync='前置两侧可用且均过冷却才打开同步门；飞机在真实dispatch时再核合法性',
@@ -1188,9 +1220,10 @@ def worker(root, path):
     except InterruptedError:
         save(folder/'END.json', dict(status='PARTIAL', real_steps=max(resume_real(folder),
              read(folder/'LIVE.json',{}).get('real_steps',0)), reason='停止请求'))
-    except BaseException:
+    except BaseException as exc:
         old = read(folder/'LIVE.json', {})
         report = dict(status='ENGINEERING_FAILED', real_steps=max(resume_real(folder), old.get('real_steps', 0)),
+                      failure_kind='ACE_LAYOUT' if isinstance(exc,AceLayoutError) else 'CELL_ERROR',
                       seconds=old.get('seconds'), traceback=traceback.format_exc())
         save(folder/f'ERROR_{time.time_ns()}.json', report)
         save(folder/'END.json', report)
@@ -1316,6 +1349,11 @@ def main():
                     time.sleep(5)
             finish_attempt(root, path, proc.returncode)
             aggregate(root, tasks)
+            end = read(folder/'END.json',{})
+            if end.get('failure_kind') == 'ACE_LAYOUT':
+                save(root/'STARTUP_LAYOUT_ERROR.json',dict(cell=item['id'],traceback=end.get('traceback'),time=time.time()))
+                print('[观察合同不符] 停止派发后续格；详见 STARTUP_LAYOUT_ERROR.json',flush=True)
+                break
         progress = aggregate(root, tasks)
         summary(root, tasks)
         status = 'COMPLETE' if progress['trained'] == len(tasks) and progress['evaluated'] == len(tasks) else 'PARTIAL'
