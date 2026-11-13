@@ -94,8 +94,9 @@ def make_plan(hist):
         group = list(ARMS)
         random.Random(14112026 + seed).shuffle(group)
         for arm in group:
+            # network 是冻结环境也读的字段，原样保留；另记实际 actor 结构。
             tasks.append(dict(old, id=f'{CASE}__{arm}__s{seed}', arm=arm, parent=PARENT[arm],
-                              network='HARL_MLP_EXTERNAL_AIRCRAFT_OBS', run_order=len(tasks)+1))
+                              policy_architecture='HARL_MLP_EXTERNAL_AIRCRAFT_OBS', run_order=len(tasks)+1))
     assert len(tasks) == 28 and PLANNED == 55_910_400 and STEPS // ROLLOUT == 195
     return dict(run=RUN, tasks=tasks, baseline='旧 88M 四种子，不安排新训练',
                 online_planned=PLANNED, cap_including_recovery=CAP, seed_order_key=14112026,
