@@ -1,0 +1,1077 @@
+{
+  "archive_sha256": "aefbf4eeb8a63924b6d2ec6fc42a3f35ae293ffddf8720bf73e38daaa5e183aa",
+  "trace": "order_8304",
+  "scope": "同权重、不同通道输入的局部敏感性；不可代替独立训练消融或在线全局收益",
+  "results": [
+    {
+      "cell": "E1_K3_VARYING__H3_S_AC__s2101",
+      "arm": "H3_S_AC",
+      "seed": 2101,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 32,
+      "feature_nonzero_difference": 32,
+      "branches": [
+        {
+          "t": 130,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 8426,
+            "1": 8434
+          },
+          "conditional_expected_regret": 7.163836047834487,
+          "replacement_conditional_expected_regret": 7.191653155183742,
+          "pair_mass": 0.9941578060388565,
+          "replacement_mass": 0.9973041489720345
+        },
+        {
+          "t": 200,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9668,
+            "1": 9668
+          },
+          "conditional_expected_regret": 0,
+          "replacement_conditional_expected_regret": 0,
+          "pair_mass": 0.9993450879119337,
+          "replacement_mass": 0.999375041690655
+        }
+      ],
+      "mean_tv": 0.036534171390485426,
+      "same_draw_changes": 1,
+      "greedy_changes": 3,
+      "query_signal_changes": 32,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H4_S_WM__s2101",
+      "arm": "H4_S_WM",
+      "seed": 2101,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 29,
+      "feature_nonzero_difference": 29,
+      "branches": [
+        {
+          "t": 136,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 8471,
+            "1": 8383
+          },
+          "conditional_expected_regret": 0.6769388339173001,
+          "replacement_conditional_expected_regret": 39.65677219120361,
+          "pair_mass": 0.9199646874330938,
+          "replacement_mass": 0.43137797713279724
+        },
+        {
+          "t": 209,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9190,
+            "1": 9098
+          },
+          "conditional_expected_regret": 0.4679979103641411,
+          "replacement_conditional_expected_regret": 14.666346459765705,
+          "pair_mass": 0.9993076622486115,
+          "replacement_mass": 0.9979808926582336
+        }
+      ],
+      "mean_tv": 0.513589480594764,
+      "same_draw_changes": 13,
+      "greedy_changes": 18,
+      "query_signal_changes": 28,
+      "wm_constant_mean_tv": 0.00027562065274807913,
+      "wm_max_residual_deviation_minutes": 0.00179976224899292
+    },
+    {
+      "cell": "E1_K3_VARYING__H5_S_CF__s2101",
+      "arm": "H5_S_CF",
+      "seed": 2101,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 36,
+      "feature_nonzero_difference": 0,
+      "branches": [
+        {
+          "t": 113,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7652,
+            "1": 7560
+          },
+          "conditional_expected_regret": 0.7157369175220727,
+          "replacement_conditional_expected_regret": 0.7157369175220727,
+          "pair_mass": 0.9987121485173702,
+          "replacement_mass": 0.9987121485173702
+        },
+        {
+          "t": 206,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9048,
+            "1": 9012,
+            "2": 9008
+          },
+          "conditional_expected_regret": 8.448430574394658,
+          "replacement_conditional_expected_regret": 8.448430574394658,
+          "pair_mass": 1.0000000521540642,
+          "replacement_mass": 1.0000000521540642
+        }
+      ],
+      "mean_tv": 0,
+      "same_draw_changes": 0,
+      "greedy_changes": 0,
+      "query_signal_changes": 36,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H1_INFO__s2101",
+      "arm": "H1_INFO",
+      "seed": 2101,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "ZERO_OOD_SENSITIVITY_ONLY",
+      "horizon": 120,
+      "eligible": 34,
+      "feature_nonzero_difference": 34,
+      "branches": [
+        {
+          "t": 93,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7159,
+            "1": 7063
+          },
+          "conditional_expected_regret": 33.35243140453583,
+          "replacement_conditional_expected_regret": 78.74381255584794,
+          "pair_mass": 0.8966671526432037,
+          "replacement_mass": 0.7343629449605942
+        },
+        {
+          "t": 197,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9678,
+            "2": 9650
+          },
+          "conditional_expected_regret": 24.35322907272545,
+          "replacement_conditional_expected_regret": 27.805366199910498,
+          "pair_mass": 0.29503726959228516,
+          "replacement_mass": 0.9974838774651289
+        }
+      ],
+      "mean_tv": 0.503468847463784,
+      "same_draw_changes": 14,
+      "greedy_changes": 20,
+      "query_signal_changes": 32,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H7_S_SET__s2101",
+      "arm": "H7_S_SET",
+      "seed": 2101,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 34,
+      "feature_nonzero_difference": 34,
+      "branches": [
+        {
+          "t": 105,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7211,
+            "1": 7279
+          },
+          "conditional_expected_regret": 64.1200032892536,
+          "replacement_conditional_expected_regret": 67.18337780550561,
+          "pair_mass": 0.5371751170605421,
+          "replacement_mass": 0.911220177076757
+        },
+        {
+          "t": 206,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9168,
+            "1": 9152,
+            "2": 9156
+          },
+          "conditional_expected_regret": 0.0016786921610573828,
+          "replacement_conditional_expected_regret": 0.6114032811270889,
+          "pair_mass": 1.000000026797352,
+          "replacement_mass": 1.0000000467989594
+        }
+      ],
+      "mean_tv": 0.26986543589737266,
+      "same_draw_changes": 9,
+      "greedy_changes": 10,
+      "query_signal_changes": 33,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H2_S__s2101",
+      "arm": "H2_S",
+      "seed": 2101,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H1_INFO",
+      "horizon": 120,
+      "eligible": 37,
+      "feature_nonzero_difference": 36,
+      "branches": [
+        {
+          "t": 117,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7899,
+            "1": 7603
+          },
+          "conditional_expected_regret": 7.58918281093629,
+          "replacement_conditional_expected_regret": 2.562184264285606,
+          "pair_mass": 0.6756167858839035,
+          "replacement_mass": 0.8375797704793513
+        },
+        {
+          "t": 198,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9156,
+            "1": 9092,
+            "2": 9212
+          },
+          "conditional_expected_regret": 0.16973489277621778,
+          "replacement_conditional_expected_regret": 0.11936634280716546,
+          "pair_mass": 1.0000000912696123,
+          "replacement_mass": 1.0000000183354132
+        }
+      ],
+      "mean_tv": 0.03945797940537592,
+      "same_draw_changes": 1,
+      "greedy_changes": 1,
+      "query_signal_changes": 36,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H2_S__s2102",
+      "arm": "H2_S",
+      "seed": 2102,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H1_INFO",
+      "horizon": 120,
+      "eligible": 19,
+      "feature_nonzero_difference": 17,
+      "branches": [
+        {
+          "t": 78,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 6527,
+            "1": 6495
+          },
+          "conditional_expected_regret": 1.139560007764012,
+          "replacement_conditional_expected_regret": 1.7448280251959367,
+          "pair_mass": 0.830176118761301,
+          "replacement_mass": 0.8267769999802113
+        },
+        {
+          "t": 205,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9285,
+            "1": 9281
+          },
+          "conditional_expected_regret": 0.018235081773417042,
+          "replacement_conditional_expected_regret": 0.01436821050428552,
+          "pair_mass": 0.9577742759138346,
+          "replacement_mass": 0.9837629869580269
+        }
+      ],
+      "mean_tv": 0.0750320507703643,
+      "same_draw_changes": 1,
+      "greedy_changes": 1,
+      "query_signal_changes": 17,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H7_S_SET__s2102",
+      "arm": "H7_S_SET",
+      "seed": 2102,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 31,
+      "feature_nonzero_difference": 31,
+      "branches": [
+        {
+          "t": 133,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 8218,
+            "1": 8106
+          },
+          "conditional_expected_regret": 1.1119871129086896,
+          "replacement_conditional_expected_regret": 74.0468158277785,
+          "pair_mass": 0.996449557133019,
+          "replacement_mass": 0.965842992067337
+        },
+        {
+          "t": 202,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 8895,
+            "1": 8819,
+            "2": 8863
+          },
+          "conditional_expected_regret": 0.5309594188515624,
+          "replacement_conditional_expected_regret": 19.187835901796547,
+          "pair_mass": 1.0000000265426934,
+          "replacement_mass": 0.999999969964847
+        }
+      ],
+      "mean_tv": 0.5015845817904319,
+      "same_draw_changes": 17,
+      "greedy_changes": 17,
+      "query_signal_changes": 28,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H5_S_CF__s2102",
+      "arm": "H5_S_CF",
+      "seed": 2102,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 34,
+      "feature_nonzero_difference": 0,
+      "branches": [
+        {
+          "t": 125,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7903,
+            "1": 7887,
+            "2": 7867
+          },
+          "conditional_expected_regret": 20.44024555263342,
+          "replacement_conditional_expected_regret": 20.44024555263342,
+          "pair_mass": 1.0000001043081284,
+          "replacement_mass": 1.0000001043081284
+        },
+        {
+          "t": 201,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9078,
+            "1": 9054,
+            "2": 9174
+          },
+          "conditional_expected_regret": 76.10347080230713,
+          "replacement_conditional_expected_regret": 76.10347080230713,
+          "pair_mass": 1,
+          "replacement_mass": 1
+        }
+      ],
+      "mean_tv": 0,
+      "same_draw_changes": 0,
+      "greedy_changes": 0,
+      "query_signal_changes": 33,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H4_S_WM__s2102",
+      "arm": "H4_S_WM",
+      "seed": 2102,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 37,
+      "feature_nonzero_difference": 37,
+      "branches": [
+        {
+          "t": 113,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7588,
+            "1": 7544
+          },
+          "conditional_expected_regret": 0.09715449242419173,
+          "replacement_conditional_expected_regret": 0.47509070228704575,
+          "pair_mass": 0.9923637006431818,
+          "replacement_mass": 0.9091181037947536
+        },
+        {
+          "t": 197,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9058,
+            "1": 8986,
+            "2": 9238
+          },
+          "conditional_expected_regret": 19.9475877873817,
+          "replacement_conditional_expected_regret": 17.800608009752736,
+          "pair_mass": 1.0000000572763383,
+          "replacement_mass": 0.9999999986030161
+        }
+      ],
+      "mean_tv": 0.25410534351485203,
+      "same_draw_changes": 12,
+      "greedy_changes": 7,
+      "query_signal_changes": 36,
+      "wm_constant_mean_tv": 0.00009185206825448502,
+      "wm_max_residual_deviation_minutes": 0.001530766487121582
+    },
+    {
+      "cell": "E1_K3_VARYING__H3_S_AC__s2102",
+      "arm": "H3_S_AC",
+      "seed": 2102,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 32,
+      "feature_nonzero_difference": 32,
+      "branches": [
+        {
+          "t": 112,
+          "status": "COMPLETE",
+          "costs": {
+            "1": 7981,
+            "2": 8109
+          },
+          "conditional_expected_regret": 0.32225957686288087,
+          "replacement_conditional_expected_regret": 0.3090755593170057,
+          "pair_mass": 0.9997084075585008,
+          "replacement_mass": 0.9996699560433626
+        },
+        {
+          "t": 205,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9389,
+            "1": 9437,
+            "2": 9409
+          },
+          "conditional_expected_regret": 47.92411277462142,
+          "replacement_conditional_expected_regret": 47.93129734221962,
+          "pair_mass": 1.000000065396307,
+          "replacement_mass": 0.9999999277642928
+        }
+      ],
+      "mean_tv": 0.00790085450148581,
+      "same_draw_changes": 0,
+      "greedy_changes": 0,
+      "query_signal_changes": 29,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H1_INFO__s2102",
+      "arm": "H1_INFO",
+      "seed": 2102,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "ZERO_OOD_SENSITIVITY_ONLY",
+      "horizon": 120,
+      "eligible": 31,
+      "feature_nonzero_difference": 31,
+      "branches": [
+        {
+          "t": 132,
+          "status": "COMPLETE",
+          "costs": {
+            "1": 8146,
+            "2": 8142
+          },
+          "conditional_expected_regret": 3.9891372071383913,
+          "replacement_conditional_expected_regret": 3.6576216895434364,
+          "pair_mass": 0.9974860737565905,
+          "replacement_mass": 0.04101498704403639
+        },
+        {
+          "t": 209,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 8866,
+            "1": 8826,
+            "2": 8862
+          },
+          "conditional_expected_regret": 1.411595051864552,
+          "replacement_conditional_expected_regret": 2.7702806111230345,
+          "pair_mass": 0.9999999364226824,
+          "replacement_mass": 0.9999999366700649
+        }
+      ],
+      "mean_tv": 0.736687880970778,
+      "same_draw_changes": 23,
+      "greedy_changes": 25,
+      "query_signal_changes": 31,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H2_S__s2103",
+      "arm": "H2_S",
+      "seed": 2103,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H1_INFO",
+      "horizon": 120,
+      "eligible": 37,
+      "feature_nonzero_difference": 35,
+      "branches": [
+        {
+          "t": 112,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7805,
+            "1": 7797
+          },
+          "conditional_expected_regret": 0.005178914842522901,
+          "replacement_conditional_expected_regret": 0.0031783943383775918,
+          "pair_mass": 0.9990093238302507,
+          "replacement_mass": 0.9997196022886783
+        },
+        {
+          "t": 203,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9430,
+            "1": 9438,
+            "2": 9534
+          },
+          "conditional_expected_regret": 100.36552683596693,
+          "replacement_conditional_expected_regret": 98.6768408374664,
+          "pair_mass": 1.0000000316649675,
+          "replacement_mass": 0.9999999348074198
+        }
+      ],
+      "mean_tv": 0.029712203297586292,
+      "same_draw_changes": 2,
+      "greedy_changes": 1,
+      "query_signal_changes": 35,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H3_S_AC__s2103",
+      "arm": "H3_S_AC",
+      "seed": 2103,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 28,
+      "feature_nonzero_difference": 28,
+      "branches": [
+        {
+          "t": 153,
+          "status": "COMPLETE",
+          "costs": {
+            "1": 8521,
+            "2": 8565
+          },
+          "conditional_expected_regret": 0.011604604221344588,
+          "replacement_conditional_expected_regret": 0.009253435713460212,
+          "pair_mass": 0.9999195625714492,
+          "replacement_mass": 0.999910594400717
+        },
+        {
+          "t": 206,
+          "status": "COMPLETE",
+          "costs": {
+            "1": 8712,
+            "2": 8756
+          },
+          "conditional_expected_regret": 0.033587759187711334,
+          "replacement_conditional_expected_regret": 0.026437735091504037,
+          "pair_mass": 0.9998546339920722,
+          "replacement_mass": 0.999846528226044
+        }
+      ],
+      "mean_tv": 0.003131874038704804,
+      "same_draw_changes": 0,
+      "greedy_changes": 0,
+      "query_signal_changes": 26,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H5_S_CF__s2103",
+      "arm": "H5_S_CF",
+      "seed": 2103,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 36,
+      "feature_nonzero_difference": 0,
+      "branches": [
+        {
+          "t": 111,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7767,
+            "1": 7755
+          },
+          "conditional_expected_regret": 2.353627752339381,
+          "replacement_conditional_expected_regret": 2.353627752339381,
+          "pair_mass": 0.8429521173238754,
+          "replacement_mass": 0.8429521173238754
+        },
+        {
+          "t": 202,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9331,
+            "1": 9199,
+            "2": 9243
+          },
+          "conditional_expected_regret": 0.5282399180272754,
+          "replacement_conditional_expected_regret": 0.5282399180272754,
+          "pair_mass": 0.9999999681022018,
+          "replacement_mass": 0.9999999681022018
+        }
+      ],
+      "mean_tv": 0,
+      "same_draw_changes": 0,
+      "greedy_changes": 0,
+      "query_signal_changes": 36,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H1_INFO__s2103",
+      "arm": "H1_INFO",
+      "seed": 2103,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "ZERO_OOD_SENSITIVITY_ONLY",
+      "horizon": 120,
+      "eligible": 40,
+      "feature_nonzero_difference": 40,
+      "branches": [
+        {
+          "t": 102,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7491,
+            "1": 7431,
+            "2": 7455
+          },
+          "conditional_expected_regret": 0.005682697142778021,
+          "replacement_conditional_expected_regret": 25.100918704216557,
+          "pair_mass": 0.9999999997417035,
+          "replacement_mass": 1.0000000596046448
+        },
+        {
+          "t": 194,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9320,
+            "1": 9280,
+            "2": 9244
+          },
+          "conditional_expected_regret": 35.87291830132967,
+          "replacement_conditional_expected_regret": 33.645326657231,
+          "pair_mass": 0.9999999364081305,
+          "replacement_mass": 1.0000000059371814
+        }
+      ],
+      "mean_tv": 0.4049069240340032,
+      "same_draw_changes": 17,
+      "greedy_changes": 18,
+      "query_signal_changes": 39,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H4_S_WM__s2103",
+      "arm": "H4_S_WM",
+      "seed": 2103,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 34,
+      "feature_nonzero_difference": 34,
+      "branches": [
+        {
+          "t": 121,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 8375,
+            "1": 8287,
+            "2": 8359
+          },
+          "conditional_expected_regret": 0.8557728821448161,
+          "replacement_conditional_expected_regret": 14.836289260058702,
+          "pair_mass": 0.9999999832361937,
+          "replacement_mass": 0.9999999515712261
+        },
+        {
+          "t": 200,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9872,
+            "1": 9912,
+            "2": 9912
+          },
+          "conditional_expected_regret": 29.315142949964315,
+          "replacement_conditional_expected_regret": 3.742260325104637,
+          "pair_mass": 1.0000000298023224,
+          "replacement_mass": 0.9999999832361937
+        }
+      ],
+      "mean_tv": 0.435117261374698,
+      "same_draw_changes": 11,
+      "greedy_changes": 18,
+      "query_signal_changes": 33,
+      "wm_constant_mean_tv": 0.0002753849227755221,
+      "wm_max_residual_deviation_minutes": 0.0015416145324707031
+    },
+    {
+      "cell": "E1_K3_VARYING__H7_S_SET__s2103",
+      "arm": "H7_S_SET",
+      "seed": 2103,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 28,
+      "feature_nonzero_difference": 28,
+      "branches": [
+        {
+          "t": 105,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7383,
+            "1": 7367
+          },
+          "conditional_expected_regret": 9.936676395829272,
+          "replacement_conditional_expected_regret": 13.010973007090213,
+          "pair_mass": 0.9750047624111176,
+          "replacement_mass": 0.7766361236572266
+        },
+        {
+          "t": 180,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9226,
+            "1": 9222
+          },
+          "conditional_expected_regret": 0.1078530487783035,
+          "replacement_conditional_expected_regret": 0.3384354051172828,
+          "pair_mass": 0.8714591041207314,
+          "replacement_mass": 0.6626525484025478
+        }
+      ],
+      "mean_tv": 0.5378004174812564,
+      "same_draw_changes": 15,
+      "greedy_changes": 18,
+      "query_signal_changes": 28,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H5_S_CF__s2104",
+      "arm": "H5_S_CF",
+      "seed": 2104,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 25,
+      "feature_nonzero_difference": 0,
+      "branches": [
+        {
+          "t": 94,
+          "status": "COMPLETE",
+          "costs": {
+            "1": 6813,
+            "2": 7053
+          },
+          "conditional_expected_regret": 0.009098521338256817,
+          "replacement_conditional_expected_regret": 0.009098521338256817,
+          "pair_mass": 0.999875304307352,
+          "replacement_mass": 0.999875304307352
+        },
+        {
+          "t": 209,
+          "status": "COMPLETE",
+          "costs": {
+            "1": 8390,
+            "2": 8490
+          },
+          "conditional_expected_regret": 0.9410477862511852,
+          "replacement_conditional_expected_regret": 0.9410477862511852,
+          "pair_mass": 0.9999515395611525,
+          "replacement_mass": 0.9999515395611525
+        }
+      ],
+      "mean_tv": 0,
+      "same_draw_changes": 0,
+      "greedy_changes": 0,
+      "query_signal_changes": 23,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H1_INFO__s2104",
+      "arm": "H1_INFO",
+      "seed": 2104,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "ZERO_OOD_SENSITIVITY_ONLY",
+      "horizon": 120,
+      "eligible": 34,
+      "feature_nonzero_difference": 34,
+      "branches": [
+        {
+          "t": 127,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 8139,
+            "1": 7771,
+            "2": 7819
+          },
+          "conditional_expected_regret": 0.129134691407263,
+          "replacement_conditional_expected_regret": 4.542171493324214,
+          "pair_mass": 0.9999999398278305,
+          "replacement_mass": 0.9999999688006938
+        },
+        {
+          "t": 209,
+          "status": "COMPLETE",
+          "costs": {
+            "1": 8410,
+            "2": 8458
+          },
+          "conditional_expected_regret": 0.0008751381730389033,
+          "replacement_conditional_expected_regret": 0.10296357401437292,
+          "pair_mass": 0.9999585074347124,
+          "replacement_mass": 0.8962034528376535
+        }
+      ],
+      "mean_tv": 0.18949300375328781,
+      "same_draw_changes": 4,
+      "greedy_changes": 2,
+      "query_signal_changes": 34,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H2_S__s2104",
+      "arm": "H2_S",
+      "seed": 2104,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H1_INFO",
+      "horizon": 120,
+      "eligible": 36,
+      "feature_nonzero_difference": 35,
+      "branches": [
+        {
+          "t": 124,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7929,
+            "1": 7837
+          },
+          "conditional_expected_regret": 0.010630586868221948,
+          "replacement_conditional_expected_regret": 0.008694290404551667,
+          "pair_mass": 0.9993514625821263,
+          "replacement_mass": 0.999529585482378
+        },
+        {
+          "t": 205,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 8813,
+            "1": 8769,
+            "2": 8813
+          },
+          "conditional_expected_regret": 0.054326977701479776,
+          "replacement_conditional_expected_regret": 0.05200925973835202,
+          "pair_mass": 1.0000000534928404,
+          "replacement_mass": 0.9999998895800672
+        }
+      ],
+      "mean_tv": 0.0017508521528826451,
+      "same_draw_changes": 0,
+      "greedy_changes": 0,
+      "query_signal_changes": 35,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H3_S_AC__s2104",
+      "arm": "H3_S_AC",
+      "seed": 2104,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 39,
+      "feature_nonzero_difference": 39,
+      "branches": [
+        {
+          "t": 111,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7739,
+            "1": 7603
+          },
+          "conditional_expected_regret": 0.3386335197962682,
+          "replacement_conditional_expected_regret": 0.4797291532716027,
+          "pair_mass": 0.9999767241533846,
+          "replacement_mass": 0.9999629317317158
+        },
+        {
+          "t": 198,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9168,
+            "1": 9164,
+            "2": 9300
+          },
+          "conditional_expected_regret": 0.16992240577962336,
+          "replacement_conditional_expected_regret": 0.1992565610776448,
+          "pair_mass": 1.000000119645847,
+          "replacement_mass": 1.0000000150830601
+        }
+      ],
+      "mean_tv": 0.010649410008192297,
+      "same_draw_changes": 0,
+      "greedy_changes": 1,
+      "query_signal_changes": 38,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H7_S_SET__s2104",
+      "arm": "H7_S_SET",
+      "seed": 2104,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 28,
+      "feature_nonzero_difference": 28,
+      "branches": [
+        {
+          "t": 125,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 8087,
+            "1": 8087
+          },
+          "conditional_expected_regret": 0,
+          "replacement_conditional_expected_regret": 0,
+          "pair_mass": 0.9927823022007942,
+          "replacement_mass": 0.7162925340235233
+        },
+        {
+          "t": 196,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 9451,
+            "1": 9395,
+            "2": 9431
+          },
+          "conditional_expected_regret": 31.431026164956197,
+          "replacement_conditional_expected_regret": 33.19146203994751,
+          "pair_mass": 1.0000000074505806,
+          "replacement_mass": 1
+        }
+      ],
+      "mean_tv": 0.51359623517575,
+      "same_draw_changes": 15,
+      "greedy_changes": 17,
+      "query_signal_changes": 27,
+      "wm_constant_mean_tv": null,
+      "wm_max_residual_deviation_minutes": null
+    },
+    {
+      "cell": "E1_K3_VARYING__H4_S_WM__s2104",
+      "arm": "H4_S_WM",
+      "seed": 2104,
+      "step": 1996800,
+      "trace": "order_8304",
+      "replacement": "H2_S",
+      "horizon": 120,
+      "eligible": 33,
+      "feature_nonzero_difference": 33,
+      "branches": [
+        {
+          "t": 109,
+          "status": "COMPLETE",
+          "costs": {
+            "0": 7773,
+            "1": 7753
+          },
+          "conditional_expected_regret": 13.293803858956654,
+          "replacement_conditional_expected_regret": 14.501514374676518,
+          "pair_mass": 0.5713306069374084,
+          "replacement_mass": 0.7116446793079376
+        },
+        {
+          "t": 197,
+          "status": "COMPLETE",
+          "costs": {
+            "1": 9330,
+            "2": 9398
+          },
+          "conditional_expected_regret": 0.35016069043067816,
+          "replacement_conditional_expected_regret": 27.44000953247335,
+          "pair_mass": 0.7939860108308494,
+          "replacement_mass": 0.12071029469370842
+        }
+      ],
+      "mean_tv": 0.3364442728943135,
+      "same_draw_changes": 14,
+      "greedy_changes": 13,
+      "query_signal_changes": 33,
+      "wm_constant_mean_tv": 0.00011460352189632513,
+      "wm_max_residual_deviation_minutes": 0.0014694929122924805
+    }
+  ],
+  "skipped": [
+    {
+      "cell": "E1_K3_VARYING__H6_S_CED__s2101",
+      "reason": "INSUFFICIENT_SUPPORT"
+    },
+    {
+      "cell": "E1_K3_VARYING__H6_S_CED__s2102",
+      "reason": "INSUFFICIENT_SUPPORT"
+    },
+    {
+      "cell": "E1_K3_VARYING__H6_S_CED__s2103",
+      "reason": "INSUFFICIENT_SUPPORT"
+    },
+    {
+      "cell": "E1_K3_VARYING__H6_S_CED__s2104",
+      "reason": "INSUFFICIENT_SUPPORT"
+    }
+  ],
+  "new_training_transitions": 0
+}
